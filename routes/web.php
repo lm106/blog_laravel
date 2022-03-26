@@ -17,7 +17,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/', function () {
+Route::get('/navbar', function () {
     return view('navbar');
 });
 /*Route::get('/', function () {
