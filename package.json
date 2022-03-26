@@ -26,6 +26,7 @@
         "vue-template-compiler": "^2.6.12"
     },
     "dependencies": {
-        "@vue/compiler-sfc": "^3.2.31"
+        "@vue/compiler-sfc": "^3.2.31",
+        "sqlite3": "^5.0.2"
     }
 }
