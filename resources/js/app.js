@@ -32,10 +32,11 @@ const app = new Vue({
 });
 */
 import { createApp } from 'vue'
-import Example from './components/ExampleComponent'
-
+import App from './components/App'
+/*
 const app = createApp({})
 
 app.component('example', Example)
 
-app.mount('#app')
+app.mount('#app')*/
+createApp(App).mount("#app")

@@ -1,6 +1,7 @@
 <template>
     <div class="container">
-        Hola vue
+        Hola vue  dsfsdfs
+        <h1> Inicio </h1>
     </div>
 </template>
 
