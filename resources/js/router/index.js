@@ -3,12 +3,12 @@ import { createRouter, createWebHistory } from 'vue-router'
 const router = [
   { 
     path: '/signup', 
-    component: signup 
-  },
+    component:  require('../components/user/signup.vue').default 
+  },/* ######No va sino lo duplica#####
   {
     path: '/',
-    component: require('../components/home.vue').default
-  },
+    component: require('../components/App.vue').default
+  },*/
   {   
     path: '/recetas/:id',
     component: require('../components/recetas/recetamostrar.vue').default
