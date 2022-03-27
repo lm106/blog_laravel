@@ -1,11 +1,20 @@
 <template>
-    <div class="container">
-        Hola vue  dsfsdfs
-        <h1> Inicio </h1>
+    <div>
+       <h1>{{message}}</h1>
+      <router-view></router-view>  
     </div>
 </template>
 
 <script>
-    export default {
-    }
+import home from './home.vue'
+/*ççimport signup from './components/signup'*/
+export default {
+  components: { home },
+  data() {
+      return {
+        message: " Bienvenido World"
+      }
+  }
+
+}
 </script>

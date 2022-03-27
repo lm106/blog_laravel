@@ -9,8 +9,12 @@
 </head>
 <body>
     <div id="app">
-    <!--    <app/>-->
+    <!--    <app/>
+    <template>
+         	<router-link to="/signup">sign</router-link>
+	</template>
+        <router-view></router-view>-->
     </div>
-    <!--<script src="{{ mix('js/app.js') }}"></script>-->
+    <!--<script src="{{ mix('js/app.js') }}"></script>-->ç
 </body>
 </html>

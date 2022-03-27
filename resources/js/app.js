@@ -33,10 +33,15 @@ const app = new Vue({
 */
 import { createApp } from 'vue'
 import App from './components/App'
+import  router from './router/index'
+
 /*
 const app = createApp({})
 
 app.component('example', Example)
 
 app.mount('#app')*/
-createApp(App).mount("#app")
+const app =createApp(App)
+app.use(router)
+
+app.mount("#app")
