@@ -41,7 +41,16 @@ const app = createApp({})
 app.component('example', Example)
 
 app.mount('#app')*/
+import VueAxios from 'vue-axios'
+import axios from 'axios';
+
+export const instance = axios.create({
+    baseURL: 'https:/localhost:8000/',
+    timeout: 1000,
+    headers: {'X-Custom-Header': 'foobar'}
+  });
 const app =createApp(App)
+
 app.use(router)
 
 app.mount("#app")

@@ -1,21 +1,69 @@
 <template>
   <div>
-      estoy en Registrarse
-      <form>
-        <input v-model="input" placeholder="name" />
+      <h2> {{ title }} </h2>
+      <p id="success"></p>
+      <form  @submit.prevent="signUp">
+        <input type="text" v-model="user.name" placeholder="name" />
+        <input text="text" v-model="user.name_last" placeholder="name_last" />
+        <input type="email" v-model="user.email" placeholder="name@example.com" />
+        <input type="password" v-model="user.password" placeholder="password" />
+        <input type="password" v-model="user.repeat_password" placeholder="repeat password" />
+        <input type="submit" value="Submit">
       </form>
-      <p>{{ input }}</p>
+      <button @click="showUser()">Mostrar datos</button>
   </div>
 </template>
 
 <script>
+import axios from 'axios'
 export default {
     name:'signup',
     data() {
       return {
-        input: ''
+        title: 'Registrate',   
+        user: [
+          {email: ''},
+          {name: ''},
+          {name_last: ''},
+          {password: ''},
+          {repeat_password: ''},
+          {type: '1'}
+
+        ],
+        errors:[]
+      }
+    }, 
+    computed:{
+
+    },
+    methods: {
+      showUser(){
+        console.log(this.user);
+      },
+      signUp(){/*
+         axios.get('/user', {
+            name: this.user.name
+
+         }).then(() => {
+           console.log('saved');
+         }).catch((error)=>{
+            this.errors=error.response.data.errors;
+         })*/
+          axios.post('/createUser', {
+              name: this.user.name,
+              name_last: this.user.name_last,
+              email: this.user.email,
+              password: this.user.password,
+              type: 1
+              }).then(() => {
+           console.log('saved');
+          }, function (error) {
+            console.log(error.response.data); 
+        });
+
       }
     }
+
 }
 </script>
 

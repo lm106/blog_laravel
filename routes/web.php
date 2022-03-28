@@ -24,3 +24,13 @@ Route::get('/', function () {
 });
 */
 Route::view('/', 'welcome');
+/*
+Route::get('register', [AuthController::class, 'show_signup_form']->name('register');
+Route::post('register', [RegisterController::class, 'process_signup']);
+*/
+	/*
+use App\Http\Controllers\PostController;
+ 
+Route::get('post', [PostController::class, 'index'])->name('post');*/
+use App\Http\Controllers\userController;
+Route::post('/createUser', [userController::class, 'createUser']);
