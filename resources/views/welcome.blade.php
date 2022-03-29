@@ -11,7 +11,6 @@
     <script defer src="{{ mix('js/app.js') }}"></script>
 </head>
 <body>
-<<<<<<< HEAD
     <div id="app">
     <!--    <app/>
     <template>
