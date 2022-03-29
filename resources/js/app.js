@@ -1,10 +1,5 @@
-/**
- * First we will load all of this project's JavaScript dependencies which
- * includes Vue and other libraries. It is a great starting point when
- * building robust, powerful web applications using Vue and Laravel.
- */
-
 require('./bootstrap');
+<<<<<<< HEAD
 /*
 window.Vue = require('vue').default;
 */
@@ -37,9 +32,13 @@ import  router from './router/index'
 
 /*
 const app = createApp({})
+=======
+>>>>>>> d9bc9de860373dc9a161fc1c06bb0e0d0849005d
 
-app.component('example', Example)
+import { createApp } from 'vue';
+import Inicio from './components/Inicio'
 
+<<<<<<< HEAD
 app.mount('#app')*/
 import VueAxios from 'vue-axios'
 import axios from 'axios';
@@ -54,3 +53,4 @@ const app =createApp(App)
 app.use(router)
 
 app.mount("#app")
+
