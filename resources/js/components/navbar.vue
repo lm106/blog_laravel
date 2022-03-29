@@ -1,17 +1,16 @@
-<template>
-  <header id="myHeader" class="p-3 mb-3 border-bottom">
-    <div class="container">
-      <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-         <form class="form-inline my-2 my-lg-0">  
+r<template>
+  <header id="myHeader" class="">
+      <div class="myContainer position-relative">
+         <form class="form-inline my-2 my-lg-0 ">  
           <input class="form-control mr-sm-2" id="searchbar" type="text" placeholder="Buscar recetas..." aria-label="Search">
 
         </form>
          
-        <div class="title">
-            <a id="myTitle" href="" class="">Blog de Recetas de Cocina</a>
+        <div class="title position-absolute top-50 start-50 translate-middle">
+            <a id="myTitle" href="" class="">Blog de Recetas</a>
         </div>
 
-        <div class="dropdown text-end">
+        <div class="dropdown text-end position-absolute top-0 end-0 ">
           <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
             <img src="https://github.com/mdo.png" alt="mdo" width="52" height="52" class="rounded-circle">
           </a>
@@ -24,7 +23,6 @@
           </ul>
         </div>
       </div>
-    </div>
   </header>
   
 </template>

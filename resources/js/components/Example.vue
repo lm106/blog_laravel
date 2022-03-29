@@ -1,5 +1,5 @@
 <template class="borrar">
-    <h2>Hola buenas tardes</h2>
+    <h2></h2>
 </template>
 
 <script>
