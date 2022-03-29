@@ -1,5 +1,4 @@
 require('./bootstrap');
-<<<<<<< HEAD
 /*
 window.Vue = require('vue').default;
 */
