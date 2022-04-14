@@ -14,7 +14,9 @@ class userController extends Controller
      */
     public function index()
     {
-        //
+        //Muestra todos los usuarios (Rol de administrador)
+        $users = User::all()->toArray();
+        return array_reverse($users); 
     }
 
     /**
@@ -25,19 +27,11 @@ class userController extends Controller
     public function createUser(Request $request)
     {
         //
-        
         $request->validate([
             'name'=>'required',
             'email'=>['required', 'email', 'unique:user'],
             'password'=>'required'
         ]);
-        /*
-        $user= new User;
-        $user->name = "nombre";
-        $user->name_last = "email";
-        $user->email = "core@gm";
-        $user->password = "w";
-        $user->type = "1";*/
         $user = new User();
         $user->name = $request->get('name');
         $user->name_last = $request->get('name_last');
@@ -64,9 +58,31 @@ class userController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function show(User $user)
+    public function show($id)
     {
         //
+        $user = User::find($id);
+        return response()->json($user);
+
+        
+        
+
+
+        // public function index(Request $request)
+        // {
+        //     $tasks = Task::orderBy('id', 'DESC')->paginate(2);
+    
+        //     return [
+        //         'pagination' => [
+        //             'total'         => $tasks->total(),
+        //             'current_page'  => $tasks->currentPage(),
+        //             'per_page'      => $tasks->perPage(),
+        //             'last_page'     => $tasks->lastPage(),
+        //             'from'          => $tasks->firstItem(),
+        //             'to'            => $tasks->lastPage(),
+        //         ],
+        //         'tasks' => $tasks
+        //     ];
     }
 
     /**

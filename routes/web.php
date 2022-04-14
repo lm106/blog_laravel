@@ -35,3 +35,5 @@ use App\Http\Controllers\PostController;
 Route::get('post', [PostController::class, 'index'])->name('post');*/
 use App\Http\Controllers\userController;
 Route::post('/createUser', [userController::class, 'createUser']);
+Route::get('/users', [userController::class, 'index']);
+Route::get('/profile/{id}', [userController::class, 'show']);
