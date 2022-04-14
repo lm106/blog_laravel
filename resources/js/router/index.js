@@ -1,4 +1,3 @@
-import signup from '../components/user/signup.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 const router = [
   { 
@@ -13,6 +12,10 @@ const router = [
     path: '/recetas/:id',
     component: require('../components/recetas/recetamostrar.vue').default
 
+  },
+  { 
+    path: '/profile/:id', 
+    component:  require('../components/user/profile.vue').default 
   }
   
 ]

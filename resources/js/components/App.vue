@@ -19,6 +19,8 @@
     <router-view></router-view>
   </div>
     
+
+
 </template>
 
 <script>
@@ -30,7 +32,8 @@ export default {
   components: {inicio},
   data() {
       return {
-        message: " Bienvenido World"
+        message: " Bienvenido World",
+        login:false
       }
   }
 
