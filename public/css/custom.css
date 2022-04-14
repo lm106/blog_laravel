@@ -22,8 +22,6 @@
     padding: 10px;
     align-items: center;
     margin: 0 auto;
-
-    
 }
 
 #myHeader{
@@ -37,9 +35,27 @@
     left: 0;
     padding: 10px;	
     /* margin: 0 auto; */
+}
 
-    
-    
+.boton {
+    text-align: right;
+    font-size: 85%;
+}
+
+.margin {
+    margin-right: -15;
+    margin-left: 15;
+}
+
+.info {
+    width: 60%;
+    height: 60%;
+}
+
+#comentarios {
+    font-size: 85%;
+    margin-top: -10;
+    color: rgb(110, 110, 110);
 }
 
 .border-bottom {
@@ -57,4 +73,13 @@
     
 }
 
-
+.card_new {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: 0.25rem;
+  }
