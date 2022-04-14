@@ -42,34 +42,27 @@
 </template>
 
 <script>
-import axios from 'axios'
+
+    import img_dir from '../img_dir.js'
 
 export default {
     data() {
         return { 
             imagen: 'http://localhost:3000/images/cookis.jpg',
-            descripcion: `esto es una receta de galletas sto es una receta de galletas sto es una 
-                receta de galletas sto es una receta de galletas sto es una receta de galletas sto es 
-                una receta de galletas sto es una receta de galletas sto es una receta de galletas sto 
-                es una receta de galletas sto es una receta de galletas sto es una receta de galletassto 
-                es una receta de galletas sto es una receta de galletas`,
-            titulo: '',
+            descripcion: this.receta.description,
+            titulo: this.receta.title,
             like: ['', ''],
-            save: 'http://localhost:3000/images/dissave.jpg',
+            save: img_dir.dissave,
             des: '',
             comentarios: '2'
         }
     },
 
-    created() {
-      axios.get('/recetas')
-        .then(response => console.log(response.data))
-        .cactch();
-    },
+    props: ["receta"],
 
     beforeMount() {
         this.getDes();
-        this.like = [3, 'http://localhost:3000/images/like2.jpg'];
+        this.like = [3, img_dir.like];
     },
 
     methods: {

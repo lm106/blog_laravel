@@ -16,7 +16,12 @@ const router = [
   { 
     path: '/profile/:id', 
     component:  require('../components/user/profile.vue').default 
-  }
+  }, 
+  {   
+    path: '/recetas',
+    component: require('../components/Receta.vue').default
+
+  },
   
 ]
 /** OTRA FORMA

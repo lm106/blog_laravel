@@ -15,8 +15,11 @@ class RecetaController extends Controller
     public function index()
     {
         //
-        $recetas = Receta::all();
-        return response()->json($recetas);
+        //$recetas = Receta::all();
+        //return response()->json($recetas);
+
+        $recetas = Receta::all()->toArray();
+        return array_reverse($recetas);
     }
 
     /**
@@ -31,13 +34,15 @@ class RecetaController extends Controller
         $request->validate([
             'name'=>'required',
             'description'=>'required',
-            'ingredients'=>'required'
+            'ingredients'=>'required',
+            'user_id'=>'required'
         ]);
 
         $receta = new Receta();
         $receta->name = $request->get('name');
         $receta->description = $request->get('description');
         $receta->ingredients = $request->get('ingredients');
+        $receta->user_id = $request->get('user_id');
         $receta -> save();
     }
 
