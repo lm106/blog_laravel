@@ -34,4 +34,6 @@ use App\Http\Controllers\PostController;
  
 Route::get('post', [PostController::class, 'index'])->name('post');*/
 use App\Http\Controllers\userController;
+use App\Http\Controllers\RecetaController;
 Route::post('/createUser', [userController::class, 'createUser']);
+Route::resource('/recetas', RecetaController::class);

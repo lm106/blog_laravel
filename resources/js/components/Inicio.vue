@@ -4,6 +4,8 @@
         <navbar></navbar>
         <div class="container-sm content">
 
+
+
             <!-- <div v-for="id in ids"> -->
                 <receta></receta>
             <!-- </div> -->
@@ -44,10 +46,5 @@ export default {
     .content {
         padding-top: 7.5%;
     }
-
-    .image {
-        padding: 3%;
-    }
-
     
 </style>
