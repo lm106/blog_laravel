@@ -2,13 +2,11 @@
 
     <div class="back">
         <navbar></navbar>
-        <div class="container-sm content">
+        <div class="container-fluid content">
 
-        <div v-for="id in ids" :receta="id">
-           
-            <receta :receta="id"></receta>
-        </div>
-            
+            <div v-for="id in ids" :receta="id">
+                <receta class="receta" :receta="id"></receta>
+            </div>
 
         </div>   
     </div>
@@ -57,7 +55,7 @@ export default {
     }
 
     .content {
-        padding-top: 7.5%;
+        padding-top: 6rem;
     }
     
 </style>

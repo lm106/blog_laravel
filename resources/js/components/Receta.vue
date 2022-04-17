@@ -1,10 +1,10 @@
 <template>
 
-    <div class="card_new" style="width: 18rem;">
+    <div class="card_new">
         <img v-bind:src="imagen" class="card-img-top image" alt="cookis">
         <div class="card-body">
             <h5 class="card-title">{{ titulo }}</h5>
-            <p class="card-text">{{ des }}</p>
+            <p class="card_text_new">{{ des }}</p>
 
             <div class="row align-items-baseline">
 
@@ -77,5 +77,12 @@ export default {
 </script>
 
 <style>
+
+    .receta {
+        width: 18rem;
+        float: left;
+        margin-right: 1rem;
+        margin-bottom: 1rem;
+    }
 
 </style>
