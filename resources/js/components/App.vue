@@ -1,8 +1,8 @@
 <template>
-  <inicio></inicio>
 
   <div>
-    <br>
+    <inicio></inicio>
+    <!-- <br>
     <br>
     <br>
     sadf
@@ -16,15 +16,9 @@
     <br>
     <h1>{{message}}</h1>
     <router-link to="/signup">Registrarse</router-link>
-    <router-view></router-view>
+    <router-view></router-view>  -->
   </div>
-    
-<div>
-  <h1>{{message}}</h1>
-  <router-link to="/profile/1">Perfil</router-link> <!--v-if="login" --><br>
-  <router-link to="/login">Iniciar Sesión</router-link>
-  <router-view></router-view>
-</div>
+  
 
 </template>
 

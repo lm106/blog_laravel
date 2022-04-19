@@ -19,7 +19,8 @@ return new class extends Migration
             $table->string('name_last');
             $table->string('email')->unique();
             $table->string('password');
-            $table->integer('type');
+            $table->enum('type', ['1', '2']);
+            $table->text('photo');
             $table->timestamps();
         });
     }
