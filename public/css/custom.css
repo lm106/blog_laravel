@@ -74,7 +74,7 @@
 }
 
 .card_new {
-    display: flex;
+    height: 23rem;
     flex-direction: column;
     min-width: 0;
     word-wrap: break-word;
@@ -82,4 +82,9 @@
     background-clip: border-box;
     border: 1px solid rgba(0, 0, 0, 0.125);
     border-radius: 0.25rem;
-  }
+}
+
+.card_text_new {
+    margin-bottom: 0;
+    height: 3rem;
+}
