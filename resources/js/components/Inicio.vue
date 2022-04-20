@@ -2,13 +2,48 @@
 
     <div class="back">
         <navbar></navbar>
-        <div class="container-fluid content">
 
-            <div v-for="id in ids" :receta="id">
-                <receta class="receta" :receta="id"></receta>
+        <div class="content">
+
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle filter" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="\images\filtre.png" alt="filter" class="image_filter">
+                    Dropdown button
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    <li class="list-group-item">
+                        <input class="form-check-input me-1" type="checkbox" @click="getFilter('harina')">
+                        Sin gluten
+                    </li>
+
+                    <li class="list-group-item">
+                        <input class="form-check-input me-1" type="checkbox" @click="getFilter('huevo')">
+                        Sin huevo
+                    </li>
+
+                    <li class="list-group-item">
+                        <input class="form-check-input me-1" type="checkbox" @click="getFilter('leche')">
+                        Sin lactosa
+                    </li>
+
+                    <li class="list-group-item">
+                        <input class="form-check-input me-1" type="checkbox" @click="getFilter('azúcar')">
+                        Sin azúcar
+                    </li>
+                </ul>
             </div>
 
-        </div>   
+            <br>
+
+
+            <div class="container_fluid_new">
+            <div v-for="id in getIds" :receta="id">
+                <receta class="receta" :receta="id"></receta>
+            </div>
+            </div> 
+        <router-view></router-view>
+        </div>
+          
     </div>
         
 </template>
@@ -24,8 +59,8 @@ export default {
         var vm = this
         axios.get('/recetas')
             .then(res => { 
-                vm.ids = res.data,
-                console.log(res.data) 
+                vm.original = res.data,
+                vm.ids = res.data
             }, 
             (error) => {
                 console.log(error.response.data);
@@ -34,12 +69,36 @@ export default {
 
     data() {
         return { 
-            ids: []
+            ids: [], 
+            original: []
+        }
+    },
+
+    computed: {
+        getIds() {
+            return this.ids;
         }
     },
 
     methods: {
         getPosts() {
+        },
+
+        getFilter(filtro) {
+            let array = [];
+            for (let index = 0; index < this.ids.length; index++) {
+                let receta = this.ids[index];
+                if (!receta.ingredients.includes(filtro)) {
+                    array.push(receta);
+                }
+                
+            }
+
+            this.ids = array;
+            console.log(this.ids);
+
+
+            
         }
     }
 }
@@ -54,8 +113,25 @@ export default {
         background-color: #F5F5F5;
     }
 
+    .receta {
+        width: 18rem;
+        margin-right: 1rem;
+        margin-bottom: 1rem;
+    }
+    
     .content {
-        padding-top: 6rem;
+        margin: 6rem;
+    }
+
+    .filter {
+        background-color: white;
+        color: rgb(0, 0, 0);
+        font: bold;
+    }
+
+    .image_filter {
+        width: 1rem;
+        height: 1rem;
     }
     
 </style>

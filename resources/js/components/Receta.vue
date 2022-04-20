@@ -78,11 +78,4 @@ export default {
 
 <style>
 
-    .receta {
-        width: 18rem;
-        float: left;
-        margin-right: 1rem;
-        margin-bottom: 1rem;
-    }
-
 </style>

@@ -88,3 +88,12 @@
     margin-bottom: 0;
     height: 3rem;
 }
+
+.container_fluid_new {
+    width: 100%;
+    padding-right: var(--bs-gutter-x, 0.75rem);
+    padding-left: var(--bs-gutter-x, 0.75rem);
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
