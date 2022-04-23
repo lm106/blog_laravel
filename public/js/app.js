@@ -22603,7 +22603,35 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({});
+/* harmony import */ var _img_dir_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../img_dir.js */ "./resources/js/img_dir.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  props: ["id"],
+  beforeCreate: function beforeCreate() {
+    var vm = this;
+    axios__WEBPACK_IMPORTED_MODULE_1___default().get('/recetas').then(function (res) {
+      for (var index = 0; index < res.data.length; index++) {
+        if (res.data[index].id == vm.id) {
+          vm.receta = res.data[index];
+          break;
+        }
+      }
+    }, function (error) {
+      console.log(error.response.data);
+    });
+  },
+  data: function data() {
+    return {
+      receta: []
+    };
+  },
+  beforeMount: function beforeMount() {
+    this.like = [3, _img_dir_js__WEBPACK_IMPORTED_MODULE_0__["default"].like];
+  }
+});
 
 /***/ }),
 
@@ -22957,7 +22985,12 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, null, 8
   /* PROPS */
   , _hoisted_15)])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_router_link, {
-    to: "/recipe_description",
+    to: {
+      name: 'recipe_description',
+      params: {
+        id: this.receta.id
+      }
+    },
     "class": "btn btn-primary"
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
@@ -22966,7 +22999,9 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     _: 1
     /* STABLE */
 
-  })])]);
+  }, 8
+  /* PROPS */
+  , ["to"])])]);
 }
 
 /***/ }),
@@ -22987,20 +23022,21 @@ __webpack_require__.r(__webpack_exports__);
 var _hoisted_1 = {
   "class": "back"
 };
-
-var _hoisted_2 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+var _hoisted_2 = {
   "class": "recipe"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" . "), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+};
+
+var _hoisted_3 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" . ");
+
+var _hoisted_4 = {
   style: {
     "margin-top": "6rem"
   }
-}, " hola receta ")], -1
-/* HOISTED */
-);
-
-var _hoisted_3 = [_hoisted_2];
+};
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("body", _hoisted_1, _hoisted_3);
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("body", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [_hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, "id: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.receta.title), 1
+  /* TEXT */
+  )])])]);
 }
 
 /***/ }),
@@ -23435,7 +23471,9 @@ component: require('../components/App.vue').default
   path: '/recetas',
   component: (__webpack_require__(/*! ../components/Receta.vue */ "./resources/js/components/Receta.vue")["default"])
 }, {
-  path: '/recipe_description',
+  path: '/recipe_description/:id',
+  name: 'recipe_description',
+  props: true,
   component: (__webpack_require__(/*! ../components/Recipe-description.vue */ "./resources/js/components/Recipe-description.vue")["default"])
 }];
 /** OTRA FORMA

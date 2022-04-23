@@ -28,7 +28,9 @@ const router = [
 
   },
   {   
-    path: '/recipe_description',
+    path: '/recipe_description/:id',
+    name: 'recipe_description',
+    props: true,
     component: require('../components/Recipe-description.vue').default
 
   },

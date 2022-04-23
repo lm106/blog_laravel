@@ -33,7 +33,8 @@
                 </div>
             </div>
             
-            <router-link to="/recipe_description" class="btn btn-primary">Ver más</router-link>
+            <router-link :to="{name: 'recipe_description', params: {id: this.receta.id}}" 
+            class="btn btn-primary">Ver más</router-link>
         </div>
         
     </div>
