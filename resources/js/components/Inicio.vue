@@ -1,11 +1,10 @@
 <template>
 
     <div class="back">
-        <navbar></navbar>
 
         <div class="content">
 
-            <div class="dropdown">
+            <div>
                 <button class="btn btn-secondary dropdown-toggle filter" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                     <img src="\images\filtre.png" alt="filter" class="image_filter">
                     Dropdown button
@@ -37,11 +36,10 @@
 
 
             <div class="container_fluid_new">
-            <div v-for="id in getIds" :receta="id">
-                <receta class="receta" :receta="id"></receta>
-            </div>
+                <div v-for="id in getIds" :receta="id">
+                    <receta class="receta" :receta="id"></receta>
+                </div>
             </div> 
-        <router-view></router-view>
         </div>
           
     </div>
@@ -50,11 +48,10 @@
 
 <script>
     import axios from 'axios'
-    import navbar from './navbar.vue'
     import receta from './Receta.vue'
 
 export default {
-    components: {navbar, receta},
+    components: {receta},
     beforeCreate() {
         var vm = this
         axios.get('/recetas')
@@ -94,6 +91,23 @@ export default {
                 
             }
 
+            /**
+             // siendo "miElementoCheckbox" el id del input checkbox
+            var miCheckbox = document.getElementById('miElementoCheckbox');
+            var msg = document.getElementById('msg');
+
+            alert('El valor inicial del checkbox es ' + miCheckbox.checked);
+
+            miCheckbox.addEventListener('click', function() {
+                if(miCheckbox.checked) {
+                msg.innerText = 'El elemento está marcado';
+                } else {
+                msg.innerText = 'Ahora está desmarcado';
+                }
+            });
+
+             * **/
+
             this.ids = array;
             console.log(this.ids);
 
@@ -109,10 +123,6 @@ export default {
 
 
 <style>
-    body{
-        background-color: #F5F5F5;
-    }
-
     .receta {
         width: 18rem;
         margin-right: 1rem;

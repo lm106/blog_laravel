@@ -1,5 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 const router = [
+
+  { 
+    path: '/', 
+    component:  require('../components/Inicio.vue').default
+  },
   { 
     path: '/signup', 
     component:  require('../components/user/signup.vue').default 
@@ -20,6 +25,11 @@ const router = [
   {   
     path: '/recetas',
     component: require('../components/Receta.vue').default
+
+  },
+  {   
+    path: '/recipe_description',
+    component: require('../components/Recipe-description.vue').default
 
   },
   

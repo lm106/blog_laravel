@@ -1,4 +1,4 @@
-r<template>
+<template>
   <header id="myHeader" class="">
       <div class="myContainer position-relative">
          <form class="form-inline my-2 my-lg-0 ">  
@@ -7,7 +7,8 @@ r<template>
         </form>
          
         <div class="title position-absolute top-50 start-50 translate-middle">
-            <a id="myTitle" href="" class="">Blog de Recetas</a>
+          <router-link to="/" id="myTitle">Blog de Recetas</router-link>
+            
         </div>
 
         <div class="dropdown text-end position-absolute top-0 end-0 ">
@@ -24,12 +25,14 @@ r<template>
         </div>
       </div>
   </header>
-  
+
+  <body>
+    <router-view></router-view>
+  </body>
 </template>
 
 <script>
 export default {
-
 }
 </script>
 

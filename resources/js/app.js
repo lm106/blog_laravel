@@ -26,7 +26,7 @@ const app = new Vue({
 });
 */
 import { createApp } from 'vue'
-import App from './components/App'
+import App from './components/navbar.vue'
 import  router from './router/index'
 
 /*

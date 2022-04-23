@@ -33,7 +33,7 @@
                 </div>
             </div>
             
-            <a href="#" class="btn btn-primary">Ver más</a>
+            <router-link to="/recipe_description" class="btn btn-primary">Ver más</router-link>
         </div>
         
     </div>
