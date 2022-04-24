@@ -3,7 +3,9 @@
       <div class="recipe">
           .
           <div style="margin-top: 6rem;">
-              <p>id: {{receta.title}}</p>
+              <p>id: {{recipe.id}}</p>
+              <p>id: {{recipe.description}}</p>
+              <p>id: {{recipe.user_id}}</p>
           </div>
       </div>
   </body>
@@ -23,7 +25,7 @@ export default {
             .then(res => { 
                 for (let index = 0; index < res.data.length; index++) {
                     if (res.data[index].id == vm.id) {
-                        vm.receta = res.data[index]
+                        vm.recipe = res.data[index]
                         break
                     }
                 }
@@ -35,7 +37,7 @@ export default {
 
     data() {
         return { 
-            receta: []
+            recipe: []
         }
     },
 

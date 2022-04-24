@@ -22615,7 +22615,7 @@ __webpack_require__.r(__webpack_exports__);
     axios__WEBPACK_IMPORTED_MODULE_1___default().get('/recetas').then(function (res) {
       for (var index = 0; index < res.data.length; index++) {
         if (res.data[index].id == vm.id) {
-          vm.receta = res.data[index];
+          vm.recipe = res.data[index];
           break;
         }
       }
@@ -22625,7 +22625,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      receta: []
+      recipe: []
     };
   },
   beforeMount: function beforeMount() {
@@ -23034,7 +23034,11 @@ var _hoisted_4 = {
   }
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("body", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [_hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, "id: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.receta.title), 1
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("body", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [_hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, "id: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.recipe.id), 1
+  /* TEXT */
+  ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, "id: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.recipe.description), 1
+  /* TEXT */
+  ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, "id: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.recipe.user_id), 1
   /* TEXT */
   )])])]);
 }
@@ -23164,7 +23168,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     _: 1
     /* STABLE */
 
-  })])])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("body", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_router_view)])], 64
+  })])])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("section", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_router_view)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" aquí abajo va el footer ")], 64
   /* STABLE_FRAGMENT */
   );
 }
