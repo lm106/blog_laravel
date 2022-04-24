@@ -26,9 +26,12 @@
       </div>
   </header>
 
-  <body>
+  <section>
     <router-view></router-view>
-  </body>
+  </section>
+
+  <!-- aquí abajo va el footer -->
+
 </template>
 
 <script>
