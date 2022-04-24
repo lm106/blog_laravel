@@ -34,6 +34,11 @@ const router = [
     component: require('../components/Recipe-description.vue').default
 
   },
+  {
+    path: '/recipes_manager',
+    component: require('../components/recipes-manager.vue').default
+
+  }
   
 ]
 /** OTRA FORMA
