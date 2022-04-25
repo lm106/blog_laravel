@@ -49,13 +49,7 @@
     </header>
     <section>
       <router-view></router-view>
-      {{user}} ---
-      {{ user[0].type}} ---
-          {{ userType}}
     </section>
-    
-    
-    
     <!-- aquí abajo va el footer -->
     <foot></foot>
 </template>
