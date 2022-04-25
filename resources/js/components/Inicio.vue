@@ -42,7 +42,7 @@
             </div> 
         </div>
 
-        <foot></foot>
+        
           
     </div>
         
@@ -51,10 +51,9 @@
 <script>
     import axios from 'axios'
     import receta from './Receta.vue'
-    import foot from './Foot.vue'
 
 export default {
-    components: {receta,foot},
+    components: {receta},
     beforeCreate() {
         var vm = this
         axios.get('/recetas')
@@ -145,11 +144,6 @@ export default {
     .image_filter {
         width: 1rem;
         height: 1rem;
-    }
-    .back{
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
     }
     
 </style>

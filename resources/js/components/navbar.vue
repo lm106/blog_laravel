@@ -55,11 +55,14 @@
   
   
   <!-- aquí abajo va el footer -->
+  <foot></foot>
 
 </template>
 
 <script>
+import foot from './Foot.vue'
 export default {
+  components: {foot},
   data(){
     return {
       user: [{

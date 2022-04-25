@@ -1,5 +1,5 @@
 <template>
-  <body class="back">
+  <section>
       <div class="recipe">
           .
           <div style="margin-top: 6rem;">
@@ -8,7 +8,7 @@
               <p>id: {{recipe.user_id}}</p>
           </div>
       </div>
-  </body>
+  </section>
 </template>
 
 <script>
