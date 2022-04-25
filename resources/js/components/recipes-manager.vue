@@ -36,22 +36,27 @@
         </div>
 
 
-    <table class="table" style="background-color:#ECE5E9">
-        <thead style="background-color:black; color:white">
+    <table class="table" >
+        <thead >
             <tr>
             <th scope="col">Id</th>
             <th scope="col">Título</th>
             <th scope="col">Descripción</th>
-             <th scope="col">Ingredientes</th>
+            <th scope="col">Ingredientes</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
             <!-- <th scope="col">Likes</th> -->
             </tr>
         </thead>
-        <tbody v-for="(r) in recipes" :key='r'>
-            <tr>
-            <th scope="row">{{r.id}}</th>
-            <td>{{r.title}}</td>
-            <td>{{r.description}}</td>
-            <td>{{r.ingredients}}</td>
+        <tbody  >
+            <tr v-for="(r) in recipes" :key='r' >
+                <td scope="row">{{r.id}}</td>
+                <td scope="row">{{r.title}}</td>
+                <td scope="row">{{r.description}}</td>
+                <td scope="row">{{r.ingredients}}</td>
+                <td scope="row"><button style="border:none; background-color:transparent"><i class="bi bi-pencil-fill" ></i></button></td>
+                <td scope="row"><button style="border:none; background-color:transparent"><i class="bi bi-trash3-fill" style="color:red"></i></button ></td>
+            
             </tr>
         </tbody>
         </table>
