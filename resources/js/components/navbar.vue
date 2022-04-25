@@ -1,5 +1,4 @@
 <template>
-  <!-- <div> -->
     <header id="myHeader" class="">
         <div class="myContainer position-relative">
           <form class="form-inline my-2 my-lg-0 ">  
@@ -56,7 +55,6 @@
     
     <!-- aquí abajo va el footer -->
     <foot></foot>
-  <!-- </div> -->
 </template>
 
 <script>
