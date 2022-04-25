@@ -44,13 +44,16 @@
               </ul>
             </div>
           </div>
-          
-          
+
         </div>
     </header>
     <section>
       <router-view></router-view>
+      {{user}} ---
+      {{ user[0].type}} ---
+          {{ userType}}
     </section>
+    
     
     
     <!-- aquí abajo va el footer -->
@@ -64,20 +67,13 @@ export default {
   data(){
     return {
       user: [
-      /*   {
-      //   id:1
-      //   // ,
-      //   // type:2,
-      //   // name:"Administrador",
-      //   // email:"admin@email.com",
-       }*/
-      ]
-      
+         { }
+      ]      
     }
   },
   computed:{
     userType(){ //verifica todo el rato si ha cambiado el tipo.
-      return this.user.type;
+      return this.user[0].type;
     }
   },
   beforeCreate() {
