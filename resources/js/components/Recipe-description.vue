@@ -1,7 +1,6 @@
 <template>
     <section class="container_fluid_new">
         <div class="recipe">
-            <p>.</p>
             <div id="content">
                 <div>
                     <div id="title"></div>
@@ -50,7 +49,7 @@
 
                             <!-- Segunda columna (like) -->
                         <div class="col" id="like_position">
-                            <img v-bind:src="like[1]" class="card-img-top save_like" alt="image">
+                            <img @click="getLike()" v-bind:src="like[1]" class="card-img-top save_like" alt="image">
                         </div>
                     </div>
                 </div>
@@ -103,10 +102,15 @@ export default {
             }, 
             (error) => {
                 console.log(error.response.data);
-            })
+            });
 
-        
-        
+        axios.get('/profile')
+            .then(resqu => {
+                this.user = resqu.data;
+            },
+            (error) => {
+                console.log(error.response.data);
+            });
     },
 
     data() {
@@ -117,12 +121,47 @@ export default {
             image: "",
             like: [],
             save: img_dir.url + img_dir.save,
-            coment: img_dir.url + img_dir.coment
+            coment: img_dir.url + img_dir.coment,
+            user: []
         }
     },
 
     beforeMount() {
-        this.like = [3, img_dir.url + img_dir.like];
+        this.like = [3, img_dir.url + img_dir.dislike];
+        axios.get('/likes')
+            .then(resp => {
+                for (let index = 0; index < resp.data.length; index++) {
+                    if (resp.data[index].user_id == this.user[0].id &&
+                        resp.data[index].recipe_id == this.id) {
+                        this.like = [5, img_dir.url + img_dir.like];
+                        break
+                    }
+                }
+            }, 
+            (error) => {
+                console.log(error.response.data);
+            });
+    }, 
+    methods: {
+        getLike() {
+            console.log('hola como estamos bien me alegro');
+            if (this.user.length == 0) {
+                alert("No puedes dar like hasta que inicies sesicón.");
+            } else {
+                console.log(this.user[0].id);
+                axios.post('/likes', {
+                user_id: this.user[0].id, 
+                recipe_id: this.recipe.id})
+                .then(() => {
+                    this.like = [4, img_dir.url + img_dir.like];
+                }, 
+                (error) => {
+                    console.log(error.response.data);
+                });
+            }
+
+            
+        }
     }
 
 }
@@ -141,6 +180,7 @@ export default {
         margin-left: 6%;
         box-shadow: 0px 20px 25px -5px rgba(0, 0, 0, 0.1), 0px 10px 10px -5px rgba(0, 0, 0, 0.04);
         border-radius: 6px;
+        margin-top: -4rem;
     }
 
     h1 {

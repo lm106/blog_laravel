@@ -33,6 +33,7 @@ Route::view('/formulario_contacto','welcome');
 Route::view('/profile', 'welcome');
 Route::view('/login', 'welcome');
 Route::view('/signup', 'welcome');
+Route::view('/likes', 'welcome');
 // Route::view('/admin_list', 'welcome'); //ruta comentada CUIDADO PONER DEBAJO
 
 
@@ -50,6 +51,7 @@ use App\Http\Controllers\PostController;
 Route::get('post', [PostController::class, 'index'])->name('post');*/
 use App\Http\Controllers\userController;
 use App\Http\Controllers\RecetaController;
+use App\Http\Controllers\LikeController;
 Route::post('/signup', [userController::class, 'createUser']);
 Route::get('/users', [userController::class, 'index']);
 Route::post('/login', [userController::class, 'login']);
@@ -57,4 +59,9 @@ Route::post('/logout', [userController::class, 'logout']);
 Route::get('/profile', [userController::class, 'show']);
 // Route::get('/admin_list', [userController::class, 'show']); 
 Route::get('/recetas', [RecetaController::class, 'index']);
+<<<<<<< HEAD
 Route::post('/new_recipe', [RecetaController::class, 'createRecipe']);
+=======
+Route::post('/likes', [LikeController::class, 'create']);
+Route::get('/likes', [LikeController::class, 'index']);
+>>>>>>> e9ba7791c5190963b91e77631cbbded9091d3b26
