@@ -33,7 +33,8 @@
                 </div>
             </div>
             
-            <a href="#" class="btn btn-primary">Ver más</a>
+            <router-link :to="{name: 'recipe_description', params: {id: this.receta.id}}" 
+            class="btn btn-primary">Ver más</router-link>
         </div>
         
     </div>
@@ -77,12 +78,5 @@ export default {
 </script>
 
 <style>
-
-    .receta {
-        width: 18rem;
-        float: left;
-        margin-right: 1rem;
-        margin-bottom: 1rem;
-    }
 
 </style>

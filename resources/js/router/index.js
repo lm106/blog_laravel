@@ -1,5 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 const router = [
+
+  { 
+    path: '/', 
+    component:  require('../components/Inicio.vue').default
+  },
   { 
     path: '/signup', 
     component:  require('../components/user/signup.vue').default 
@@ -22,6 +27,18 @@ const router = [
     component: require('../components/Receta.vue').default
 
   },
+  {   
+    path: '/recipe_description/:id',
+    name: 'recipe_description',
+    props: true,
+    component: require('../components/Recipe-description.vue').default
+
+  },
+  {
+    path: '/recipes_manager',
+    component: require('../components/recipes-manager.vue').default
+
+  }
   
 ]
 /** OTRA FORMA
