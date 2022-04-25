@@ -1,9 +1,16 @@
 <template>
-  <section>
+  <section class="container_fluid_new">
       <div class="recipe">
           .
-          <div style="margin-top: 6rem;">
-              <p>id: {{recipe.id}}</p>
+          <div id="content">
+              <div>
+
+                  <div id="title"></div>
+                  <h1>{{recipe.title}}</h1>
+
+              </div>
+              
+              
               <p>id: {{recipe.description}}</p>
               <p>id: {{recipe.user_id}}</p>
           </div>
@@ -49,11 +56,30 @@ export default {
 </script>
 
 <style>
+    #content {
+        margin-top: 6rem;
+        margin-right: 3rem;
+        margin-left: 3rem;
+    }
 
     .recipe {
         background-color: #ECE5E9;
         margin-right: 3rem;
         margin-left: 3rem;
+    }
+
+    h1 {
+        text-align: center;
+        font-family: 'Rouge Script';
+        font-style: normal;
+        align-items: center;
+        margin-top: -2.1rem;
+    }
+
+    #title {
+        background: #EFC6CD;
+        height: 1rem;
+        border-radius: 30px;
     }
 
 </style>

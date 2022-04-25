@@ -1,12 +1,15 @@
 <template>
 
     <div class="card_new">
-        <img v-bind:src="imagen" class="card-img-top image" alt="cookis">
+        <div>
+            <img v-bind:src="imagen" class="card-img-top image photo" alt="imagen">
+        </div>
+        
         <div class="card-body">
             <h5 class="card-title">{{ titulo }}</h5>
             <p class="card_text_new">{{ des }}</p>
 
-            <div class="row align-items-baseline">
+            <div class="row align-items-baseline" style="margin-top: 1rem;">
 
                 <div class="col-6">
                     <div>
@@ -49,7 +52,7 @@
 export default {
     data() {
         return { 
-            imagen: 'http://localhost:3000/images/cookis.jpg',
+            imagen: this.receta.image,
             descripcion: this.receta.description,
             titulo: this.receta.title,
             like: ['', ''],
@@ -78,5 +81,10 @@ export default {
 </script>
 
 <style>
+
+    .photo {
+        width: 18rem;
+        height: 9.7rem;
+    }
 
 </style>

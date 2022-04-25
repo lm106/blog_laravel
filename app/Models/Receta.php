@@ -11,7 +11,7 @@ class Receta extends Model
     use HasFactory;
     use Notifiable;
     protected $fillable = [
-        'title', 'description', 'ingredients', 'user_id'
+        'title', 'image', 'description', 'ingredients', 'user_id'
     ];
     protected $table = 'receta';
 }

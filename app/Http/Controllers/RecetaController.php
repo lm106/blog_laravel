@@ -33,6 +33,7 @@ class RecetaController extends Controller
 
         $request->validate([
             'name'=>'required',
+            'image'=>'',
             'description'=>'required',
             'ingredients'=>'required',
             'user_id'=>'required'
@@ -40,6 +41,7 @@ class RecetaController extends Controller
 
         $receta = new Receta();
         $receta->name = $request->get('name');
+        $receta->image = $request->get('image');
         $receta->description = $request->get('description');
         $receta->ingredients = $request->get('ingredients');
         $receta->user_id = $request->get('user_id');
