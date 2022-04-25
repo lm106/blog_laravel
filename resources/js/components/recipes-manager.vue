@@ -1,5 +1,4 @@
 <template  >
-<<<<<<< HEAD
   <div class="myTable" style=" width: 85%; margin: 8rem auto;">
         <!-- Button trigger modal -->
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" style="margin-bottom:15px">Nueva receta</button>
@@ -38,10 +37,6 @@
 
 
     <table class="table" style="background-color:#ECE5E9">
-=======
-  <div class="myTable" style=" width: 85%; margin: 8rem auto; background-color:#ECE5E9">
-    <table class="table">
->>>>>>> f135da7220bea870d080ad2ae2da5d751fb73d1d
         <thead style="background-color:black; color:white">
             <tr>
             <th scope="col">Id</th>
