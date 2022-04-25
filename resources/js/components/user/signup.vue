@@ -46,7 +46,7 @@ export default {
          }).catch((error)=>{
             this.errors=error.response.data.errors;
          })*/console.log(this.user.type);
-          axios.post('/signup', { name: this.user.name, name_last: this.user.name_last, email: this.user.email, password: this.user.password, type: '1'}).then(() => {
+          axios.post('/signup', { name: this.user.name, name_last: this.user.name_last, email: this.user.email, password: this.user.password, type: '2'}).then(() => {
             console.log('saved');
             window.location.href="/";
           }, function (error) {
