@@ -1,8 +1,8 @@
 <template>
 
     <div class="card_new">
-        <div>
-            <img v-bind:src="imagen" class="card-img-top image photo" alt="imagen">
+        <div style="height: 9.7rem">
+            <img v-bind:src="imagen" class="card-img-top photo" alt="imagen">
         </div>
         
         <div class="card-body">
@@ -83,8 +83,8 @@ export default {
 <style>
 
     .photo {
-        width: 18rem;
-        height: 9.7rem;
+        height: 100%;
+        object-fit: cover;
     }
 
 </style>
