@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\Like;
 
 class LikeController extends Controller
@@ -60,6 +61,8 @@ class LikeController extends Controller
     public function show($id)
     {
         //
+        $like = DB::table('likes')->where('user_id', $id);
+        return response()->json($like);
     }
 
     /**

@@ -22663,24 +22663,28 @@ __webpack_require__.r(__webpack_exports__);
       }
     }, function (error) {
       console.log(error.response.data);
-    });
+    }); // miramos si el usuario está registrado
+
     axios__WEBPACK_IMPORTED_MODULE_1___default().get('/profile').then(function (resqu) {
       _this.user = resqu.data;
-    }, function (error) {
-      console.log(error.response.data);
-    });
-    axios__WEBPACK_IMPORTED_MODULE_1___default().get('/likes').then(function (resp) {
-      for (var index = 0; index < resp.data.length; index++) {
-        if (resp.data[index].user_id == _this.user[0].id && resp.data[index].recipe_id == _this.id) {
-          _this.like[1] = _img_dir_js__WEBPACK_IMPORTED_MODULE_0__["default"].url + _img_dir_js__WEBPACK_IMPORTED_MODULE_0__["default"].like;
-          break;
+      axios__WEBPACK_IMPORTED_MODULE_1___default().get("/likes/".concat(_this.user[0].id)).then(function (resp) {
+        /*    console.log('hola cmo estamos');
+        console.log(resp.data);*/
+        for (var index = 0; index < resp.data.length; index++) {
+          if (resp.data[index].user_id == _this.user[0].id && resp.data[index].recipe_id == _this.id) {
+            _this.like[1] = _img_dir_js__WEBPACK_IMPORTED_MODULE_0__["default"].url + _img_dir_js__WEBPACK_IMPORTED_MODULE_0__["default"].like;
+            break;
+          }
         }
-      }
+      }, function (error) {
+        console.log(error.response.data);
+      });
     }, function (error) {
       console.log(error.response.data);
-    });
-    console.log(this.id);
-    axios__WEBPACK_IMPORTED_MODULE_1___default().get("/receta_likes/".concat(this.id)).then(function (respo) {
+    }); // miramos si el usuario registrado ha dado like a la receta
+    // miramos el num de likes de la receta
+
+    axios__WEBPACK_IMPORTED_MODULE_1___default().get("/recipe_likes/".concat(this.id)).then(function (respo) {
       _this.like[0] = respo.data;
     }, function (error) {
       console.log(error.response.data);
@@ -22702,8 +22706,6 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     getLike: function getLike() {
       var _this2 = this;
-
-      console.log('hola como estamos bien me alegro');
 
       if (this.user.length == 0) {
         alert("No puedes dar like hasta que inicies sesicón.");
@@ -23423,16 +23425,16 @@ var _hoisted_21 = ["src"];
 var _hoisted_22 = {
   "class": "container coments"
 };
-var _hoisted_22 = {
+var _hoisted_23 = {
   "class": "row"
 };
-var _hoisted_23 = {
+var _hoisted_24 = {
   "class": "col-1",
   id: "save_position"
 };
-var _hoisted_24 = ["src"];
+var _hoisted_25 = ["src"];
 
-var _hoisted_25 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+var _hoisted_26 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
   "class": "col",
   id: "save_position"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
@@ -23487,7 +23489,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     alt: "image"
   }, null, 8
   /* PROPS */
-  , _hoisted_24)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Segunda columna (escribir) "), _hoisted_25])])]);
+  , _hoisted_25)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Segunda columna (escribir) "), _hoisted_26])])]);
 }
 
 /***/ }),
@@ -24188,6 +24190,10 @@ const app = createApp({})
 
 import { createApp } from 'vue';
 import Inicio from './components/Inicio'
+
+<<<<<<< HEAD
+app.mount('#app')*/
+
 
 
 var instance = axios__WEBPACK_IMPORTED_MODULE_4___default().create({
