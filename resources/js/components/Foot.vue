@@ -1,13 +1,12 @@
 <template>
     <div class="foot p-5 text-white d-flex justify-content-between">
         <div>
-            <h2 class="text-white">Blog de Recetas</h2>
+            <h2>Blog de Recetas</h2>
             &copy; All Rights Reserved
         </div>
         <div>
             <br>
-            <router-link to="/contact_form" class="text-white" id="contact"><h4>Contactanos</h4></router-link>
-            
+            <h4>Contactanos</h4>
         </div>
         <div>
             <!-- Instagram -->
@@ -51,8 +50,5 @@ export default {
     .foot{
         background-color: #ab8a62;
         margin-top: auto;
-    }
-    #contact{
-        text-decoration: none;
     }
 </style> 
