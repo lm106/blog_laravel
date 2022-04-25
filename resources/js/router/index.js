@@ -46,6 +46,10 @@ const router = [
   {
     path: '/formulario_contacto',
     component: require('../components/FormContacto.vue').default
+  },
+  {
+    path: '/new_recipe',
+    component: require('../components/recipes-manager.vue').default
   }
   
 ]

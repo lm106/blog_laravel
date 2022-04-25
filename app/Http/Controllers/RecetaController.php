@@ -36,12 +36,12 @@ class RecetaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request)
+    public function createRecipe(Request $request)
     {
         //
 
         $request->validate([
-            'name'=>'required',
+            'title'=>'required',
             'image'=>'',
             'description'=>'required',
             'ingredients'=>'required',
@@ -49,7 +49,7 @@ class RecetaController extends Controller
         ]);
 
         $receta = new Receta();
-        $receta->name = $request->get('name');
+        $receta->title = $request->get('title');
         $receta->image = $request->get('image');
         $receta->description = $request->get('description');
         $receta->ingredients = $request->get('ingredients');
@@ -67,7 +67,6 @@ class RecetaController extends Controller
     {
         //
 
-        Receta::create($request->all());
     }
 
     /**

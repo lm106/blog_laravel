@@ -22812,53 +22812,46 @@ __webpack_require__.r(__webpack_exports__);
 
     axios.get('/recetas').then(function (res) {
       _this.recipes = res.data;
-    }), axios.get('/users').then(function (res) {
-      _this.users = res.data;
-
-      for (var index = 0; index < _this.users.length; index++) {
-        if (_this.users[index].type == 1) {
-          _this.loggedUser = _this.users[index];
-          break;
-        } else {
-          _this.loggedUser = {
-            id: 99,
-            name: "ElAdmin",
-            type: 1,
-            email: "eladmin@eladmin.com"
-          };
-        }
-      }
+    }), axios.get("/profile/").then(function (res) {
+      _this.user = res.data; //Recoger los datos del usuario en la session
+    }, function (error) {
+      console.log(error.response.data);
     });
   },
   data: function data() {
     return {
       recipes: [],
       recipe: [{
-        title: ''
-      }, {
-        ingredients: ''
-      }, {
-        description: ''
-      }, {
-        id: ''
+        title: '',
+        image: '',
+        ingredients: '',
+        description: '',
+        user_id: ''
       }],
-      users: [],
+      user: [],
       loggedUser: ""
     };
   },
   methods: {
     newRecipe: function newRecipe() {
+      var _this2 = this;
+
       axios.post('/new_recipe', {
         title: this.recipe.title,
-        ingredients: this.recipe.ingredients,
+        image: "",
         description: this.recipe.description,
-        id: this.loggedUser.id
+        ingredients: this.recipe.ingredients,
+        user_id: this.user[0].id
       }).then(function () {
-        console.log("saved");
+        console.log('saved');
+        window.location.href = "/recipes_manager";
+        console.log(_this2.recipe[0]);
+      }, function (error) {
+        console.log(error.response.data);
       });
     },
     test: function test() {
-      console.log(this.loggedUser);
+      console.log(this.user[0].id);
     }
   }
 });
@@ -23430,16 +23423,16 @@ var _hoisted_21 = ["src"];
 var _hoisted_22 = {
   "class": "container coments"
 };
-var _hoisted_23 = {
+var _hoisted_22 = {
   "class": "row"
 };
-var _hoisted_24 = {
+var _hoisted_23 = {
   "class": "col-1",
   id: "save_position"
 };
-var _hoisted_25 = ["src"];
+var _hoisted_24 = ["src"];
 
-var _hoisted_26 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+var _hoisted_25 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
   "class": "col",
   id: "save_position"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
@@ -23494,7 +23487,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     alt: "image"
   }, null, 8
   /* PROPS */
-  , _hoisted_25)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Segunda columna (escribir) "), _hoisted_26])])]);
+  , _hoisted_24)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Segunda columna (escribir) "), _hoisted_25])])]);
 }
 
 /***/ }),
@@ -23835,7 +23828,7 @@ var _hoisted_14 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElement
   "class": "btn btn-secondary",
   "data-bs-dismiss": "modal"
 }, "Cerrar"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
-  type: "button ",
+  type: "button submit",
   "class": "btn btn-primary"
 }, "Guardar")], -1
 /* HOISTED */
@@ -24196,10 +24189,6 @@ const app = createApp({})
 import { createApp } from 'vue';
 import Inicio from './components/Inicio'
 
-<<<<<<< HEAD
-app.mount('#app')*/
-
-
 
 var instance = axios__WEBPACK_IMPORTED_MODULE_4___default().create({
   baseURL: 'https:/localhost:8000/',
@@ -24324,6 +24313,9 @@ var router = [{
 }, {
   path: '/formulario_contacto',
   component: (__webpack_require__(/*! ../components/FormContacto.vue */ "./resources/js/components/FormContacto.vue")["default"])
+}, {
+  path: '/new_recipe',
+  component: (__webpack_require__(/*! ../components/recipes-manager.vue */ "./resources/js/components/recipes-manager.vue")["default"])
 }];
 /** OTRA FORMA
  * const routes = [
