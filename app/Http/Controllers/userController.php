@@ -39,6 +39,15 @@ class userController extends Controller
         $user->password = $request->get('password');
         $user->type= $request->get('type');
         $user -> save();
+        // $request->session()->put(['login'=>'user']);
+        // session(['login'=>'token']);
+        /*Para eliminar session
+        $request->session()->forget('login');
+        $request->session()->flush(); //Para eliminar toda la información
+        */
+        $request->session()->put(['user' => $user]);
+
+        return $request->session()->all();
     }
 
     /**
@@ -61,9 +70,11 @@ class userController extends Controller
     public function show($id)
     {
         //
-        $user = User::find($id);
-        return response()->json($user);
-
+        // $user = User::find($id);
+        // return response()->json($user);
+        $value = $request->session()->get('key');
+        
+       
         
         
 

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->text('description');
             $table->foreignId('user_id')->constrained('user');
+            $table->foreignId('recipe_id')->constrained('receta');
             $table->timestamps();
         });
     }
