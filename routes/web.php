@@ -27,6 +27,7 @@ Route::get('/', function () {
 Route::view('/', 'welcome');
 Route::view('/recipe_description/{id}', 'welcome');
 Route::view('/recipes_manager', 'welcome');
+Route::view('/formulario_contacto','welcome');
 
 /*
 Route::get('register', [AuthController::class, 'show_signup_form']->name('register');

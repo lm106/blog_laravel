@@ -1,5 +1,8 @@
 <template>
-  <h1>CONTACTOS</h1>
+<section style="margin-top: 6rem;">
+    <h1>CONTACTOS</h1>
+</section>
+  
 </template>
 
 <script>

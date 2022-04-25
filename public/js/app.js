@@ -22899,8 +22899,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
 
+var _hoisted_1 = {
+  style: {
+    "margin-top": "6rem"
+  }
+};
+
+var _hoisted_2 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h1", null, "CONTACTOS", -1
+/* HOISTED */
+);
+
+var _hoisted_3 = [_hoisted_2];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("h1", null, "CONTACTOS");
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("section", _hoisted_1, _hoisted_3);
 }
 
 /***/ }),
@@ -23770,7 +23781,7 @@ component: require('../components/App.vue').default
   component: (__webpack_require__(/*! ../components/recipes-manager.vue */ "./resources/js/components/recipes-manager.vue")["default"])
 }, {
   path: '/formulario_contacto',
-  component: __webpack_require__(/*! ../components/FormContacto.vue */ "./resources/js/components/FormContacto.vue")
+  component: (__webpack_require__(/*! ../components/FormContacto.vue */ "./resources/js/components/FormContacto.vue")["default"])
 }];
 /** OTRA FORMA
  * const routes = [
