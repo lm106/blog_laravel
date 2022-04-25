@@ -40,7 +40,6 @@ class userController extends Controller
     public function logout(Request $request){
         $request->session()->forget('user');
         // return $request->session()->all();
-        return redirect('/');
     }
 
     /**
@@ -70,7 +69,7 @@ class userController extends Controller
         $request->session()->flush(); //Para eliminar toda la información
         */
         $request->session()->put(['user' => $user]);
-
+        // return response()->json($user);
         return $request->session()->all();
     }
 

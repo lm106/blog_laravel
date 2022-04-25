@@ -50,7 +50,7 @@ use App\Http\Controllers\PostController;
 Route::get('post', [PostController::class, 'index'])->name('post');*/
 use App\Http\Controllers\userController;
 use App\Http\Controllers\RecetaController;
-Route::post('/createUser', [userController::class, 'createUser']);
+Route::post('/signup', [userController::class, 'createUser']);
 Route::get('/users', [userController::class, 'index']);
 Route::post('/login', [userController::class, 'login']);
 Route::post('/logout', [userController::class, 'logout']);

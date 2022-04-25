@@ -1,5 +1,4 @@
 <template>
-  <div>
     <header id="myHeader" class="">
         <div class="myContainer position-relative">
           <form class="form-inline my-2 my-lg-0 ">  
@@ -56,7 +55,6 @@
     
     <!-- aquí abajo va el footer -->
     <foot></foot>
-  </div>
 </template>
 
 <script>
@@ -79,7 +77,7 @@ export default {
   },
   computed:{
     userType(){ //verifica todo el rato si ha cambiado el tipo.
-      return this.user[0].type;
+      return this.user.type;
     }
   },
   beforeCreate() {
@@ -112,5 +110,8 @@ export default {
 </script>
 
 <style>
-
+#log-in{
+  text-decoration: none;
+  color:black
+}
 </style>
