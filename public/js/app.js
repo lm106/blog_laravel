@@ -22664,6 +22664,11 @@ __webpack_require__.r(__webpack_exports__);
     }, function (error) {
       console.log(error.response.data);
     });
+    axios__WEBPACK_IMPORTED_MODULE_1___default().get('/profile').then(function (resqu) {
+      _this.user = resqu.data;
+    }, function (error) {
+      console.log(error.response.data);
+    });
   },
   data: function data() {
     return {
@@ -22673,11 +22678,45 @@ __webpack_require__.r(__webpack_exports__);
       image: "",
       like: [],
       save: _img_dir_js__WEBPACK_IMPORTED_MODULE_0__["default"].url + _img_dir_js__WEBPACK_IMPORTED_MODULE_0__["default"].save,
-      coment: _img_dir_js__WEBPACK_IMPORTED_MODULE_0__["default"].url + _img_dir_js__WEBPACK_IMPORTED_MODULE_0__["default"].coment
+      coment: _img_dir_js__WEBPACK_IMPORTED_MODULE_0__["default"].url + _img_dir_js__WEBPACK_IMPORTED_MODULE_0__["default"].coment,
+      user: []
     };
   },
   beforeMount: function beforeMount() {
-    this.like = [3, _img_dir_js__WEBPACK_IMPORTED_MODULE_0__["default"].url + _img_dir_js__WEBPACK_IMPORTED_MODULE_0__["default"].like];
+    var _this2 = this;
+
+    this.like = [3, _img_dir_js__WEBPACK_IMPORTED_MODULE_0__["default"].url + _img_dir_js__WEBPACK_IMPORTED_MODULE_0__["default"].dislike];
+    axios__WEBPACK_IMPORTED_MODULE_1___default().get('/likes').then(function (resp) {
+      for (var index = 0; index < resp.data.length; index++) {
+        if (resp.data[index].user_id == _this2.user[0].id && resp.data[index].recipe_id == _this2.id) {
+          _this2.like = [5, _img_dir_js__WEBPACK_IMPORTED_MODULE_0__["default"].url + _img_dir_js__WEBPACK_IMPORTED_MODULE_0__["default"].like];
+          break;
+        }
+      }
+    }, function (error) {
+      console.log(error.response.data);
+    });
+  },
+  methods: {
+    getLike: function getLike() {
+      var _this3 = this;
+
+      console.log('hola como estamos bien me alegro');
+
+      if (this.user.length == 0) {
+        alert("No puedes dar like hasta que inicies sesicón.");
+      } else {
+        console.log(this.user[0].id);
+        axios__WEBPACK_IMPORTED_MODULE_1___default().post('/likes', {
+          user_id: this.user[0].id,
+          recipe_id: this.recipe.id
+        }).then(function () {
+          _this3.like = [4, _img_dir_js__WEBPACK_IMPORTED_MODULE_0__["default"].url + _img_dir_js__WEBPACK_IMPORTED_MODULE_0__["default"].like];
+        }, function (error) {
+          console.log(error.response.data);
+        });
+      }
+    }
   }
 });
 
@@ -23308,90 +23347,85 @@ var _hoisted_1 = {
 var _hoisted_2 = {
   "class": "recipe"
 };
-
-var _hoisted_3 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, ".", -1
-/* HOISTED */
-);
-
-var _hoisted_4 = {
+var _hoisted_3 = {
   id: "content"
 };
 
-var _hoisted_5 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+var _hoisted_4 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
   id: "title"
 }, null, -1
 /* HOISTED */
 );
 
-var _hoisted_6 = {
+var _hoisted_5 = {
   "class": "container"
 };
-var _hoisted_7 = {
+var _hoisted_6 = {
   "class": "row"
 };
-var _hoisted_8 = {
+var _hoisted_7 = {
   "class": "col ingredient"
 };
-var _hoisted_9 = {
+var _hoisted_8 = {
   "class": "picture_recipe",
   style: {
     "margin-top": "2.5rem",
     "margin-bottom": "2.5rem"
   }
 };
-var _hoisted_10 = {
+var _hoisted_9 = {
   "class": "hijo"
 };
-var _hoisted_11 = {
+var _hoisted_10 = {
   style: {
     "font-style": "italic"
   }
 };
-var _hoisted_12 = {
+var _hoisted_11 = {
   "class": "col",
   style: {
     "height": "15rem",
     "margin-bottom": "1rem"
   }
 };
-var _hoisted_13 = ["src"];
-var _hoisted_14 = {
+var _hoisted_12 = ["src"];
+var _hoisted_13 = {
   "class": "descrip"
 };
 
-var _hoisted_15 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("br", null, null, -1
+var _hoisted_14 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("br", null, null, -1
 /* HOISTED */
 );
 
-var _hoisted_16 = {
+var _hoisted_15 = {
   "class": "container"
 };
-var _hoisted_17 = {
+var _hoisted_16 = {
   "class": "row"
 };
-var _hoisted_18 = {
+var _hoisted_17 = {
   "class": "col",
   id: "save_position"
 };
-var _hoisted_19 = ["src"];
-var _hoisted_20 = {
+var _hoisted_18 = ["src"];
+var _hoisted_19 = {
   "class": "col",
   id: "like_position"
 };
-var _hoisted_21 = ["src"];
-var _hoisted_22 = {
+var _hoisted_20 = ["src"];
+var _hoisted_21 = {
   "class": "container coments"
 };
-var _hoisted_23 = {
+var _hoisted_22 = {
   "class": "row"
 };
-var _hoisted_24 = {
+var _hoisted_23 = {
   "class": "col-1",
   id: "save_position"
 };
-var _hoisted_25 = ["src"];
+var _hoisted_24 = ["src"];
 
-var _hoisted_26 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+var _hoisted_25 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
   "class": "col",
   id: "save_position"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
@@ -23403,45 +23437,48 @@ var _hoisted_26 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElement
 );
 
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("section", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [_hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [_hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h1", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.recipe.title), 1
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("section", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [_hoisted_4, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h1", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.recipe.title), 1
   /* TEXT */
-  )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" primera colimna (ingredients) "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.ingredients, function (ingredient) {
-    return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("ul", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_11, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(ingredient), 1
+  )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" primera colimna (ingredients) "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.ingredients, function (ingredient) {
+    return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("ul", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_10, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(ingredient), 1
     /* TEXT */
     )])]);
   }), 256
   /* UNKEYED_FRAGMENT */
-  ))])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Segunda columna (image) "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
+  ))])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Segunda columna (image) "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
     src: $data.image,
     "class": "card-img-top picture_recipe",
     alt: "image"
   }, null, 8
   /* PROPS */
-  , _hoisted_13)])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" description "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.descriptions, function (description) {
+  , _hoisted_12)])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" description "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_13, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.descriptions, function (description) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(description), 1
     /* TEXT */
     )]);
   }), 256
   /* UNKEYED_FRAGMENT */
-  ))]), _hoisted_15, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" like y guardado "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_16, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_17, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" primera colimna (save) "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_18, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
+  ))]), _hoisted_14, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" like y guardado "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_15, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_16, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" primera colimna (save) "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_17, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
     src: $data.save,
     "class": "card-img-top save_like",
     alt: "image"
   }, null, 8
   /* PROPS */
-  , _hoisted_19)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Segunda columna (like) "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_20, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
+  , _hoisted_18)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Segunda columna (like) "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_19, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
+    onClick: _cache[0] || (_cache[0] = function ($event) {
+      return $options.getLike();
+    }),
     src: $data.like[1],
     "class": "card-img-top save_like",
     alt: "image"
   }, null, 8
   /* PROPS */
-  , _hoisted_21)])])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" comentarios "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_22, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_23, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" primera colimna (coment) "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_24, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
+  , _hoisted_20)])])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" comentarios "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_21, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_22, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" primera colimna (coment) "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_23, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
     src: $data.coment,
     "class": "card-img-top save_like",
     alt: "image"
   }, null, 8
   /* PROPS */
-  , _hoisted_25)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Segunda columna (escribir) "), _hoisted_26])])]);
+  , _hoisted_24)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Segunda columna (escribir) "), _hoisted_25])])]);
 }
 
 /***/ }),
@@ -29429,7 +29466,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n#content {\n        margin-top: 6rem;\n        margin-right: 4%;\n        margin-left: 4%;\n}\n.recipe {\n        background-color: #ECE5E9;\n        margin-right: 6%;\n        margin-left: 6%;\n        box-shadow: 0px 20px 25px -5px rgba(0, 0, 0, 0.1), 0px 10px 10px -5px rgba(0, 0, 0, 0.04);\n        border-radius: 6px;\n}\nh1 {\n        text-align: center;\n        font-family: 'Rouge Script';\n        font-style: normal;\n        align-items: center;\n        margin-top: -2.1rem;\n}\n#title {\n        background: #EFC6CD;\n        height: 1rem;\n        border-radius: 30px;\n}\n.ingredient {\n        background: #F8EBEC;\n        margin-right: 1rem;\n        margin-bottom: 1rem;\n        max-width: 100%;\n        max-height: 100%;\n}\n.hijo {\n        width: 100%;\n        height: 100%;\n}\n.descrip {\n        margin: 3%;\n        text-align: justify;\n        text-indent: 3%;\n}\n.picture_recipe {\n        min-width: 8rem;\n        height: 100%;\n        width: 100%;\n        -o-object-fit: contain;\n           object-fit: contain;\n}\n#like_position {\n        text-align: right;\n}\n#save_position {\n        text-align: left;\n}\n.save_like {\n        width: 15%;\n        min-width: 2.5rem;\n}\n.coments {\n        margin-top: 3rem;\n        margin-right: 6%;\n        margin-left: 6%;\n        background-color: #D5888D;\n        widows: 100%;\n        margin-bottom: 1rem;\n}\n.txt_coment {\n        background-color: #D5888D;\n        border-color: #D5888D;\n        margin-left: -3rem;\n}\n.txt_coment:focus {\n        background-color: #D5888D;\n        border-color: #D5888D;\n        box-shadow: 0 0 0 0 #d18f93;\n        color: white;\n}\n\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n#content {\n        margin-top: 6rem;\n        margin-right: 4%;\n        margin-left: 4%;\n}\n.recipe {\n        background-color: #ECE5E9;\n        margin-right: 6%;\n        margin-left: 6%;\n        box-shadow: 0px 20px 25px -5px rgba(0, 0, 0, 0.1), 0px 10px 10px -5px rgba(0, 0, 0, 0.04);\n        border-radius: 6px;\n        margin-top: -4rem;\n}\nh1 {\n        text-align: center;\n        font-family: 'Rouge Script';\n        font-style: normal;\n        align-items: center;\n        margin-top: -2.1rem;\n}\n#title {\n        background: #EFC6CD;\n        height: 1rem;\n        border-radius: 30px;\n}\n.ingredient {\n        background: #F8EBEC;\n        margin-right: 1rem;\n        margin-bottom: 1rem;\n        max-width: 100%;\n        max-height: 100%;\n}\n.hijo {\n        width: 100%;\n        height: 100%;\n}\n.descrip {\n        margin: 3%;\n        text-align: justify;\n        text-indent: 3%;\n}\n.picture_recipe {\n        min-width: 8rem;\n        height: 100%;\n        width: 100%;\n        -o-object-fit: contain;\n           object-fit: contain;\n}\n#like_position {\n        text-align: right;\n}\n#save_position {\n        text-align: left;\n}\n.save_like {\n        width: 15%;\n        min-width: 2.5rem;\n}\n.coments {\n        margin-top: 3rem;\n        margin-right: 6%;\n        margin-left: 6%;\n        background-color: #D5888D;\n        widows: 100%;\n        margin-bottom: 1rem;\n}\n.txt_coment {\n        background-color: #D5888D;\n        border-color: #D5888D;\n        margin-left: -3rem;\n}\n.txt_coment:focus {\n        background-color: #D5888D;\n        border-color: #D5888D;\n        box-shadow: 0 0 0 0 #d18f93;\n        color: white;\n}\n\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

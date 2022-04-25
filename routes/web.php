@@ -59,9 +59,9 @@ Route::post('/logout', [userController::class, 'logout']);
 Route::get('/profile', [userController::class, 'show']);
 // Route::get('/admin_list', [userController::class, 'show']); 
 Route::get('/recetas', [RecetaController::class, 'index']);
-<<<<<<< HEAD
+
 Route::post('/new_recipe', [RecetaController::class, 'createRecipe']);
-=======
+
 Route::post('/likes', [LikeController::class, 'create']);
 Route::get('/likes', [LikeController::class, 'index']);
->>>>>>> e9ba7791c5190963b91e77631cbbded9091d3b26
+
