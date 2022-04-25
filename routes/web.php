@@ -57,3 +57,4 @@ Route::post('/logout', [userController::class, 'logout']);
 Route::get('/profile', [userController::class, 'show']);
 // Route::get('/admin_list', [userController::class, 'show']); 
 Route::get('/recetas', [RecetaController::class, 'index']);
+Route::post('/new_recipe', [RecetaController::class, 'createRecipe']);

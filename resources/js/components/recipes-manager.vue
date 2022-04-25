@@ -27,7 +27,8 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                            <button type="button " class="btn btn-primary">Guardar</button>
+                            <button type="button submit" class="btn btn-primary">Guardar</button>
+
                         </div>
                     </form>
                 </div>
@@ -75,19 +76,16 @@ export default {
         .then(res => { 
             this.recipes = res.data
         }),
-        axios.get('/users')
-            .then(res => { 
-                this.users = res.data
-                for (var index = 0; index < this.users.length; index++) {
-                    if(this.users[index].type == 1){
-                            this.loggedUser = this.users[index]
-                            break;
-                    }else{
-                        this.loggedUser = {id:99, name:"ElAdmin", type:1, email: "eladmin@eladmin.com"}
-                    }
-                }
-                        
+
+        
+    
+        axios.get(`/profile/`).then(res => {
+            this.user = res.data;//Recoger los datos del usuario en la session
+        },
+        (error) => {
+            console.log(error.response.data);
         })
+       
         
     },
     
@@ -97,12 +95,13 @@ export default {
         return { 
             recipes: [],
             recipe: [
-                {title: ''},
-                {ingredients: ''},
-                {description: ''},
-                {id: ''}
-             ],
-            users: [],
+                {title: '',
+                image: '',
+                ingredients: '',
+                description: '',
+                user_id: ''
+                }],
+            user: [],
             loggedUser: ""
             
             
@@ -113,17 +112,17 @@ export default {
 
     methods: {
         newRecipe(){
-            axios.post('/new_recipe', {
-            title: this.recipe.title,
-            ingredients: this.recipe.ingredients,
-            description: this.recipe.description,
-            id: this.loggedUser.id
-             }).then(() => {
-                console.log("saved")
-            })
+            axios.post('/new_recipe', {title: this.recipe.title, image: "", description: this.recipe.description, ingredients: this.recipe.ingredients, user_id: this.user[0].id}).then(() => {
+            console.log('saved');
+            window.location.href="/recipes_manager";
+            console.log(this.recipe[0])
+          }, function (error) {
+            console.log(error.response.data); 
+            
+        });
         },
         test(){
-           console.log(this.loggedUser)
+           console.log(this.user[0].id)
         },
 
     }
