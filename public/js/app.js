@@ -22702,21 +22702,13 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      user: [
-        /*   {
-        //   id:1
-        //   // ,
-        //   // type:2,
-        //   // name:"Administrador",
-        //   // email:"admin@email.com",
-         }*/
-      ]
+      user: [{}]
     };
   },
   computed: {
     userType: function userType() {
       //verifica todo el rato si ha cambiado el tipo.
-      return this.user.type;
+      return this.user[0].type;
     }
   },
   beforeCreate: function beforeCreate() {
@@ -22789,13 +22781,11 @@ __webpack_require__.r(__webpack_exports__);
     return {
       recipes: [],
       recipe: [{
-        title: ''
-      }, {
-        ingredients: ''
-      }, {
-        description: ''
-      }, {
-        id: ''
+        title: '',
+        image: '',
+        ingredients: '',
+        description: '',
+        user_id: ''
       }],
       user: [],
       loggedUser: ""
@@ -22807,12 +22797,16 @@ __webpack_require__.r(__webpack_exports__);
 
       axios.post('/new_recipe', {
         title: this.recipe.title,
-        ingredients: this.recipe.ingredients,
+        image: "",
         description: this.recipe.description,
-        id: this.user[0].id
+        ingredients: this.recipe.ingredients,
+        user_id: this.user[0].id
       }).then(function () {
-        console.log("saved");
-        console.log(_this2.user[0].id);
+        console.log('saved');
+        window.location.href = "/recipes_manager";
+        console.log(_this2.recipe[0]);
+      }, function (error) {
+        console.log(error.response.data);
       });
     },
     test: function test() {
@@ -22936,17 +22930,11 @@ __webpack_require__.r(__webpack_exports__);
     return {
       title: 'Registrate',
       user: [{
-        email: ''
-      }, {
-        name: ''
-      }, {
-        name_last: ''
-      }, {
-        password: ''
-      }, {
+        email: '',
+        name: '',
+        name_last: '',
+        password: '',
         repeat_password: ''
-      }, {
-        type: '2'
       }]
     };
   },
@@ -22963,14 +22951,16 @@ __webpack_require__.r(__webpack_exports__);
       }).catch((error)=>{
       this.errors=error.response.data.errors;
       })*/
-      axios.post('/createUser', {
+      console.log(this.user.type);
+      axios.post('/signup', {
         name: this.user.name,
         name_last: this.user.name_last,
         email: this.user.email,
         password: this.user.password,
-        type: this.user.type
+        type: '2'
       }).then(function () {
         console.log('saved');
+        window.location.href = "/";
       }, function (error) {
         console.log(error.response.data);
       });
@@ -23792,7 +23782,7 @@ var _hoisted_14 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElement
   "class": "btn btn-secondary",
   "data-bs-dismiss": "modal"
 }, "Cerrar"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
-  type: "button ",
+  type: "button submit",
   "class": "btn btn-primary"
 }, "Guardar")], -1
 /* HOISTED */
@@ -24086,7 +24076,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     placeholder: "repeat password"
   }, null, 512
   /* NEED_PATCH */
-  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.user.repeat_password]]), _hoisted_3], 32
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.user.repeat_password]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <input type=\"hidden\" v-model=\"user.type\" value=\"2\"/> "), _hoisted_3], 32
   /* HYDRATE_EVENTS */
   ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <button @click=\"showUser()\">Mostrar datos</button> ")]);
 }
