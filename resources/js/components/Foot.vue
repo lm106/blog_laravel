@@ -36,7 +36,6 @@
                 </svg>
             </a>
         </div>
-        
   </div>
 </template>
 
