@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Http\RedirectResponse;
 
 class userController extends Controller
 {
@@ -17,6 +19,28 @@ class userController extends Controller
         //Muestra todos los usuarios (Rol de administrador)
         $users = User::all()->toArray();
         return array_reverse($users); 
+    }
+    public function login(Request $request){
+        $request->validate([
+            'email'=>['required', 'email'],
+            'password'=> 'required'
+        ]);
+        $user = new User();
+        $user->email=$request->get('email');
+        $user->password=$request->get('password');
+        $user_login = DB::table('user')
+            ->where('email', '=', $user['email'])
+            -> where('password', '=', $user['password'])
+            ->get();
+        if($user_login != null) session(['user'=>$user_login]);
+        // return ($user['password']===$user['password'])? response()->json($user_check): 'Error: no coincide';
+        return $request->session()->all();
+    }
+
+    public function logout(Request $request){
+        $request->session()->forget('user');
+        // return $request->session()->all();
+        return redirect('/');
     }
 
     /**
@@ -67,33 +91,12 @@ class userController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request)
     {
         //
+        // $id = $request->session('user')->get();
         // $user = User::find($id);
-        // return response()->json($user);
-        $value = $request->session()->get('key');
-        
-       
-        
-        
-
-
-        // public function index(Request $request)
-        // {
-        //     $tasks = Task::orderBy('id', 'DESC')->paginate(2);
-    
-        //     return [
-        //         'pagination' => [
-        //             'total'         => $tasks->total(),
-        //             'current_page'  => $tasks->currentPage(),
-        //             'per_page'      => $tasks->perPage(),
-        //             'last_page'     => $tasks->lastPage(),
-        //             'from'          => $tasks->firstItem(),
-        //             'to'            => $tasks->lastPage(),
-        //         ],
-        //         'tasks' => $tasks
-        //     ];
+        return $request->session()->get('user');
     }
 
     /**

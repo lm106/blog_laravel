@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="section">
       <h2> {{ title }} </h2>
       <p id="success"></p>
       <form  @submit.prevent="signUp">
@@ -10,12 +10,12 @@
         <input type="password" v-model="user.repeat_password" placeholder="repeat password" />
         <input type="submit" value="Submit">
       </form>
-      <button @click="showUser()">Mostrar datos</button>
+      <!-- <button @click="showUser()">Mostrar datos</button> -->
   </div>
 </template>
 
 <script>
-import axios from 'axios'
+// import axios from 'axios'
 export default {
     name:'signup',
     data() {
@@ -27,14 +27,10 @@ export default {
           {name_last: ''},
           {password: ''},
           {repeat_password: ''},
-          {type: '1'}
+          {type: '2'}
 
-        ],
-        errors:[]
+        ]
       }
-    }, 
-    computed:{
-
     },
     methods: {
       showUser(){
@@ -54,13 +50,12 @@ export default {
               name_last: this.user.name_last,
               email: this.user.email,
               password: this.user.password,
-              type: 1
+              type: this.user.type
               }).then(() => {
            console.log('saved');
           }, function (error) {
             console.log(error.response.data); 
         });
-
       }
     }
 
@@ -68,5 +63,7 @@ export default {
 </script>
 
 <style>
-
+.section{
+  margin-top:5rem;
+}
 </style>

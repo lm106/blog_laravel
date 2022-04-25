@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div style='margin-top:5rem;'>
         <h2> {{ title }}</h2>
         <!-- <p>Nombre: {{ name }}</p>
         <p>Apellidos: {{ name_last }}</p>
@@ -18,16 +18,14 @@ export default {
         //     vm.user = res.data;
         //     console.log(res);
         // })
-        // console.log(this.$route.params.id)
-        axios.get(`/profile/${this.$route.params.id}`).then(res => {
+        //  console.log(this.user_id);
+        axios.get('/profile').then(res => {
             vm.user = res.data;
-            // console.log(res);
+            console.log(res);
         },
         (error) => {
             console.log(error.response.data);
         })
-
-
 
         // axios.get('/profile')
         // .then(function (response) {
@@ -47,6 +45,7 @@ export default {
             user: []
         }
     }
+    // props: ["user_id"]
 }
 </script>
 
