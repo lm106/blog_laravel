@@ -8,8 +8,10 @@
         <input type="email" v-model="user.email" placeholder="name@example.com" />
         <input type="password" v-model="user.password" placeholder="password" />
         <input type="password" v-model="user.repeat_password" placeholder="repeat password" />
+        <!-- <input type="hidden" v-model="user.type" value="2"/> -->
         <input type="submit" value="Submit">
       </form>
+
       <!-- <button @click="showUser()">Mostrar datos</button> -->
   </div>
 </template>
@@ -22,13 +24,12 @@ export default {
       return {
         title: 'Registrate',   
         user: [
-          {email: ''},
-          {name: ''},
-          {name_last: ''},
-          {password: ''},
-          {repeat_password: ''},
-          {type: '2'}
-
+          {email: '',
+          name: '',
+          name_last: '',
+          password: '',
+          repeat_password: ''
+          }
         ]
       }
     },
@@ -44,15 +45,10 @@ export default {
            console.log('saved');
          }).catch((error)=>{
             this.errors=error.response.data.errors;
-         })*/
-          axios.post('/createUser', {
-              name: this.user.name,
-              name_last: this.user.name_last,
-              email: this.user.email,
-              password: this.user.password,
-              type: this.user.type
-              }).then(() => {
-           console.log('saved');
+         })*/console.log(this.user.type);
+          axios.post('/signup', { name: this.user.name, name_last: this.user.name_last, email: this.user.email, password: this.user.password, type: '2'}).then(() => {
+            console.log('saved');
+            window.location.href="/";
           }, function (error) {
             console.log(error.response.data); 
         });
