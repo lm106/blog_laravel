@@ -8,20 +8,24 @@ const router = [
   { 
     path: '/signup', 
     component:  require('../components/user/signup.vue').default 
-  },/* ######No va sino lo duplica#####
+  },
   {
-    path: '/',
-    component: require('../components/App.vue').default
-  },*/
+    path: '/login',
+    component: require('../components/user/login.vue').default
+  },
   {   
     path: '/recetas/:id',
     component: require('../components/recetas/recetamostrar.vue').default
 
   },
   { 
-    path: '/profile/:id', 
+    path: '/profile', 
     component:  require('../components/user/profile.vue').default 
-  }, 
+  },
+  // { 
+  //   path: '/admin_list', 
+  //   component:  require('../components/user/admin_list_user.vue').default 
+  // },
   {   
     path: '/recetas',
     component: require('../components/Receta.vue').default
