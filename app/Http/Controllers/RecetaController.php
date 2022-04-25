@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\Receta;
 
 class RecetaController extends Controller
@@ -20,6 +21,14 @@ class RecetaController extends Controller
 
         $recetas = Receta::all()->toArray();
         return array_reverse($recetas);
+    }
+
+    public function nLike($id) {
+        //$like = new Receta();
+        //$like->n_likes()->where('recipe_id', '=', $id)->count();
+        $receta = DB::table('likes')->where('recipe_id', $id)->count();
+        //$like = Receta::find($id)->n_likes()->count();
+        return response()->json($receta);
     }
 
     /**

@@ -14,4 +14,8 @@ class Receta extends Model
         'title', 'image', 'description', 'ingredients', 'user_id'
     ];
     protected $table = 'receta';
+
+    public function n_likes() {
+        return $this->hasMany(Like::class);
+    }
 }

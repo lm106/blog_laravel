@@ -49,7 +49,9 @@
 
                             <!-- Segunda columna (like) -->
                         <div class="col" id="like_position">
-                            <img @click="getLike()" v-bind:src="like[1]" class="card-img-top save_like" alt="image">
+                            <p style="font-weight: bold;">
+                                {{like[0]}} <img @click="getLike()" v-bind:src="like[1]" class="card-img-top save_like" alt="image">
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -111,6 +113,29 @@ export default {
             (error) => {
                 console.log(error.response.data);
             });
+
+        axios.get('/likes')
+            .then(resp => {
+                for (let index = 0; index < resp.data.length; index++) {
+                    if (resp.data[index].user_id == this.user[0].id &&
+                        resp.data[index].recipe_id == this.id) {
+                        this.like[1] = img_dir.url + img_dir.like;
+                        break
+                    }
+                }
+            }, 
+            (error) => {
+                console.log(error.response.data);
+            });
+
+        console.log(this.id);
+        axios.get(`/receta_likes/${this.id}`)
+            .then(respo => {
+                this.like[0] = respo.data;
+            }, 
+            (error) => {
+                console.log(error.response.data);
+            });
     },
 
     data() {
@@ -119,7 +144,7 @@ export default {
             ingredients: [],
             descriptions: [],
             image: "",
-            like: [],
+            like: [0, img_dir.url + img_dir.dislike],
             save: img_dir.url + img_dir.save,
             coment: img_dir.url + img_dir.coment,
             user: []
@@ -127,20 +152,6 @@ export default {
     },
 
     beforeMount() {
-        this.like = [3, img_dir.url + img_dir.dislike];
-        axios.get('/likes')
-            .then(resp => {
-                for (let index = 0; index < resp.data.length; index++) {
-                    if (resp.data[index].user_id == this.user[0].id &&
-                        resp.data[index].recipe_id == this.id) {
-                        this.like = [5, img_dir.url + img_dir.like];
-                        break
-                    }
-                }
-            }, 
-            (error) => {
-                console.log(error.response.data);
-            });
     }, 
     methods: {
         getLike() {
@@ -153,7 +164,7 @@ export default {
                 user_id: this.user[0].id, 
                 recipe_id: this.recipe.id})
                 .then(() => {
-                    this.like = [4, img_dir.url + img_dir.like];
+                    this.like = [this.like[0]+1, img_dir.url + img_dir.like];
                 }, 
                 (error) => {
                     console.log(error.response.data);
