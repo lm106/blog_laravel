@@ -1,7 +1,7 @@
 <template>
   <div class="section_form">
       <h2> {{ title }} </h2>
-      <p id="success"></p>
+      <p id="success">{{message_error}}</p>
       <form  class='form_edit_signup' @submit.prevent="signUp">
         <label class="label_signup">Nombre:</label><br>
         <input type="text" class="input_signup" v-model="user.name" placeholder="name" /><br>
@@ -35,7 +35,8 @@ export default {
           password: '',
           repeat_password: ''
           }
-        ]
+        ],
+        message_error:''
       }
     },
     methods: {
@@ -51,12 +52,16 @@ export default {
          }).catch((error)=>{
             this.errors=error.response.data.errors;
          })*/console.log(this.user.type);
-          axios.post('/signup', { name: this.user.name, name_last: this.user.name_last, email: this.user.email, password: this.user.password, type: '2'}).then(() => {
-            console.log('saved');
-            window.location.href="/";
-          }, function (error) {
-            console.log(error.response.data); 
-        });
+         if(this.user.password ===this.user.repeat_password){
+            axios.post('/signup', { name: this.user.name, name_last: this.user.name_last, email: this.user.email, password: this.user.password, type: '2'}).then(() => {
+              console.log('saved');
+              window.location.href="/";
+            }, function (error) {
+              console.log(error.response.data); 
+          });
+         }else{
+           this.message_error="La contraseña no coincide";
+         }
       }
     }
 
