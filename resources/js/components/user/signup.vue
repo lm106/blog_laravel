@@ -1,17 +1,22 @@
 <template>
-  <div class="section">
+  <div class="section_form">
       <h2> {{ title }} </h2>
       <p id="success"></p>
-      <form  @submit.prevent="signUp">
-        <input type="text" v-model="user.name" placeholder="name" />
-        <input text="text" v-model="user.name_last" placeholder="name_last" />
-        <input type="email" v-model="user.email" placeholder="name@example.com" />
-        <input type="password" v-model="user.password" placeholder="password" />
-        <input type="password" v-model="user.repeat_password" placeholder="repeat password" />
+      <form  class='form_edit_signup' @submit.prevent="signUp">
+        <label class="label_signup">Nombre:</label><br>
+        <input type="text" class="input_signup" v-model="user.name" placeholder="name" /><br>
+        <label class="label_signup">Apellidos:</label><br>
+        <input text="text" class="input_signup" v-model="user.name_last" placeholder="name_last" /><br>
+        <label class="label_signup">Email:</label><br>
+        <input type="email" class="input_signup" v-model="user.email" placeholder="name@example.com" /><br>
+        <label class="label_signup">Contraseña:</label><br>
+        <input type="password" class="input_signup" v-model="user.password" placeholder="password" /><br>
+        <label class="label_signup">Confirmar contraseña:</label><br>
+        <input type="password" class="input_signup" v-model="user.repeat_password" placeholder="repeat password" /><br>
         <!-- <input type="hidden" v-model="user.type" value="2"/> -->
-        <input type="submit" value="Submit">
+        <input type="submit" id='btn_signup' value="Registrarse">
       </form>
-
+      <div class='signup'>Si tienes cuenta <router-link to="/login" class="signup_login">Iniciar sesión</router-link></div>
       <!-- <button @click="showUser()">Mostrar datos</button> -->
   </div>
 </template>
@@ -59,7 +64,23 @@ export default {
 </script>
 
 <style>
-.section{
-  margin-top:5rem;
+.input_signup{
+  padding-right:40%;
+}
+#btn_signup {
+    margin-top: 20%;
+    /* text-align: center; */
+    /* margin: 0 auto; */
+    margin-left: 30%;
+    color: white;
+    padding: 5px 25px;
+    background: #AB8A62;
+}
+.label_signup {
+    margin: 5px 0px;
+}
+.signup{
+  padding: 5px 0px 15px 0px;
+  color:#AB8A62;
 }
 </style>

@@ -14,8 +14,7 @@ class userController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
+    public function index(){
         //Muestra todos los usuarios (Rol de administrador)
         $users = User::all()->toArray();
         return array_reverse($users); 
@@ -40,6 +39,7 @@ class userController extends Controller
     public function logout(Request $request){
         $request->session()->forget('user');
         // return $request->session()->all();
+
     }
 
     /**
@@ -47,8 +47,7 @@ class userController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function createUser(Request $request)
-    {
+    public function createUser(Request $request){
         //
         $request->validate([
             'name'=>'required',
@@ -90,8 +89,7 @@ class userController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request)
-    {
+    public function show(Request $request){
         //
         // $id = $request->session('user')->get();
         // $user = User::find($id);
@@ -104,9 +102,25 @@ class userController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function edit(User $user)
-    {
-        //
+    public function edit(Request $request){
+        //El que queremos actualizar
+        $user_update = new User();
+        $user_update->name = $request->get('name');
+        $user_update->name_last = $request->get('name_last');
+        $user_update->email = $request->get('email');
+        $user_update->password = $request->get('password');
+        $user_update->type= $request->get('type');
+        //El antiguo que está en session (token)
+        $user_old = $request->session()->get('user');
+        //En la base de datos
+        $user_db=User::find($user_old[0]->id);
+        if($user_old[0]->name !==$user_update->name) $user_db->name=$user_update->name;
+        if($user_old[0]->name_last !==$user_update->name_last) $user_db->name_last=$user_update->name_last;
+        if($user_old[0]->password !==$user_update->password) $user_old->password=$user_update->password;
+        $user_db->save();
+        $request->session()->put(['user' => $user_update]);
+        return response()->json($user_db);
+        // return response()->json($user_update);
     }
 
     /**
