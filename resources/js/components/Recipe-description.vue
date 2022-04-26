@@ -110,32 +110,11 @@ export default {
         axios.get('/profile')
             .then(resqu => {
                 this.user = resqu.data;
-
-                    axios.get(`/likes/${this.user[0].id}`)
-                    .then(resp => {
-                    /*    console.log('hola cmo estamos');
-                    console.log(resp.data);*/
-
-
-        
-                        for (let index = 0; index < resp.data.length; index++) {
-                            if (resp.data[index].user_id == this.user[0].id &&
-                                resp.data[index].recipe_id == this.id) {
-                                this.like[1] = img_dir.url + img_dir.like;
-                                break
-                            }
-                        }
-                    }, 
-                    (error) => {
-                        console.log(error.response.data);
-                    });
+                this.getUserLike();
             },
             (error) => {
                 console.log(error.response.data);
             });
-
-        // miramos si el usuario registrado ha dado like a la receta
-        
 
         // miramos el num de likes de la receta
         axios.get(`/recipe_likes/${this.id}`)
@@ -178,9 +157,30 @@ export default {
                     console.log(error.response.data);
                 });
             }
+        }, 
 
-            
+        getUserLike() {
+            // miramos si el usuario registrado ha dado like a la receta
+            console.log(this.user[0]);
+            axios.get(`/likes/${this.user[0].id}`)
+                .then(resp => {    
+                    console.log(resp.data);
+                    for (let index = 0; index < resp.data.length; index++) {
+                        console.log(this.user[0].id);
+                        console.log(this.id);
+                        if (resp.data[index].user_id == this.user[0].id &&
+                            resp.data[index].recipe_id == this.id) {
+                            this.like[1] = img_dir.url + img_dir.like;
+                            console.log('ya estamso en if');
+                            break
+                        }
+                    }
+                }, 
+                (error) => {
+                    console.log(error.response.data);
+            });
         }
+            
     }
 
 }

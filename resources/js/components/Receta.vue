@@ -48,14 +48,26 @@
 <script>
 
     import img_dir from '../img_dir.js'
+    import axios from 'axios';
 
 export default {
+    beforeCreate() {
+        // miramos el num de likes de la receta
+        axios.get(`/recipe_likes/${this.receta.id}`)
+            .then(respo => {
+                this.like[0] = respo.data;
+            }, 
+            (error) => {
+                console.log(error.response.data);
+            });
+    },
+
     data() {
         return { 
             imagen: this.receta.image,
             descripcion: this.receta.description,
             titulo: this.receta.title,
-            like: ['', ''],
+            like: ['', img_dir.like],
             save: img_dir.dissave,
             des: '',
             comentarios: '2'
@@ -66,7 +78,6 @@ export default {
 
     beforeMount() {
         this.getDes();
-        this.like = [3, img_dir.like];
     },
 
     methods: {

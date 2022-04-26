@@ -112,7 +112,7 @@ export default {
 
     methods: {
         newRecipe(){
-            axios.post('/new_recipe', {title: this.recipe.title, image: "", description: this.recipe.description, ingredients: this.recipe.ingredients, user_id: this.user[0].id}).then(() => {
+            axios.post('/new_recipe', {title: this.recipe.title, image: "borrar", description: this.recipe.description, ingredients: this.recipe.ingredients, user_id: this.user[0].id}).then(() => {
             console.log('saved');
             window.location.href="/recipes_manager";
             console.log(this.recipe[0])

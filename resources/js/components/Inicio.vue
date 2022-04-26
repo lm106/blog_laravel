@@ -7,7 +7,7 @@
             <div>
                 <button class="btn btn-secondary dropdown-toggle filter" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                     <img src="\images\filtre.png" alt="filter" class="image_filter">
-                    Dropdown button
+                    Filtrar recetas
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                     <li class="list-group-item">
