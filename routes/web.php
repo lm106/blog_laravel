@@ -34,6 +34,7 @@ Route::view('/profile', 'welcome');
 Route::view('/login', 'welcome');
 Route::view('/signup', 'welcome');
 Route::view('/likes', 'welcome');
+Route::view('/edit', 'welcome');
 // Route::view('/admin_list', 'welcome'); //ruta comentada CUIDADO PONER DEBAJO
 
 
@@ -57,12 +58,13 @@ Route::get('/users', [userController::class, 'index']);
 Route::post('/login', [userController::class, 'login']);
 Route::post('/logout', [userController::class, 'logout']);
 Route::get('/profile', [userController::class, 'show']);
+Route::post('/edit', [userController::class, 'edit']);
 // Route::get('/admin_list', [userController::class, 'show']); 
 Route::get('/recetas', [RecetaController::class, 'index']);
 
 Route::post('/new_recipe', [RecetaController::class, 'createRecipe']);
 
 Route::post('/likes', [LikeController::class, 'create']);
-Route::get('/likes/{id}', [LikeController::class, 'show']);
+Route::get('/likes/{id}', [LikeController::class, 'index']);
 Route::get('/recipe_likes/{id}', [RecetaController::class, 'nLike']);
 
