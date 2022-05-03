@@ -67,3 +67,8 @@ Route::post('/likes', [LikeController::class, 'create']);
 Route::get('/likes/{id}', [LikeController::class, 'index']);
 Route::get('/recipe_likes/{id}', [RecetaController::class, 'nLike']);
 
+
+
+
+
+
