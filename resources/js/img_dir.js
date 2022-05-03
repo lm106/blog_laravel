@@ -4,6 +4,7 @@ const dislike = 'images/dislike.png';
 const save = 'images/save.png';
 const dissave = 'images/dissave.png';
 const coment = 'images/coment.png';
+const user = 'images/user.png';
 export default {
-    url, like, dislike, save, dissave, coment
+    url, like, dislike, save, dissave, coment, user
 }

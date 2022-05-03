@@ -86,7 +86,7 @@ body{
 }
 
 .card_new {
-    height: 23rem;
+    height: 20rem;
     flex-direction: column;
     min-width: 0;
     word-wrap: break-word;

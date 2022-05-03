@@ -64,13 +64,55 @@
         <div class="container coments">
             <div class="row">
                 <!-- primera colimna (coment) -->
-                <div class="col-1" id="save_position">
-                    <img v-bind:src="coment" class="card-img-top save_like" alt="image">
+                <div class="col-1">
+                    <img v-bind:src="coment" class="card-img-top comment_image" alt="image">
                 </div>
 
                     <!-- Segunda columna (escribir) -->
-                <div class="col" id="save_position">
-                    <input type="text" class="form-control txt_coment" placeholder="Escribe tu comentario...">
+                <div class="col-11">
+                    <textarea name="comment" class="form-control txt_coment" placeholder="Escribe tu comentario..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="container coment_user">
+
+            <div class="row margin_comment">
+                <!-- primera colimna (avatar) -->
+                <div class="col-1">
+                    <img v-bind:src="user_img" class="card-img-top comment_image" alt="image">
+                </div>
+
+                    <!-- Segunda columna (comentario) -->
+                <div class="col-11">
+                    <p style="font-weight: bold;">@JavierMorenito19</p>
+                    <p>Esto es un comentario como otro cualquiera bb</p>
+                </div>
+            </div>
+
+            <div class="row margin_comment">
+                <!-- primera colimna (avatar) -->
+                <div class="col-1">
+                    <img v-bind:src="user_img" class="card-img-top comment_image" alt="image">
+                </div>
+
+                    <!-- Segunda columna (comentario) -->
+                <div class="col-11">
+                    <p style="font-weight: bold;">@JavierMorenito19</p>
+                    <p>Esto es un comentario como otro cualquiera bb</p>
+                </div>
+            </div>
+
+            <div class="row margin_comment">
+                <!-- primera colimna (avatar) -->
+                <div class="col-1">
+                    <img v-bind:src="user_img" class="card-img-top comment_image" alt="image">
+                </div>
+
+                    <!-- Segunda columna (comentario) -->
+                <div class="col-11">
+                    <p style="font-weight: bold;">@JavierMorenito19</p>
+                    <p> Esto es un comentario como otro cualquiera bb Esto es un comentario como otro cualquiera bb Esto es un comentario como otro cualquiera bb Esto es un comentario como otro cualquiera bb Esto es un comentario como otro cualquiera bb Esto es un comentario como otro cualquiera bbEsto es un comentario como otro cualquiera bb Esto es un comentario como otro cualquiera bb</p>
                 </div>
             </div>
         </div>
@@ -135,7 +177,8 @@ export default {
             like: [0, img_dir.url + img_dir.dislike],
             save: img_dir.url + img_dir.save,
             coment: img_dir.url + img_dir.coment,
-            user: []
+            user: [],
+            user_img: img_dir.url + img_dir.user
         }
     },
 
@@ -255,26 +298,46 @@ export default {
         min-width: 2.5rem;
     }
 
-    .coments {
+    .comment_image {
+        width: 15%;
+        min-width: 1.6rem;
+    }
+
+    .coments, .coment_user {
         margin-top: 3rem;
         margin-right: 6%;
-        margin-left: 6%;
-        background-color: #D5888D;
-        widows: 100%;
+        margin-left: 6%;        
+        width: 100%;
         margin-bottom: 1rem;
+
+        display: inline-block;
+        min-width: 100px;
+    }
+
+    .coments {
+        background-color: #D5888D;
+        border-radius: 6px;
     }
 
     .txt_coment {
-        background-color: #D5888D;
-        border-color: #D5888D;
-        margin-left: -3rem;
+        background-color:transparent;
+        border-color:transparent;
+        color: white;
+
     }
 
     .txt_coment:focus {
-        background-color: #D5888D;
-        border-color: #D5888D;
-        box-shadow: 0 0 0 0 #d18f93;
+        background-color:transparent;
+        border-color:transparent;
+        box-shadow: 0 0 0 0 transparent;
         color: white;
+    }
+
+    .margin_comment {
+        margin-bottom: 1%;
+        box-shadow: 0px 20px 20px -5px rgba(0, 0, 0, 0.1), 0px 10px 10px -5px rgba(0, 0, 0, 0.04);
+        border-radius: 6px;
+        background-color: #EDEBEB;
     }
 
 </style>

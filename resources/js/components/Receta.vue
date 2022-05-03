@@ -7,7 +7,6 @@
         
         <div class="card-body">
             <h5 class="card-title">{{ titulo }}</h5>
-            <p class="card_text_new">{{ des }}</p>
 
             <div class="row align-items-baseline" style="margin-top: 1rem;">
 
@@ -69,23 +68,11 @@ export default {
             titulo: this.receta.title,
             like: ['', img_dir.like],
             save: img_dir.dissave,
-            des: '',
             comentarios: '2'
         }
     },
 
-    props: ["receta"],
-
-    beforeMount() {
-        this.getDes();
-    },
-
-    methods: {
-        
-        getDes() {
-            this.des = this.descripcion.substring(0,100) + "...";
-        }
-    }
+    props: ["receta"]
 }
 
 

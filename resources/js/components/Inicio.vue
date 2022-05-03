@@ -4,35 +4,39 @@
 
         <div class="content">
 
+
             <div>
-                <button class="btn btn-secondary dropdown-toggle filter" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="\images\filtre.png" alt="filter" class="image_filter">
-                    Filtrar recetas
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                    <li class="list-group-item">
-                        <input class="form-check-input me-1" type="checkbox" @click="getFilter('harina')">
-                        Sin gluten
-                    </li>
+                    <button class="btn btn-secondary dropdown-toggle filter" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="\images\filtre.png" alt="filter" class="image_filter">
+                        Filtrar recetas
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        <li class="list-group-item">
+                            <input class="form-check-input me-1" type="checkbox" @click="getFilter('harina')">
+                            Sin gluten
+                        </li>
 
-                    <li class="list-group-item">
-                        <input class="form-check-input me-1" type="checkbox" @click="getFilter('huevo')">
-                        Sin huevo
-                    </li>
+                        <li class="list-group-item">
+                            <input class="form-check-input me-1" type="checkbox" @click="getFilter('huevo')">
+                            Sin huevo
+                        </li>
 
-                    <li class="list-group-item">
-                        <input class="form-check-input me-1" type="checkbox" @click="getFilter('leche')">
-                        Sin lactosa
-                    </li>
+                        <li class="list-group-item">
+                            <input class="form-check-input me-1" type="checkbox" @click="getFilter('leche')">
+                            Sin lactosa
+                        </li>
 
-                    <li class="list-group-item">
-                        <input class="form-check-input me-1" type="checkbox" @click="getFilter('azúcar')">
-                        Sin azúcar
-                    </li>
-                </ul>
-            </div>
+                        <li class="list-group-item">
+                            <input class="form-check-input me-1" type="checkbox" @click="getFilter('azúcar')">
+                            Sin azúcar
+                        </li>
+                    </ul>
 
-            <br>
+                   
+                </div>
+
+                <br>
+
 
 
             <div class="container_fluid_new">
@@ -140,7 +144,6 @@ export default {
         color: rgb(0, 0, 0);
         font: bold;
     }
-
     .image_filter {
         width: 1rem;
         height: 1rem;
