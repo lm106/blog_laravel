@@ -16,8 +16,8 @@ class userController extends Controller
      */
     public function index(){
         //Muestra todos los usuarios (Rol de administrador)
-        $users = User::all()->toArray();
-        return array_reverse($users); 
+        $users = User::all();
+        return response()->json($users); 
     }
     public function login(Request $request){
         $request->validate([
@@ -81,6 +81,9 @@ class userController extends Controller
     public function store(Request $request)
     {
         //
+    }
+    public function show_edit($id){
+        
     }
 
     /**

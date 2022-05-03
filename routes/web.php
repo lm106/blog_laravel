@@ -35,8 +35,8 @@ Route::view('/login', 'welcome');
 Route::view('/signup', 'welcome');
 Route::view('/likes', 'welcome');
 Route::view('/edit', 'welcome');
-// Route::view('/admin_list', 'welcome'); //ruta comentada CUIDADO PONER DEBAJO
-
+Route::view('/admin_list', 'welcome');
+Route::view('/edit_user/{id}', 'welcome');
 
 
 
@@ -54,14 +54,13 @@ use App\Http\Controllers\userController;
 use App\Http\Controllers\RecetaController;
 use App\Http\Controllers\LikeController;
 Route::post('/signup', [userController::class, 'createUser']);
-Route::get('/users', [userController::class, 'index']);
 Route::post('/login', [userController::class, 'login']);
 Route::post('/logout', [userController::class, 'logout']);
 Route::get('/profile', [userController::class, 'show']);
 Route::post('/edit', [userController::class, 'edit']);
-// Route::get('/admin_list', [userController::class, 'show']); 
+Route::get('/admin_list', [userController::class, 'index']); 
 Route::get('/recetas', [RecetaController::class, 'index']);
-
+Route::post('/edit_user/{id}', [userController::class, 'edit_user']);
 Route::post('/new_recipe', [RecetaController::class, 'createRecipe']);
 
 Route::post('/likes', [LikeController::class, 'create']);

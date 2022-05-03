@@ -1,6 +1,10 @@
 <template>
     <div class="section_form">
         <h2> {{ title }}</h2>
+        <ul class="success">
+            <li v-if="getError.message_1">{{ getError.message_1 }}</li>
+            <li v-if="getError.message_2">{{ getError.message_2 }}</li>
+        </ul>
         <form  class='form_edit_signup' @submit.prevent="update()">
         <!-- <img> -->
         <div id='input_data'>
@@ -29,8 +33,10 @@ export default {
         // })
         //  console.log(this.user_id);
         axios.get('/profile').then(res => {
-            this.user = res.data;
+            this.user = res.data[0];
             // console.log(res);
+            // console.log(this.user);
+
         },
         (error) => {
             console.log(error.response.data);
@@ -51,12 +57,19 @@ export default {
     data() {
       return {
             title: 'Perfil',   
-            user: [{}]
+            user: [],
+            message:[{
+                message_1:'',
+                message_2:''
+            }]
         }
     },
     computed:{
         getUser(){
-            return this.user[0];
+            return this.user;
+        },
+        getError(){
+            return this.message[0];
         }
     }, 
     methods:{
@@ -64,13 +77,32 @@ export default {
             console.log("---");
             console.log(this.user);
             // var user_new=this.user;
-            axios.post('/edit', { name: this.user[0].name, name_last: this.user[0].name_last, email: this.user[0].email, password: this.user.password}).then((res) => {
-                console.log(res);
-            console.log('saved update');
-          }, function (error) {
-            console.log(error.response.data); 
-        });
+            if(this.validate()){
+                axios.post('/edit', { name: this.user.name, name_last: this.user.name_last, email: this.user.email, password: this.user.password}).then((res) => {
+                    // console.log(res);
+                console.log('saved update');
+            }, function (error) {
+                console.log(error.response.data); 
+                });
+            }
+        },
+        validate(){
+            console.log('he');
+            this.getError.message_1='';
+            this.getError.message_2='';
+            var flag=true;
+            if (this.getUser.name==='') {
+                this.getError.message_1= "El nombre no puede estar vacío";
+                flag=false;
+            } 
+            if (this.getUser.password==='') {
+                this.getError.message_2= " La contraseña no puede estar vacía"
+                flag=false;
+            }
+            console.log(this.message)
+            return flag;
         }
+
     }
 }
 </script>

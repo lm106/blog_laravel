@@ -22,10 +22,10 @@ const router = [
     path: '/profile', 
     component:  require('../components/user/profile.vue').default 
   },
-  // { 
-  //   path: '/admin_list', 
-  //   component:  require('../components/user/admin_list_user.vue').default 
-  // },
+  { 
+    path: '/admin_list', 
+    component:  require('../components/user/admin/list_user.vue').default 
+  },
   {   
     path: '/recetas',
     component: require('../components/Receta.vue').default
@@ -50,6 +50,12 @@ const router = [
   {
     path: '/new_recipe',
     component: require('../components/recipes-manager.vue').default
+  }, 
+  {
+    path: '/edit_user/:id',
+    name: 'editUser',
+    props: true,
+    component: require('../components/user/admin/edit_user.vue').default
   }
   
 ]

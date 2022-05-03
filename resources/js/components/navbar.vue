@@ -13,7 +13,7 @@
           <div v-if="user.length < 1" class="no-user text-end position-absolute top-0 end-0" id="menu_login">
             <router-link to="/login" id="log-in">Iniciar sesión</router-link>
           </div>
-          <div v-else-if="userType == 1">
+          <div v-else-if="userType == 1 || user[0].type == 1">
           <div class="dropdown text-end position-absolute top-0 end-0 ">
             <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
               <img src="https://github.com/mdo.png" alt="mdo" width="52" height="52" class="rounded-circle">
@@ -29,7 +29,7 @@
             </div>
           </div>
 
-          <div v-else-if="userType != 1">
+          <div v-else-if="userType != 1 || user[0].type != 1">
             <div class="dropdown text-end position-absolute top-0 end-0 ">
             <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
               <img src="https://github.com/mdo.png" alt="mdo" width="52" height="52" class="rounded-circle">
@@ -38,7 +38,7 @@
                 <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1">
                 <li><a class="dropdown-item" href="#">New project...</a></li>
                 <li><a class="dropdown-item" href="#">Settings</a></li>
-                <li><router-link class="dropdown-item" to="/profile" >Profile</router-link></li>
+                <li><router-link class="dropdown-item" to="/profile" >Perfil</router-link></li>
                 <li><hr class="dropdown-divider"></li>
                 <li><button class="dropdown-item" @click="logout">Cerrar sesión</button></li>
               </ul>
@@ -61,7 +61,6 @@ export default {
   data(){
     return {
       user: [
-         { }
       ]      
     }
   },
@@ -73,7 +72,9 @@ export default {
   beforeCreate() {
         var vm = this
         axios.get(`/profile/`).then(res => {
-            vm.user = res.data;//Recoger los datos del usuario en la session
+            vm.user = res.data[0];//Recoger los datos del usuario en la session
+            console.log(res.data);
+            console.log(vm.user);
         },
         (error) => {
             console.log(error.response.data);

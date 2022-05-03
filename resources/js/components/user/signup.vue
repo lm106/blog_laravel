@@ -1,7 +1,12 @@
 <template>
   <div class="section_form">
       <h2> {{ title }} </h2>
-      <p id="success">{{message_error}}</p>
+      <ul class="success">
+        <li v-if="getError.message_error_1">{{ getError.message_error_1}}</li> 
+        <li v-if="getError.message_error_2">{{getError.message_error_2}}</li> 
+        <li v-if="getError.message_error_3">{{getError.message_error_3}}</li> 
+        <li v-if="getError.message_error_4">{{getError.message_error_4}}</li>
+      </ul>
       <form  class='form_edit_signup' @submit.prevent="signUp">
         <label class="label_signup">Nombre:</label><br>
         <input type="text" class="input_signup" v-model="user.name" placeholder="name" /><br>
@@ -29,14 +34,25 @@ export default {
       return {
         title: 'Registrate',   
         user: [
-          {email: '',
-          name: '',
-          name_last: '',
-          password: '',
-          repeat_password: ''
-          }
+          // {email: ''},
+          // {name: ''},
+          // {name_last: ''},
+          // {password: ''},
+          // {repeat_password: ''}
+          
         ],
-        message_error:''
+        error_message:[{
+          message_error_1:'',
+          message_error_2:'',
+          message_error_3:'',
+          message_error_4:''
+        }],
+        error:''
+      }
+    },
+    computed:{
+      getError(){
+        return this.error_message[0];
       }
     },
     methods: {
@@ -51,17 +67,46 @@ export default {
            console.log('saved');
          }).catch((error)=>{
             this.errors=error.response.data.errors;
-         })*/console.log(this.user.type);
-         if(this.user.password ===this.user.repeat_password){
-            axios.post('/signup', { name: this.user.name, name_last: this.user.name_last, email: this.user.email, password: this.user.password, type: '2'}).then(() => {
-              console.log('saved');
-              window.location.href="/";
-            }, function (error) {
-              console.log(error.response.data); 
+         })console.log(this.user.type);*/
+         var vm=this;
+        if(this.validate(0)){
+          axios.post('/signup', { name: this.user.name, name_last: this.user.name_last, email: this.user.email, password: this.user.password, type: '2'}).then(() => {
+            console.log('saved');
+            window.location.href="/";
+          }, function (error) {
+            console.log(error.response.data); 
+            vm.error=error.response.data.message;
           });
-         }else{
-           this.message_error="La contraseña no coincide";
-         }
+        }
+        if(this.error !=='') this.message_error_2="El email tiene que ser único";
+      },
+      validate(){
+        this.getError.message_error_1='';
+        this.getError.message_error_2='';
+        this.getError.message_error_3='';
+        this.getError.message_error_4='';
+        var flag=true;
+        if (!this.user.name) {
+          this.getError.message_error_1= "El nombre no puede estar vacío";
+          flag= false;
+        } 
+        if (!this.user.email) {
+          this.getError.message_error_2= " El email no puede estar vacío";
+          flag= false;
+        }
+        if (!this.user.password) {
+          this.getError.message_error_3= " La contraseña no puede estar vacía"
+          flag= false;
+        }
+        if (!this.user.repeat_password) {
+          this.getError.message_error_4= " Es necesario confirmar la contraseña no puede dejarla vacía";
+          flag= false;
+        }
+        if (this.user.password !== this.user.repeat_password){
+            this.message_error_4= " La contraseña no coincide";
+            flag= false;
+        }
+        return flag;
       }
     }
 
