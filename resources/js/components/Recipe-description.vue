@@ -60,7 +60,7 @@
             </div>
         </div>
 
-        <!-- comentarios -->
+        <!-- send comment -->
         <div class="container coments">
             <div class="row">
                 <!-- primera colimna (coment) -->
@@ -80,46 +80,25 @@
             </div>
         </div>
 
+        <!-- comments -->
         <div class="container coment_user">
+            <div v-for="comment_recipe in getComment">
 
-            <div class="row margin_comment">
-                <!-- primera colimna (avatar) -->
-                <div class="col-1">
-                    <img v-bind:src="user_img" class="card-img-top comment_image" alt="image">
+                <div class="row margin_comment">
+                    <!-- primera colimna (avatar) -->
+                    <div class="col-1">
+                        <img v-bind:src="user_img" class="card-img-top comment_image" alt="image">
+                    </div>
+
+                        <!-- Segunda columna (comentario) -->
+                    <div class="col-11">
+                        <p style="font-weight: bold;">@{{ comment_recipe.user_id }}</p>
+                        <p>{{ comment_recipe.description }}</p>
+                    </div>
                 </div>
 
-                    <!-- Segunda columna (comentario) -->
-                <div class="col-11">
-                    <p style="font-weight: bold;">@JavierMorenito19</p>
-                    <p>Esto es un comentario como otro cualquiera bb</p>
-                </div>
             </div>
-
-            <div class="row margin_comment">
-                <!-- primera colimna (avatar) -->
-                <div class="col-1">
-                    <img v-bind:src="user_img" class="card-img-top comment_image" alt="image">
-                </div>
-
-                    <!-- Segunda columna (comentario) -->
-                <div class="col-11">
-                    <p style="font-weight: bold;">@JavierMorenito19</p>
-                    <p>Esto es un comentario como otro cualquiera bb</p>
-                </div>
-            </div>
-
-            <div class="row margin_comment">
-                <!-- primera colimna (avatar) -->
-                <div class="col-1">
-                    <img v-bind:src="user_img" class="card-img-top comment_image" alt="image">
-                </div>
-
-                    <!-- Segunda columna (comentario) -->
-                <div class="col-11">
-                    <p style="font-weight: bold;">@JavierMorenito19</p>
-                    <p> Esto es un comentario como otro cualquiera bb Esto es un comentario como otro cualquiera bb Esto es un comentario como otro cualquiera bb Esto es un comentario como otro cualquiera bb Esto es un comentario como otro cualquiera bb Esto es un comentario como otro cualquiera bbEsto es un comentario como otro cualquiera bb Esto es un comentario como otro cualquiera bb</p>
-                </div>
-            </div>
+    
         </div>
     </section>
 </template>
@@ -170,6 +149,26 @@ export default {
             (error) => {
                 console.log(error.response.data);
             });
+
+        // miramos todos los comentarios
+        axios.get(`/recipe_comments/${this.id}`)
+            .then(respo => {
+                this.comments = respo.data;
+                console.log(this.comments);
+            }, 
+            (error) => {
+                console.log(error.response.data);
+            });
+
+        /*axios.post('/userComment', 
+            {user_id: vm.getUser.id})
+            .then(resqu => {
+                console.log(resqu);
+            },
+            (error) => {
+                console.log(error.response.data);
+            });*/
+        
     },
 
     data() {
@@ -190,8 +189,12 @@ export default {
     },
 
     computed: {
-        user() {
+        getUser() {
             return (this.user[0]) ? this.user[0] : this.user;
+        }, 
+
+        getComment() {
+            return this.comments;
         }
     },
 
@@ -199,12 +202,12 @@ export default {
     }, 
     methods: {
         getLike() {
-            if (this.user.length == 0) {
+            if (this.getUser.length == 0) {
                 alert("No puedes dar like hasta que inicies sesicón.");
             } else {
-                //console.log(this.user);
+                //console.log(this.getUser);
                 axios.post('/likes', {
-                user_id: this.user.id, 
+                user_id: this.getUser.id, 
                 recipe_id: this.recipe.id})
                 .then(() => {
                     this.like = [this.like[0]+1, img_dir.url + img_dir.like];
@@ -217,14 +220,14 @@ export default {
 
         getUserLike() {
             // miramos si el usuario registrado ha dado like a la receta
-            //console.log(this.user);
-            axios.get(`/likes/${this.user.id}`)
+            //console.log(this.getUser);
+            axios.get(`/likes/${this.getUser.id}`)
                 .then(resp => {    
                     //console.log(resp.data);
                     for (let index = 0; index < resp.data.length; index++) {
-                        /*console.log(this.user.id);
+                        /*console.log(this.getUser.id);
                         console.log(this.id);*/
-                        if (resp.data[index].user_id == this.user.id &&
+                        if (resp.data[index].user_id == this.getUser.id &&
                             resp.data[index].recipe_id == this.id) {
                             this.like[1] = img_dir.url + img_dir.like;
                             break
@@ -237,23 +240,24 @@ export default {
         }, 
 
         sendComment() {
-            if (this.user.length == 0) {
+            if (this.getUser.length == 0) {
                 alert("No puedes comentar hasta que inicies sesicón.");
             } else {
-                console.log('entramos a mandar el comentario');
                 axios.post('/comment', {
                 description: this.comment,
-                user_id: this.user.id, 
+                user_id: this.getUser.id, 
                 recipe_id: this.recipe.id})
-                .then(() => {
-                    this.comments = [];
+                .then((res) => {
+                    this.comment = '';
+                    this.comments.push(res.data);
                 }, 
                 (error) => {
                     console.log(error.response.data);
                 });
+
+                
             }
-        }
-            
+        }, 
     }
 
 }

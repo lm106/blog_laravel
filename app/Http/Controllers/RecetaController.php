@@ -31,6 +31,16 @@ class RecetaController extends Controller
         return response()->json($like);
     }
 
+    public function nComment($id) {
+        $comment = Receta::find($id)->n_comment->count();
+        return response()->json($comment);
+    }
+
+    public function allComments($id) {
+        $comment = Receta::find($id)->n_comment;
+        return response()->json($comment);
+    }
+
     /**
      * Show the form for creating a new resource.
      *

@@ -18,4 +18,12 @@ class Receta extends Model
     public function n_likes() {
         return $this->hasMany('App\Models\Like', 'recipe_id');
     }
+
+    public function n_comment() {
+        return $this->hasMany('App\Models\Comment', 'recipe_id');
+    }
+
+    public function all_comments() {
+        return $this->hasMany('App\Models\Comment', 'recipe_id');
+    }
 }

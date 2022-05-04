@@ -20,6 +20,12 @@ class CommentController extends Controller
         return array_reverse($comments);
     }
 
+
+    public function nameUser(Request $request) {
+        $user = User::find($request->get('user_id'))->nameComment;
+        return response()->json($user);
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -38,6 +44,8 @@ class CommentController extends Controller
         $comment->user_id = $request->get('user_id');
         $comment->recipe_id = $request->get('recipe_id');
         $comment -> save();
+
+        return response()->json($comment);
     }
 
     /**
