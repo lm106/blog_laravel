@@ -7,7 +7,7 @@
         <li v-if="getError.message_error_3">{{getError.message_error_3}}</li> 
         <li v-if="getError.message_error_4">{{getError.message_error_4}}</li>
       </ul>
-        <form  class='form_edit_signup' @submit.prevent="update()">
+        <form  class='form_edit_signup' @submit.prevent="update_user()">
         <div id='input_data'>
             <label>Rol:</label><br>
             <select v-model="user.type" id="rol">
@@ -65,7 +65,7 @@ export default {
         }
     },
     methods:{
-        update(){
+        update_user(){
             if(this.validate()){
                 axios.post('/update_user', { id:this.user.id, type:this.user.type, name: this.user.name, name_last: this.user.name_last, email: this.user.email, password: this.user.password}).then((res) => {
                 // console.log(res);

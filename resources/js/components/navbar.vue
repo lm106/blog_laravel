@@ -73,8 +73,8 @@ export default {
         var vm = this
         axios.get(`/profile`).then(res => {
             vm.user = res.data[0];//Recoger los datos del usuario en la session
-            console.log(res.data);
-            console.log(vm.user);
+            // console.log(res.data);
+            // console.log(vm.user);
         },
         (error) => {
             console.log(error.response.data);

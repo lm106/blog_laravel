@@ -74,13 +74,13 @@ export default {
     }, 
     methods:{
         update(){
-            console.log("---");
-            console.log(this.user);
+            // console.log("---");
+            // console.log(this.user);
             // var user_new=this.user;
             if(this.validate()){
                 axios.post('/edit', { name: this.user.name, name_last: this.user.name_last, email: this.user.email, password: this.user.password}).then((res) => {
                     // console.log(res);
-                console.log('saved update');
+                // console.log('saved update');
             }, function (error) {
                 console.log(error.response.data); 
                 });
