@@ -74,11 +74,33 @@ export default {
     watch:{
         receta(val){
             this.titulo=val.title;
-            
+            this.imagen = val.image;
+            this.descripcion = val.description;    
+            this.loadLikeComment();        
         }
     },
 
-    props: ["receta"]
+    props: ["receta"], 
+
+    methods: {
+        loadLikeComment() {
+            axios.get(`/recipe_likes/${this.receta.id}`)
+            .then(respo => {
+                this.like[0] = respo.data;
+            }, 
+            (error) => {
+                console.log(error.response.data);
+            });
+
+            /*axios.get(`/recipe_likes/${this.receta.id}`)
+            .then(respo => {
+                this.like[0] = respo.data;
+            }, 
+            (error) => {
+                console.log(error.response.data);
+            });*/
+        }
+    }
 }
 
 

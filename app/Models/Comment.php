@@ -11,7 +11,7 @@ class Comment extends Model
     use HasFactory;
     use Notifiable;
     protected $fillable = [
-        'user_id', 'recipe_id'
+        'description', 'user_id', 'recipe_id'
     ];
     protected $table = 'comment';
 }

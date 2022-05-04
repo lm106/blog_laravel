@@ -70,7 +70,12 @@
 
                     <!-- Segunda columna (escribir) -->
                 <div class="col-11">
-                    <textarea name="comment" class="form-control txt_coment" placeholder="Escribe tu comentario..."></textarea>
+                    <form style="height: auto;" @submit.prevent="sendComment()">
+                        <textarea style="width: 80%;" v-model="comment" class="form-control txt_coment" placeholder="Escribe tu comentario..."></textarea>
+                        <button type="submit" class="button_comment">
+                            <img v-bind:src="send" class="card-img-top comment_image" alt="image">
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -174,10 +179,19 @@ export default {
             descriptions: [],
             image: "",
             like: [0, img_dir.url + img_dir.dislike],
+            send: img_dir.url + img_dir.send,
             save: img_dir.url + img_dir.save,
             coment: img_dir.url + img_dir.coment,
             user: [],
-            user_img: img_dir.url + img_dir.user
+            user_img: img_dir.url + img_dir.user,
+            comment: '', 
+            comments: []
+        }
+    },
+
+    computed: {
+        user() {
+            return (this.user[0]) ? this.user[0] : this.user;
         }
     },
 
@@ -188,9 +202,9 @@ export default {
             if (this.user.length == 0) {
                 alert("No puedes dar like hasta que inicies sesicón.");
             } else {
-                console.log(this.user[0].id);
+                //console.log(this.user);
                 axios.post('/likes', {
-                user_id: this.user[0].id, 
+                user_id: this.user.id, 
                 recipe_id: this.recipe.id})
                 .then(() => {
                     this.like = [this.like[0]+1, img_dir.url + img_dir.like];
@@ -203,17 +217,16 @@ export default {
 
         getUserLike() {
             // miramos si el usuario registrado ha dado like a la receta
-            console.log(this.user[0]);
-            axios.get(`/likes/${this.user[0].id}`)
+            //console.log(this.user);
+            axios.get(`/likes/${this.user.id}`)
                 .then(resp => {    
-                    console.log(resp.data);
+                    //console.log(resp.data);
                     for (let index = 0; index < resp.data.length; index++) {
-                        console.log(this.user[0].id);
-                        console.log(this.id);
-                        if (resp.data[index].user_id == this.user[0].id &&
+                        /*console.log(this.user.id);
+                        console.log(this.id);*/
+                        if (resp.data[index].user_id == this.user.id &&
                             resp.data[index].recipe_id == this.id) {
                             this.like[1] = img_dir.url + img_dir.like;
-                            console.log('ya estamso en if');
                             break
                         }
                     }
@@ -221,6 +234,24 @@ export default {
                 (error) => {
                     console.log(error.response.data);
             });
+        }, 
+
+        sendComment() {
+            if (this.user.length == 0) {
+                alert("No puedes comentar hasta que inicies sesicón.");
+            } else {
+                console.log('entramos a mandar el comentario');
+                axios.post('/comment', {
+                description: this.comment,
+                user_id: this.user.id, 
+                recipe_id: this.recipe.id})
+                .then(() => {
+                    this.comments = [];
+                }, 
+                (error) => {
+                    console.log(error.response.data);
+                });
+            }
         }
             
     }
@@ -229,6 +260,16 @@ export default {
 </script>
 
 <style>
+
+    .button_comment {
+        float: right; 
+        margin: auto; 
+        background-color: 
+        transparent; 
+        border-color: transparent;
+        width: 5%;
+    }
+
     #content {
         margin-top: 6rem;
         margin-right: 4%;

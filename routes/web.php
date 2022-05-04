@@ -37,6 +37,7 @@ Route::view('/likes', 'welcome');
 Route::view('/edit', 'welcome');
 Route::view('/admin_list', 'welcome');
 Route::view('/edit_user/{id}', 'welcome');
+Route::view('/comment', 'welcome');
 
 
 
@@ -53,6 +54,7 @@ Route::get('post', [PostController::class, 'index'])->name('post');*/
 use App\Http\Controllers\userController;
 use App\Http\Controllers\RecetaController;
 use App\Http\Controllers\LikeController;
+use App\Http\Controllers\CommentController;
 Route::post('/signup', [userController::class, 'createUser']);
 Route::post('/login', [userController::class, 'login']);
 Route::post('/logout', [userController::class, 'logout']);
@@ -66,4 +68,5 @@ Route::post('/update_user', [userController::class, 'update']);
 Route::post('/likes', [LikeController::class, 'create']);
 Route::get('/likes/{id}', [LikeController::class, 'index']);
 Route::get('/recipe_likes/{id}', [RecetaController::class, 'nLike']);
+Route::post('/comment', [CommentController::class, 'create']);
 

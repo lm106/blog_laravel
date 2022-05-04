@@ -25,7 +25,7 @@ class CommentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
         //
         $request->validate([
@@ -35,12 +35,9 @@ class CommentController extends Controller
         ]);
         $comment = new Comment();
         $comment->description = $request->get('description');
-        $comment->user_id = $request->get('user_Id');
+        $comment->user_id = $request->get('user_id');
         $comment->recipe_id = $request->get('recipe_id');
-        $user -> save();
-        
-        $request->session()->put(['comment' => $comment]);
-        return $request->session()->all();
+        $comment -> save();
     }
 
     /**
@@ -52,6 +49,7 @@ class CommentController extends Controller
     public function store(Request $request)
     {
         //
+        Comment::create($request->all());
     }
 
     /**
@@ -63,6 +61,8 @@ class CommentController extends Controller
     public function show($id)
     {
         //
+        $comment = DB::table('comment')->where('recipe_id', $id);
+        return response()->json($comment);
     }
 
     /**
