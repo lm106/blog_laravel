@@ -60,7 +60,7 @@ Route::get('/profile', [userController::class, 'show']);
 Route::post('/edit', [userController::class, 'edit']);
 Route::get('/admin_list', [userController::class, 'index']); 
 Route::get('/recetas', [RecetaController::class, 'index']);
-Route::post('/edit_user/{id}', [userController::class, 'edit_user']);
+Route::get('/edit_user/{id}', [userController::class, 'edit_user']);
 Route::post('/new_recipe', [RecetaController::class, 'createRecipe']);
 
 Route::post('/likes', [LikeController::class, 'create']);

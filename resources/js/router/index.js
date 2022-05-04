@@ -53,7 +53,7 @@ const router = [
   }, 
   {
     path: '/edit_user/:id',
-    name: 'editUser',
+    name: 'edit_user',
     props: true,
     component: require('../components/user/admin/edit_user.vue').default
   }
