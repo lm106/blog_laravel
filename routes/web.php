@@ -62,7 +62,7 @@ Route::get('/admin_list', [userController::class, 'index']);
 Route::get('/recetas', [RecetaController::class, 'index']);
 Route::get('/edit_user/{id}', [userController::class, 'edit_user']);
 Route::post('/new_recipe', [RecetaController::class, 'createRecipe']);
-
+Route::post('/update_user', [userController::class, 'update']);
 Route::post('/likes', [LikeController::class, 'create']);
 Route::get('/likes/{id}', [LikeController::class, 'index']);
 Route::get('/recipe_likes/{id}', [RecetaController::class, 'nLike']);
