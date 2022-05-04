@@ -37,13 +37,13 @@
 
                 <br>
 
-
-
             <div class="container_fluid_new">
                 <div v-for="id in getIds" :receta="id">
-                    <receta class="receta" :receta="id"></receta>
+                    <receta class="receta" :receta.sync="id"></receta>
+
                 </div>
-            </div> 
+
+             </div> 
         </div>
 
         

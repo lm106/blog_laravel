@@ -71,6 +71,12 @@ export default {
             comentarios: '2'
         }
     },
+    watch:{
+        receta(val){
+            this.titulo=val.title;
+            
+        }
+    },
 
     props: ["receta"]
 }
