@@ -13,7 +13,7 @@
           <div v-if="user.length < 1" class="no-user text-end position-absolute top-0 end-0" id="menu_login">
             <router-link to="/login" id="log-in">Iniciar sesión</router-link>
           </div>
-          <div v-else-if="userType == 1 || user[0].type == 1">
+          <div v-else-if="userType == 1">
           <div class="dropdown text-end position-absolute top-0 end-0 ">
             <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
               <img src="https://github.com/mdo.png" alt="mdo" width="52" height="52" class="rounded-circle">
@@ -29,7 +29,7 @@
             </div>
           </div>
 
-          <div v-else-if="userType != 1 || user[0].type != 1">
+          <div v-else-if="userType != 1">
             <div class="dropdown text-end position-absolute top-0 end-0 ">
             <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
               <img src="https://github.com/mdo.png" alt="mdo" width="52" height="52" class="rounded-circle">
@@ -66,7 +66,7 @@ export default {
   },
   computed:{
     userType(){ //verifica todo el rato si ha cambiado el tipo.
-      return this.user.type;
+      return (this.user[0])? this.user[0].type: this.user.type;
     }
   },
   beforeCreate() {
