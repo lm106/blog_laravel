@@ -26,9 +26,9 @@ class RecetaController extends Controller
     public function nLike($id) {
         //$like = new Receta();
         //$like->n_likes()->where('recipe_id', '=', $id)->count();
-        $receta = DB::table('likes')->where('recipe_id', $id)->count();
-        //$like = Receta::find($id)->n_likes()->count();
-        return response()->json($receta);
+        // $receta = DB::table('likes')->where('recipe_id', $id)->count();
+        $like = Receta::find($id)->n_likes->count();
+        return response()->json($like);
     }
 
     /**
