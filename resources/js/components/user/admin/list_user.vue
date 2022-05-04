@@ -18,7 +18,7 @@
                 <td scope="row">{{user.name}}</td>
                 <td scope="row" v-if="user.type==1">Administrador</td>
                 <td scope="row" v-if="user.type!=1">Usuario registrado</td>
-                <td scope="row"> <router-link :to="{name: 'editUser', params: {id: user.id}}" class="btn_edit_delete">
+                <td scope="row"> <router-link :to="{name: 'edit_user', params: {id: user.id}}" class="btn_edit_delete">
                     <i class="bi bi-pencil-fill" ></i></router-link></td>
                 <td scope="row"><a class="btn_edit_delete"><i class="bi bi-trash3-fill" style="color:red"></i></a></td>
             

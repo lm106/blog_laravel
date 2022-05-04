@@ -82,12 +82,14 @@ class userController extends Controller
     {
         //
     }
-    public function show_edit($id){
-        
+    public function edit_user($id){
+        $id_num=(int)$id;
+        $user = User::find($id_num);
+        return response()->json($user);
+        // return  $id;
     }
 
-    /**
-     * Display the specified resource.
+    /** Mostrar los datos del usuario
      *
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
@@ -99,9 +101,8 @@ class userController extends Controller
         return $request->session()->get('user');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
+    /** Actualizar el perfil del usuario
+     * 
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
@@ -126,16 +127,30 @@ class userController extends Controller
         // return response()->json($user_update);
     }
 
-    /**
+    /** Actualizar un usuario (Rol Admnistrador)
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
-    {
+    public function update(Request $request){
         //
+        $user_update = new User();
+        $user_update->name = $request->get('name');
+        $user_update->name_last = $request->get('name_last');
+        $user_update->email = $request->get('email');
+        $user_update->password = $request->get('password');
+        $user_update->type= $request->get('type');
+        $user_update->id= $request->get('id');
+        $user_db=User::find($user_update->id);
+        if($user_db->name !==$user_update->name) $user_db->name=$user_update->name;
+        if($user_db->name_last !==$user_update->name_last) $user_db->name_last=$user_update->name_last;
+        if($user_db->password !==$user_update->password) $user_db->password=$user_update->password;
+        if($user_db->type !==$user_update->type) $user_db->type=$user_update->type;
+        $user_db->save();
+        // return response()->json($user_db);
+
     }
 
     /**
