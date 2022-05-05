@@ -19,6 +19,9 @@
         </div>
         <input type="submit"  id="update" value="Actualizar datos">
         </form>
+        <form @submit.prevent="delete_user()">
+        <input type="submit"  class="update" value="Eliminar cuenta">
+        </form>
         <!-- <p>{{ user }}</p> -->
     </div>
 </template>
@@ -136,5 +139,11 @@ export default {
     border: none;
     padding: 5px 20px;
     color: white;
+}
+#delete{
+    width: 20%;
+    float: right;
+    padding-right: 15%;
+    margin-top: 2%;
 }
 </style>
