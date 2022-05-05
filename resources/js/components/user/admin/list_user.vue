@@ -1,31 +1,34 @@
 <template>
   <div class="section">
-      <h2>{{title}}</h2>
-      <table class="table" id="content_table" >
-        <thead>
-            <tr>
-            <th scope="col"></th>
-            <th scope="col">Nombre</th>
-            <th id="rol_column" scope="col">Tipo de usuario</th>
-            <th class="btn_table" scope="col"></th>
-            <th class="btn_table" scope="col"></th>
+    <h2 class="titulo">{{title}}</h2>
+    <div class="form-inline my-2 my-lg-0 ">  
+        <input class="form-control mr-sm-2" id="search_user" type="text" v-model="search_user" placeholder="Buscar usuario..." aria-label="Search">
+        <!-- {{search}} -->
+    </div>   
+    <table class="table" id="content_table" >
+    <thead>
+        <tr>
+        <th scope="col"></th>
+        <th scope="col">Nombre</th>
+        <th id="rol_column" scope="col">Tipo de usuario</th>
+        <th class="btn_table" scope="col"></th>
+        <th class="btn_table" scope="col"></th>
 
-            </tr>
-        </thead>
-        <tbody>
-            <tr v-for="user in users" :key='user' >
-                <td scope="row">{{user.photo}}</td>
-                <td scope="row">{{user.name}}</td>
-                <td scope="row" v-if="user.type==1">Administrador</td>
-                <td scope="row" v-if="user.type!=1">Usuario registrado</td>
-                <td scope="row"> <router-link :to="{name: 'edit_user', params: {id: user.id}}" class="btn_edit_delete">
-                    <i class="bi bi-pencil-fill" ></i></router-link></td>
-                <td scope="row"><a class="btn_edit_delete"><i class="bi bi-trash3-fill" style="color:red"></i></a></td>
-            
-            </tr>
-        </tbody>
-        </table>
-
+        </tr>
+    </thead>
+    <tbody v-if="search!='not'">
+        <tr v-for="user in search" :key='user' >
+            <td scope="row">{{user.photo}}</td>
+            <td scope="row">{{user.name}}</td>
+            <td scope="row" v-if="user.type==1">Administrador</td>
+            <td scope="row" v-if="user.type!=1">Usuario registrado</td>
+            <td scope="row"> <router-link :to="{name: 'edit_user', params: {id: user.id}}" class="btn_edit_delete">
+                <i class="bi bi-pencil-fill" ></i></router-link></td>
+            <td scope="row"><a class="btn_edit_delete"><i class="bi bi-trash3-fill" style="color:red"></i></a></td>
+        </tr>
+    </tbody>
+    </table>
+    <div class="alert alert-secondary" id="alert_search" v-if="search=='not'"> ¡Ups! No hay usuarios con ese nombre. ¡Intentálo de nuevo!</div>
   </div>
 </template>
 
@@ -35,6 +38,7 @@ export default {
         var vm=this;
         axios.get('/admin_list').then(res => {
             vm.users = res.data;
+            vm.users_original = res.data;
             // console.log(res.data);
         },
         (error) => {
@@ -46,7 +50,26 @@ export default {
     data(){
         return {
             title: 'Usuarios registrados',
-            users:[]
+            users:[],
+            search_user:''
+
+        }
+    },
+    computed:{
+        search(){
+            if(this.search_user){
+                var user=[];
+                var users_search = [];
+                for (let i = 0; i < this.users.length; i++) {
+                    user = this.users[i];
+                    if(user.name==this.search_user ||user.name.includes(this.search_user) ){
+                        users_search.push(user);
+                    }                     
+                }
+                return (users_search.length>0)? users_search : 'not';
+            }else{
+                return this.users;
+            }
         }
     }
 }
@@ -55,6 +78,14 @@ export default {
 <style>
 .section{
     margin-top:5rem;
+}
+.titulo{
+    margin-left:20px;
+}
+#search_user{
+    width: 15%;
+    float: right;
+    margin-right: 4%;
 }
 #content_table{
     margin: 20px;
@@ -69,5 +100,9 @@ export default {
 .btn_edit_delete{
     border:none; 
     background-color:transparent
+}
+#alert_search{
+    text-align: center;
+    margin: 20px 75px 20px 20px;
 }
 </style>
