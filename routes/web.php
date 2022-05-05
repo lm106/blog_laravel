@@ -71,6 +71,5 @@ Route::get('/recipe_likes/{id}', [RecetaController::class, 'nLike']);
 Route::post('/comment', [CommentController::class, 'create']);
 Route::get('/recipe_comment/{id}', [RecetaController::class, 'nComment']);
 Route::get('/recipe_comments/{id}', [RecetaController::class, 'allComments']);
-Route::post('/userComment', [CommentController::class, 'nameUser']);
 
 

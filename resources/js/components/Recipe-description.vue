@@ -92,7 +92,7 @@
 
                         <!-- Segunda columna (comentario) -->
                     <div class="col-11">
-                        <p style="font-weight: bold;">@{{ comment_recipe.user_id }}</p>
+                        <p style="font-weight: bold;">@{{ comment_recipe.name_user.name }}</p>
                         <p>{{ comment_recipe.description }}</p>
                     </div>
                 </div>
@@ -112,7 +112,7 @@ export default {
     props: ["id"],
 
     beforeCreate() {
-        var vm = this
+        var vm = this;
         axios.get('/recetas')
             .then(res => { 
                 for (let index = 0; index < res.data.length; index++) {
@@ -154,21 +154,10 @@ export default {
         axios.get(`/recipe_comments/${this.id}`)
             .then(respo => {
                 this.comments = respo.data;
-                console.log(this.comments);
             }, 
             (error) => {
                 console.log(error.response.data);
-            });
-
-        /*axios.post('/userComment', 
-            {user_id: vm.getUser.id})
-            .then(resqu => {
-                console.log(resqu);
-            },
-            (error) => {
-                console.log(error.response.data);
-            });*/
-        
+            });        
     },
 
     data() {
@@ -250,6 +239,7 @@ export default {
                 .then((res) => {
                     this.comment = '';
                     this.comments.push(res.data);
+                    this.comments[this.comments.length -1].name_user = this.getUser;
                 }, 
                 (error) => {
                     console.log(error.response.data);
@@ -257,7 +247,8 @@ export default {
 
                 
             }
-        }, 
+        }
+        
     }
 
 }

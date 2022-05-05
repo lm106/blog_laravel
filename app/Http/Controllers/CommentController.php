@@ -16,15 +16,14 @@ class CommentController extends Controller
     public function index()
     {
         //
-        $comments = Comment::all()->toArray();
+        $comments = Comment::all();
         return array_reverse($comments);
     }
 
-
-    public function nameUser(Request $request) {
+    /*public function nameUser(Request $request) {
         $user = User::find($request->get('user_id'))->nameComment;
         return response()->json($user);
-    }
+    }*/
 
     /**
      * Show the form for creating a new resource.

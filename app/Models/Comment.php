@@ -14,4 +14,8 @@ class Comment extends Model
         'description', 'user_id', 'recipe_id'
     ];
     protected $table = 'comment';
+
+    public function nameUser() {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

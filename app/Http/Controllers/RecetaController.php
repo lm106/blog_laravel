@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Receta;
+use App\Models\Comment;
 
 class RecetaController extends Controller
 {
@@ -37,8 +38,11 @@ class RecetaController extends Controller
     }
 
     public function allComments($id) {
-        $comment = Receta::find($id)->n_comment;
-        return response()->json($comment);
+        //$comment = Receta::find($id)->n_comment;
+        $comments = Comment::with('nameUser')
+            ->where('recipe_id', '=', $id)
+            ->get()->toArray();
+        return response()->json($comments);
     }
 
     /**

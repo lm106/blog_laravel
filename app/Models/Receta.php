@@ -22,8 +22,4 @@ class Receta extends Model
     public function n_comment() {
         return $this->hasMany('App\Models\Comment', 'recipe_id');
     }
-
-    public function all_comments() {
-        return $this->hasMany('App\Models\Comment', 'recipe_id');
-    }
 }

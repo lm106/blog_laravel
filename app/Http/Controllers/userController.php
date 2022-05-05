@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\RedirectResponse;
@@ -19,6 +20,7 @@ class userController extends Controller
         $users = User::all();
         return response()->json($users); 
     }
+
     public function login(Request $request){
         $request->validate([
             'email'=>['required', 'email'],
