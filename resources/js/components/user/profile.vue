@@ -4,6 +4,7 @@
         <ul class="success">
             <li v-if="getError.message_1">{{ getError.message_1 }}</li>
             <li v-if="getError.message_2">{{ getError.message_2 }}</li>
+            <li v-if="error">{{ error }}</li>
         </ul>
         <form  class='form_edit_signup' @submit.prevent="update()">
         <!-- <img> -->
@@ -17,10 +18,10 @@
             <label >Password:</label><br>
             <input type="password"  v-model="getUser.password"/><br>
         </div>
-        <input type="submit"  id="update" value="Actualizar datos">
+        <input type="submit"  class="update" value="Actualizar datos">
         </form>
         <form @submit.prevent="delete_user()">
-        <input type="submit"  class="update" value="Eliminar cuenta">
+        <input type="submit"  class="update" id="delete" value="Eliminar cuenta">
         </form>
         <!-- <p>{{ user }}</p> -->
     </div>
@@ -36,7 +37,7 @@ export default {
         // })
         //  console.log(this.user_id);
         axios.get('/profile').then(res => {
-            this.user = res.data[0];
+            this.user = res.data;
             // console.log(res);
             // console.log(this.user);
 
@@ -64,12 +65,13 @@ export default {
             message:[{
                 message_1:'',
                 message_2:''
-            }]
+            }],
+            error:''
         }
     },
     computed:{
         getUser(){
-            return this.user;
+            return (this.user[0])?this.user[0]: this.user;
         },
         getError(){
             return this.message[0];
@@ -84,8 +86,8 @@ export default {
                 axios.post('/edit', { name: this.user.name, name_last: this.user.name_last, email: this.user.email, password: this.user.password}).then((res) => {
                     // console.log(res);
                 // console.log('saved update');
-            }, function (error) {
-                console.log(error.response.data); 
+                }, function (error) {
+                    console.log(error.response.data); 
                 });
             }
         },
@@ -104,6 +106,19 @@ export default {
             }
             console.log(this.message)
             return flag;
+        },
+        delete_user(){
+            axios.post('/delete', { id: this.user.id}).then((res) => {
+                console.log(res);
+                // console.log('saved update');
+                if(res.data) {
+                    window.location.href='/';
+                }else{
+                    this.error="Error: No se ha podido eliminar la cuenta";
+                }
+            }, function (error) {
+                console.log(error.response.data); 
+            });
         }
 
     }
@@ -133,17 +148,17 @@ export default {
 #input_data label{
     margin: 5px 0px;
 }
-#update {
+.update {
     margin: 30% 0% 10% 30%;
     background: #D5888D;
     border: none;
     padding: 5px 20px;
     color: white;
 }
-#delete{
+#delete {
     width: 20%;
     float: right;
-    padding-right: 15%;
     margin-top: 2%;
+    background: #AB8A62;
 }
 </style>
