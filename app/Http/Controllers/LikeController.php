@@ -38,6 +38,8 @@ class LikeController extends Controller
         $like->recipe_id = $request->get('recipe_id');
         $like -> save();
 
+        return response()->json($like);
+
     }
 
     /**
@@ -96,21 +98,8 @@ class LikeController extends Controller
      */
     public function destroy($id)
     {
-        //
-        $user_id = $request->session()->get('user');
-        if ($user_id != null) {
-            $request->validate([
-                'recipe_id'=>'required'
-            ]);
-
-            $like = DB::table('likes')
-            ->where('user_id', '=', $user_id['id'])
-            -> where('recipe_id', '=', $id)
-            ->get();
-
-            //falta eliminarlo, como hemos comprobado que
-            // el like existe
-        } 
+        $like = Like::findOrFail($id);
+        $like->delete();
 
     }
 }

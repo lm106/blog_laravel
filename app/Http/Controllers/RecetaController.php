@@ -28,13 +28,8 @@ class RecetaController extends Controller
         //$like = new Receta();
         //$like->n_likes()->where('recipe_id', '=', $id)->count();
         // $receta = DB::table('likes')->where('recipe_id', $id)->count();
-        $like = Receta::find($id)->n_likes->count();
+        $like = [Receta::find($id)->n_likes->count(), Receta::find($id)->n_comment->count()];
         return response()->json($like);
-    }
-
-    public function nComment($id) {
-        $comment = Receta::find($id)->n_comment->count();
-        return response()->json($comment);
     }
 
     public function allComments($id) {

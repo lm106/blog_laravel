@@ -66,10 +66,10 @@ Route::get('/edit_user/{id}', [userController::class, 'edit_user']);
 Route::post('/new_recipe', [RecetaController::class, 'createRecipe']);
 Route::post('/update_user', [userController::class, 'update']);
 Route::post('/likes', [LikeController::class, 'create']);
+Route::get('/dislikes/{id}', [LikeController::class, 'destroy']);
 Route::get('/likes/{id}', [LikeController::class, 'index']);
 Route::get('/recipe_likes/{id}', [RecetaController::class, 'nLike']);
 Route::post('/comment', [CommentController::class, 'create']);
-Route::get('/recipe_comment/{id}', [RecetaController::class, 'nComment']);
 Route::get('/recipe_comments/{id}', [RecetaController::class, 'allComments']);
 
 

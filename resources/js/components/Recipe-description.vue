@@ -144,7 +144,7 @@ export default {
         // miramos el num de likes de la receta
         axios.get(`/recipe_likes/${this.id}`)
             .then(respo => {
-                this.like[0] = respo.data;
+                this.like[0] = respo.data[0];
             }, 
             (error) => {
                 console.log(error.response.data);
@@ -166,7 +166,7 @@ export default {
             ingredients: [],
             descriptions: [],
             image: "",
-            like: [0, img_dir.url + img_dir.dislike],
+            like: [0, img_dir.url + img_dir.dislike, null],
             send: img_dir.url + img_dir.send,
             save: img_dir.url + img_dir.save,
             coment: img_dir.url + img_dir.coment,
@@ -187,23 +187,32 @@ export default {
         }
     },
 
-    beforeMount() {
-    }, 
     methods: {
         getLike() {
             if (this.getUser.length == 0) {
                 alert("No puedes dar like hasta que inicies sesicón.");
             } else {
-                //console.log(this.getUser);
-                axios.post('/likes', {
-                user_id: this.getUser.id, 
-                recipe_id: this.recipe.id})
-                .then(() => {
-                    this.like = [this.like[0]+1, img_dir.url + img_dir.like];
-                }, 
-                (error) => {
-                    console.log(error.response.data);
-                });
+
+                if (this.like[2] == null) {
+                    axios.post('/likes', {
+                    user_id: this.getUser.id, 
+                    recipe_id: this.recipe.id})
+                    .then((res) => {
+                        this.like = [this.like[0]+1, img_dir.url + img_dir.like, res.data.id];
+                    }, 
+                    (error) => {
+                        console.log(error.response.data);
+                    });
+
+                } else {
+                    axios.get(`/dislikes/${this.like[2]}`)
+                    .then(() => {
+                        this.like = [this.like[0]-1, img_dir.url + img_dir.dislike, null];
+                    }, 
+                    (error) => {
+                        console.log(error.response.data);
+                    });
+                }
             }
         }, 
 
@@ -219,6 +228,7 @@ export default {
                         if (resp.data[index].user_id == this.getUser.id &&
                             resp.data[index].recipe_id == this.id) {
                             this.like[1] = img_dir.url + img_dir.like;
+                            this.like[2] = resp.data[index].id;
                             break
                         }
                     }

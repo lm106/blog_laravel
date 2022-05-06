@@ -10,17 +10,9 @@
 
             <div class="row align-items-baseline" style="margin-top: 1rem;">
 
-                <div class="col-6">
+                <div class="col-9">
                     <div>
-                        <p id="comentarios"> {{ comentarios }} comentarios</p>
-                    </div>
-                </div>
-
-                <div class="col-3">
-                    <div class="boton margin">
-                        <p>
-                            <img v-bind:src="save" class="info" style="vertical-align:middle;">
-                        </p>
+                        <p id="comentarios"> {{ comment }} comentarios</p>
                     </div>
                 </div>
                 
@@ -51,10 +43,11 @@
 
 export default {
     beforeCreate() {
-        // miramos el num de likes de la receta
+        // miramos el num de likes y commentarios de la receta
         axios.get(`/recipe_likes/${this.receta.id}`)
             .then(respo => {
-                this.like[0] = respo.data;
+                this.like[0] = respo.data[0];
+                this.comment = respo.data[1];
             }, 
             (error) => {
                 console.log(error.response.data);
@@ -68,7 +61,7 @@ export default {
             titulo: this.receta.title,
             like: ['', img_dir.like],
             save: img_dir.dissave,
-            comentarios: '2'
+            comment: ''
         }
     },
     watch:{
