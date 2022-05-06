@@ -74,6 +74,7 @@ Route::get('/recipe_comments/{id}', [RecetaController::class, 'allComments']);
 
 //#################Controlador de like##################
 Route::get('/likes/{id}', [LikeController::class, 'index']);
+Route::get('/dislikes/{id}', [LikeController::class, 'destroy']);
 Route::post('/likes', [LikeController::class, 'create']);
 
 //#################Controlador de comentario##################
