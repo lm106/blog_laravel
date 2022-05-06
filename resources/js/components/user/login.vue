@@ -1,6 +1,9 @@
 <template>
 <div id="section_login"> 
       <h2> {{ title }} </h2>
+      <ul class="success">
+            <li v-if="error">{{ error }}</li>
+        </ul>
       <form  id='form_login' @submit.prevent="login()">
         <label>Email:</label><br>
         <input type="email" class='input_login' v-model="user.email" placeholder="name@example.com" /><br>
@@ -24,14 +27,19 @@ export default {
         user: [
           {email: ''},
           {password: ''}
-        ]
+        ], error:''
       }
     },
     methods:{
         login(){
-            axios.post('/login', {email: this.user.email,password: this.user.password}).then(() => {
+          this.error='';
+            axios.post('/login', {email: this.user.email,password: this.user.password}).then((res) => {
             // console.log(res);
-              window.location.href='/';
+              if(res.data==='ok') {
+                window.location.href='/';
+              }else{
+                this.error="Error: Usuario y/o contraseña no coincide";
+              }
             }, function (error) {
                 console.log(error.response.data); 
             });

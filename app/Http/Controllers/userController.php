@@ -26,16 +26,21 @@ class userController extends Controller
             'email'=>['required', 'email'],
             'password'=> 'required'
         ]);
+        $message='not';
         $user = new User();
         $user->email=$request->get('email');
         $user->password=$request->get('password');
-        $user_login = DB::table('user')
+        $user = DB::table('user')
             ->where('email', '=', $user['email'])
-            -> where('password', '=', $user['password'])
-            ->get();
-        if($user_login != null) session(['user'=>$user_login]);
+            -> where('password', '=', $user['password']);
+        if($user->exists()){
+            $user_login = $user->get();
+            session(['user'=>$user_login]);
+            $message='ok';
+        } 
         // return ($user['password']===$user['password'])? response()->json($user_check): 'Error: no coincide';
-        return $request->session()->all();
+        
+        return response()->json($message);
     }
 
     public function logout(Request $request){
@@ -161,8 +166,11 @@ class userController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
-    {
+    public function destroy(Request $request){
         //
+        $user_id=$request->get('id');
+        $request->session()->forget('user');
+        $user=User::find($user_id)->delete();
+        return response()->json($user);
     }
 }
