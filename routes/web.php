@@ -38,7 +38,7 @@ Route::view('/edit', 'welcome');
 Route::view('/admin_list', 'welcome');
 Route::view('/edit_user/{id}', 'welcome');
 Route::view('/comment', 'welcome');
-
+Route::view('/list_private', 'welcome');
 
 
 
@@ -56,6 +56,7 @@ use App\Http\Controllers\RecetaController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeCommentController;
+use App\Http\Controllers\ListController;
 
 //#################Controlador de usuario##################
 Route::post('/signup', [userController::class, 'createUser']);
@@ -86,3 +87,6 @@ Route::post('/like_comment', [LikeCommentController::class, 'create']);
 //#################Controlador de comentario##################
 Route::post('/comment', [CommentController::class, 'create']);
 
+//#################Controlador de Lista privadas##################
+Route::get('/lists', [ListController::class, 'index']);
+// Route::get('/list_private/{id}', [ListController::class, 'show']);
