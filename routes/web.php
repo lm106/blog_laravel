@@ -55,6 +55,8 @@ use App\Http\Controllers\userController;
 use App\Http\Controllers\RecetaController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\LikeCommentController;
+
 //#################Controlador de usuario##################
 Route::post('/signup', [userController::class, 'createUser']);
 Route::post('/login', [userController::class, 'login']);
@@ -76,6 +78,10 @@ Route::get('/recipe_comments/{id}', [RecetaController::class, 'allComments']);
 Route::get('/likes/{id}', [LikeController::class, 'index']);
 Route::get('/dislikes/{id}', [LikeController::class, 'destroy']);
 Route::post('/likes', [LikeController::class, 'create']);
+
+//#################Controlador de like comentarios##################
+Route::get('/dislike_comment/{id}', [LikeCommentController::class, 'destroy']);
+Route::post('/like_comment', [LikeCommentController::class, 'create']);
 
 //#################Controlador de comentario##################
 Route::post('/comment', [CommentController::class, 'create']);
