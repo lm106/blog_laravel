@@ -5,7 +5,7 @@
         <input class="form-control mr-sm-2" id="search_user" type="text" v-model="search_user" placeholder="Buscar usuario..." aria-label="Search">
         <!-- {{search}} -->
     </div>   
-    <table class="table" id="content_table" >
+    <table class="table content_table" >
     <thead>
         <tr>
         <th scope="col"></th>
@@ -87,7 +87,7 @@ export default {
     float: right;
     margin-right: 4%;
 }
-#content_table{
+.content_table{
     margin: 20px;
     width: 95%;
 }

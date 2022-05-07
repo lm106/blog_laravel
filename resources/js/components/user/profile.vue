@@ -92,7 +92,7 @@ export default {
             }
         },
         validate(){
-            console.log('he');
+            // console.log('he');
             this.getError.message_1='';
             this.getError.message_2='';
             var flag=true;
@@ -104,7 +104,7 @@ export default {
                 this.getError.message_2= " La contraseña no puede estar vacía"
                 flag=false;
             }
-            console.log(this.message)
+            // console.log(this.message)
             return flag;
         },
         delete_user(){
@@ -160,5 +160,10 @@ export default {
     float: right;
     margin-top: 2%;
     background: #AB8A62;
+}
+.success{
+    color:red;
+    font-weight: bold;
+    list-style: none;
 }
 </style>
