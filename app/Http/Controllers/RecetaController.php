@@ -63,15 +63,21 @@ class RecetaController extends Controller
 
         $request->validate([
             'title'=>'required',
-            'image'=>'',
+            'image.*' => 'mimes:jpeg,png,jpg,svg',
             'description'=>'required',
             'ingredients'=>'required',
             'user_id'=>'required'
         ]);
-
+        
+        if($image = $request->hasFile('image')) { 
+            $image = $request->file('image') ;
+            $imageName = $image->getClientOriginalName() ;
+            $destinationPath = public_path().'/images' ;
+            $image->move($destinationPath,$imageName);
+        } 
         $receta = new Receta();
         $receta->title = $request->get('title');
-        $receta->image = $request->get('image');
+        $receta->image = $request->get('image_path');
         $receta->description = $request->get('description');
         $receta->ingredients = $request->get('ingredients');
         $receta->user_id = $request->get('user_id');

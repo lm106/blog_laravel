@@ -1,9 +1,7 @@
 <template  >
   <div class="myTable" style=" width: 85%; margin: 8rem auto;">
-        <!-- Button trigger modal -->
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" style="margin-bottom:15px">Nueva receta</button>
-
-        <!-- Modal -->
+        
         <div class="modal fade bd-example-modal-xl" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" >
             <div class="modal-dialog modal-xl" >
                 <div class="modal-content">
@@ -12,7 +10,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form @submit.prevent="newRecipe">
+                    <form @submit.prevent="newRecipe" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label for="recipe-title" class="col-form-label">Título:</label>
                             <input type="text" class="form-control" id="recipe-title" v-model="recipe.title">
@@ -25,10 +23,14 @@
                             <label for="recipe-ingredients" class="col-form-label">Ingredientes:</label>
                             <textarea placeholder= "Introducir ingredientes separados por comas" rows="6" class="form-control" id="recipe-ingredients" v-model="recipe.ingredients " style="resize:vertical"></textarea>
                         </div>
+        
                         <div class="mb-5">
                             <label for="formFile" class="form-label">Imagen:</label>
-                            <input class="form-control" type="file" id="formFile" accept=".jpg,.png">
+                            <input class="form-control" type="file" id="formFile" accept=".jpeg,.png,.jpg,.svg" name="image" v-on:change="onChange" ref="file">
                         </div>
+                        
+       
+                        
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                             <button type="button submit" class="btn btn-primary">Guardar</button>
@@ -46,6 +48,7 @@
             <tr>
             <th scope="col">Id</th>
             <th scope="col">Título</th>
+            <th scope="col">Imagen</th>
             <th scope="col">Descripción</th>
             <th scope="col">Ingredientes</th>
             <th scope="col"></th>
@@ -57,6 +60,7 @@
             <tr v-for="(r) in recipes" :key='r' >
                 <td scope="row">{{r.id}}</td>
                 <td scope="row">{{r.title}}</td>
+                <td scope="row"><img v-bind:src="r.image" width="100" height="100" /></td>
                 <td scope="row">{{r.short_description}}</td>
                 <td scope="row">{{r.short_ingredients}}</td>
                 <td scope="row"><button @click="showRecipe(r.id)" style="border:none; background-color:transparent"><i class="bi bi-info-circle-fill" style="color:blue" ></i></button></td>
@@ -81,15 +85,13 @@ export default {
         .then(res => { 
             this.recipes = res.data
             for(var i=0; i < this.recipes.length; i++){
-                this.recipes[i].short_description = this.recipes[i].description.substring(0,200) + "..."
-                this.recipes[i].short_ingredients = this.recipes[i].ingredients.substring(0,200) + "..."
+                this.recipes[i].short_description = this.shortString(this.recipes[i].description)
+                this.recipes[i].short_ingredients = this.shortString(this.recipes[i].ingredients)
+                
             }
         }),
-
-        
-    
         axios.get(`/profile/`).then(res => {
-            this.user = res.data;//Recoger los datos del usuario en la session
+            this.user = res.data;
         },
         (error) => {
             console.log(error.response.data);
@@ -102,10 +104,12 @@ export default {
     data() {
         
         return { 
+            image: "",
             recipes: [],
             recipe: [
                 {title: '',
                 image: '',
+                image_path: '',
                 ingredients: '',
                 description: '',
                 short_description: '',
@@ -122,22 +126,49 @@ export default {
     },
 
     methods: {
-        newRecipe(){
-            axios.post('/new_recipe', {title: this.recipe.title, image: "borrar", description: this.recipe.description, ingredients: this.recipe.ingredients, user_id: this.user[0].id}).then(() => {
-            console.log('saved');
-            window.location.href="/recipes_manager";
-            console.log(this.recipe[0].description)
-          }, function (error) {
-            console.log(error.response.data); 
-            
-        });
+        onChange(){
+            this.image =this.$refs.file.files[0];
+            this.image_path = 'images/' + this.image.name
         },
-        test(){
-           console.log(this.user[0].id)
+
+        newRecipe(){
+            this.checkIfExistImage()
+            const formData = new FormData()
+            formData.append('image', this.image)
+            formData.append('image_path',this.image_path)
+            formData.append('title', this.recipe.title)
+            formData.append('description', this.recipe.description)
+            formData.append('ingredients', this.recipe.ingredients)
+            formData.append('user_id',this.user[0].id)
+            const headers = { 'Content-Type': 'multipart/form-data' };
+            axios.post('/new_recipe', formData, {headers}).then(() => {
+                console.log('saved');
+                window.location.href="/recipes_manager";
+                console.log(this.recipe[0].description)
+            }, function (error) {
+                console.log(error.response.data); 
+            
+            });
         },
         showRecipe(id){
             window.location.href = '/recipe_description/' + id
+        },
+        shortString(string){
+            if(string.length >= 100) {
+                return string.substring(0,100) + "..."
+            }else{
+                return string
+            }
+        },
+
+        checkIfExistImage(){
+            if(this.image == ""){
+                this.image_path = "images/undefined.jpeg"
+            }
         }
+           
+        
+        
 
     }
 }
