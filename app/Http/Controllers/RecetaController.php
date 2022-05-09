@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Receta;
+use App\Models\LikeComment;
 use App\Models\Comment;
+use App\Models\User;
 
 class RecetaController extends Controller
 {
@@ -39,6 +41,16 @@ class RecetaController extends Controller
             ->get()->toArray();
         return response()->json($comments);
     }
+
+    public function allLikesComments($id) {
+        $comments = DB::table('like_comment')
+            ->select('like_comment.id as id', 'like_comment.user_id as user_id_like', 'like_comment.comment_id',
+                    'user.id as user_id_comment')->where('like_comment.comment_id', '=', $id)
+            ->crossJoin('user', 'user.id', '=', 'like_comment.user_id')->get();
+        return response()->json($comments);
+    }
+
+
 
     /**
      * Show the form for creating a new resource.

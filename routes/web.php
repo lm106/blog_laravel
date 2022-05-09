@@ -74,6 +74,7 @@ Route::get('/recetas', [RecetaController::class, 'index']);
 Route::post('/new_recipe', [RecetaController::class, 'createRecipe']);
 Route::get('/recipe_likes/{id}', [RecetaController::class, 'nLike']);
 Route::get('/recipe_comments/{id}', [RecetaController::class, 'allComments']);
+Route::get('/recipe_like_comments/{id}', [RecetaController::class, 'allLikesComments']);
 
 //#################Controlador de like##################
 Route::get('/likes/{id}', [LikeController::class, 'index']);
@@ -83,6 +84,7 @@ Route::post('/likes', [LikeController::class, 'create']);
 //#################Controlador de like comentarios##################
 Route::get('/dislike_comment/{id}', [LikeCommentController::class, 'destroy']);
 Route::post('/like_comment', [LikeCommentController::class, 'create']);
+Route::post('/dislike_comment', [LikeCommentController::class, 'destroy']);
 
 //#################Controlador de comentario##################
 Route::post('/comment', [CommentController::class, 'create']);

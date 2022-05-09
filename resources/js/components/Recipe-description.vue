@@ -44,13 +44,18 @@
                     <div class="row">
                         <!-- primera colimna (save) -->
                         <div class="col" id="save_position">
-                            <img v-bind:src="save" class="card-img-top save_like" alt="image">
+                            <button class="button_like">
+                                <img v-bind:src="save" class="card-img-top save_like" alt="image">
+                            </button>
                         </div>
 
                             <!-- Segunda columna (like) -->
                         <div class="col" id="like_position">
                             <p style="font-weight: bold;">
-                                {{like[0]}} <img @click="getLike()" v-bind:src="like[1]" class="card-img-top save_like" alt="image">
+                                {{like[0]}} 
+                                <button class="button_like">
+                                    <img @click="getLike()" v-bind:src="like[1]" class="card-img-top save_like" alt="image">
+                                </button>
                             </p>
                         </div>
                     </div>
@@ -82,21 +87,8 @@
 
         <!-- comments -->
         <div class="container coment_user">
-            <div v-for="comment_recipe in getComment">
-
-                <div class="row margin_comment">
-                    <!-- primera colimna (avatar) -->
-                    <div class="col-1">
-                        <img v-bind:src="user_img" class="card-img-top comment_image" alt="image">
-                    </div>
-
-                        <!-- Segunda columna (comentario) -->
-                    <div class="col-11">
-                        <p style="font-weight: bold;">@{{ comment_recipe.name_user.name }}</p>
-                        <p>{{ comment_recipe.description }}</p>
-                    </div>
-                </div>
-
+            <div v-for="comment_recipe in getComment" :comment='comment_recipe'>
+                <Comment :comment="comment_recipe"  ></Comment>
             </div>
     
         </div>
@@ -107,11 +99,13 @@
 
 import img_dir from '../img_dir.js'
 import axios from 'axios'
+import Comment from './Comment.vue';
 
 export default {
     props: ["id"],
-
+    components: {Comment},
     beforeCreate() {
+        // vemos el contenido de la receta
         var vm = this;
         axios.get('/recetas')
             .then(res => { 
@@ -150,7 +144,7 @@ export default {
                 console.log(error.response.data);
             });
 
-        // miramos todos los comentarios
+        // miramos todos los comentarios 
         axios.get(`/recipe_comments/${this.id}`)
             .then(respo => {
                 this.comments = respo.data;
@@ -171,7 +165,6 @@ export default {
             save: img_dir.url + img_dir.save,
             coment: img_dir.url + img_dir.coment,
             user: [],
-            user_img: img_dir.url + img_dir.user,
             comment: '', 
             comments: []
         }
@@ -257,8 +250,7 @@ export default {
 
                 
             }
-        }
-        
+        }      
     }
 
 }
@@ -266,13 +258,20 @@ export default {
 
 <style>
 
-    .button_comment {
-        float: right; 
+    .button_comment, .button_like, .button_edit {
         margin: auto; 
         background-color: 
         transparent; 
         border-color: transparent;
         width: 5%;
+    }
+
+    .button_edit {
+        width: 2%;
+    }
+
+    .button_comment {
+        float: right; 
     }
 
     #content {
@@ -338,9 +337,13 @@ export default {
         text-align: left;
     }
 
-    .save_like {
+    .save_like, .edit {
         width: 15%;
         min-width: 2.5rem;
+    }
+
+    .edit {
+        min-width: 1.5rem;
     }
 
     .comment_image {
