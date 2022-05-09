@@ -1,37 +1,46 @@
 <template>
   <div class="row margin_comment">
-                     <!-- primera colimna (avatar)  -->
-                    <div class="col-1">
-                        <img v-bind:src="user_img" class="card-img-top comment_image" alt="image">
-                    </div>
+        <!-- primera colimna (avatar)  -->
+        <div class="col-1">
+            <img v-bind:src="user_img" class="card-img-top comment_image" alt="image">
+        </div>
 
-                     <!-- Segunda columna (comentario)  -->
-                    <div class="col-10">
-                        <p style="font-weight: bold;">@{{ my_comment.name_user.name }}</p>
-                        <p>{{ my_comment.description }}</p>
-                    </div>
+            <!-- Segunda columna (comentario)  -->
+        <div class="col-10">
+            <p style="font-weight: bold;">@{{ my_comment.name_user.name }}</p>
+            <div v-if="flag == true">
+                <p>
+                    <input class="form-control edit_comment_input" type="textarea" v-model="my_comment.description">
+                </p> 
+            </div>
+            <div v-else-if="flag == false">
+                <p>{{ my_comment.description }}</p>
+            </div>
+            
+        </div>
 
-                     <!-- like o editar  -->
-                    <div class="col-1">
-                        <br>
-                        <div v-if="my_comment.name_user.id == getUser.id">
-                            <button @click="getEdit()" class="button_edit">
-                                <img v-bind:src="edit" class="card-img-top edit" alt="image">
-                            </button>
-                        </div>
-                        <div v-else-if="my_comment.name_user.id != getUser.id">
-                            <button @click="sendLike()" class="button_edit">
-                                <img v-bind:src="getLike" class="card-img-top edit" alt="image">
-                            </button>
-                        </div>
-                        
-                    </div>
-                </div>
+            <!-- like o editar  -->
+        <div class="col-1">
+            <br>
+            <div v-if="my_comment.name_user.id == getUser.id">
+                <button @click="getEdit()" class="button_edit">
+                    <img v-bind:src="edit" class="card-img-top edit" alt="image">
+                </button>
+            </div>
+            <div v-else-if="my_comment.name_user.id != getUser.id">
+                <button @click="sendLike()" class="button_edit">
+                    <img v-bind:src="getLike" class="card-img-top save_like" alt="image">
+                </button>
+            </div>
+            
+        </div>
+    </div>
 </template>
 
 <script>
     import img_dir from '../img_dir.js'
     import axios from 'axios';
+    
 export default {
     props: ["comment"],
 
@@ -62,6 +71,7 @@ export default {
             edit: img_dir.url + img_dir.edit, 
             like_comment: [],
             my_comment: this.comment,
+            flag: false
         }
     }, 
 
@@ -121,6 +131,23 @@ export default {
 
          getEdit() {
             console.log('estamos editando');
+            if (this.flag == false) {
+                this.flag = true;
+
+            } else {
+                axios.post('/edit_comment', {
+                    id: this.my_comment.id,
+                    user_id: this.my_comment.user_id, 
+                    recipe_id: this.my_comment.recipe_id,
+                    description: this.my_comment.description})
+                    .then(() => {
+                        this.flag = false;
+                    }, 
+                    (error) => {
+                        console.log(error.response.data);
+                    }); 
+            }
+            
         }
     }
 
@@ -129,5 +156,27 @@ export default {
 </script>
 
 <style>
+
+    .edit_comment_input {
+        background-color: #f0f0f0;
+        border-radius: 1rem;
+        border-color:transparent;
+        color: rgb(128, 128, 128);
+        width: 100%;
+        margin-top: -0.5%;
+    }
+
+    .edit_comment_input:focus {
+        background-color: #f0f0f0;
+        border-radius: 1rem;
+        border-color:transparent;
+        box-shadow: 0 0 0 0 transparent;
+        color: rgb(128, 128, 128);
+    }
+
+    .save_like, .edit{
+        min-width: 1.5rem;
+        width: 100%;
+    }
 
 </style>
