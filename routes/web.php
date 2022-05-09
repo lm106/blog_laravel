@@ -38,7 +38,7 @@ Route::view('/edit', 'welcome');
 Route::view('/admin_list', 'welcome');
 Route::view('/edit_user/{id}', 'welcome');
 Route::view('/comment', 'welcome');
-Route::view('/list_private', 'welcome');
+Route::view('/lists_private', 'welcome');
 
 
 
@@ -93,4 +93,5 @@ Route::post('/edit_comment', [CommentController::class, 'edit']);
 
 //#################Controlador de Lista privadas##################
 Route::get('/lists', [ListController::class, 'index']);
-// Route::get('/list_private/{id}', [ListController::class, 'show']);
+Route::post('/create_list', [ListController::class, 'create']);
+Route::get('/delete_list/{name}', [ListController::class, 'destroy']);

@@ -14,11 +14,11 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form @submit.prevent="list_private">
+                    <form @submit.prevent="create_list">
                         <div class="mb-3">
-                            <label for="recipe-title" class="col-form-label">Título:</label>
+                            <label for="recipe-title" class="col-form-label">Nombre de la lista:</label>
                             <!-- <input type="text" class="form-control" id="recipe-title" v-model="list_private.name"> -->
-                            <input type="text" class="form-control" id="">
+                            <input type="text" class="form-control" v-model="create_list_name" id="">
                         </div>
                         <!-- <div class="modal-footer"> -->
                             <button type="submit" class="btn btns_create" id="btn_save">Crear lista</button>
@@ -26,6 +26,7 @@
 
                         <!-- </div> -->
                     </form>
+                    <p class="success">{{message_error}}</p>
                 </div>
                 </div>
         </div>
@@ -42,7 +43,7 @@
         </tr>
     </thead>
     <tbody>
-        <tr v-for="list in lists_private" :key='list' >
+        <tr v-for=" (list, index) in lists_private" :key='list'>
             <td scope="row"><a>{{list.name}}</a></td>
             <td scope="row" v-if="list.n_recetas == 1"> {{list.n_recetas}} receta </td>
             <td scope="row" v-if="list.n_recetas > 1"> {{list.n_recetas}} recetas </td>
@@ -59,7 +60,7 @@
                                 <i class="bi bi-pencil-fill" style="color:#AB8A62"></i> Editar
                             </router-link>
                         </li>
-                        <li><button class="dropdown-item" style="color:red; font-weight:bold;">
+                        <li><button @click="delete_list(list.name, index)" class="dropdown-item" style="color:red; font-weight:bold;">
                                 <i class="bi bi-trash3-fill" style="color:red"></i>Eliminar
                             </button>
                         </li>
@@ -79,21 +80,67 @@
 <script>
 export default {
     beforeCreate(){
-         axios.get('/lists').then(res => {
+        axios.get('/lists').then(res => {
             this.lists_private = res.data;
+            console.log(res);
+        },
+        (error) => {
+            console.log(error.response.data);
+        });
+        axios.get('/profile').then(res => {
+            this.user = res.data;
             // console.log(res);
             // console.log(this.user);
 
         },
         (error) => {
             console.log(error.response.data);
-        })
+        });
     },
     name: 'lists_private',
     data(){
         return {
             title:'Listas privadas',
-            lists_private:[]
+            lists_private:[],
+            user:[],
+            create_list_name:'',
+            message_error:''
+        }
+    },
+    computed:{
+        getUser(){
+            return (this.user[0])?this.user[0]: this.user;
+        }
+    },
+    methods:{
+        create_list(){
+            this.message_error='';
+            var vm= this;
+            if(vm.create_list_name!=''){
+                axios.post('/create_list', {name:this.create_list_name, user_id: this.getUser.id}).then(res => {
+                    if(res.data !='not'){
+                        var list_new= (res.data[0])? res.data[0]:res.data;
+                        vm.lists_private.push(list_new);
+                        window.location.href="/lists_private";
+                    }else{
+                        vm.message_error="Este nombre ya existe";
+                    }
+                },
+                (error) => {
+                    console.log(error.response.data);
+                });
+
+            } else{
+                this.message_error='No puedes crear una lista con el nombre vacio';
+            }
+        },
+        delete_list(name, i){
+            axios.get(`/delete_list/${name}`).then(res => {
+                this.lists_private.splice(i,1);
+            },
+            (error) => {
+                console.log(error.response.data);
+            });
         }
     }
 }
