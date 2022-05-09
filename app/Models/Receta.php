@@ -16,6 +16,10 @@ class Receta extends Model
     protected $table = 'receta';
 
     public function n_likes() {
-        return $this->hasMany(Like::class);
+        return $this->hasMany('App\Models\Like', 'recipe_id');
+    }
+
+    public function n_comment() {
+        return $this->hasMany('App\Models\Comment', 'recipe_id');
     }
 }

@@ -53,6 +53,9 @@ export default {
     computed:{
       getError(){
         return this.error_message[0];
+      }, 
+      user(){
+        return (this.user[0])? this.user[0] : this.user;
       }
     },
     methods: {

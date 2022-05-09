@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Receta;
+use App\Models\Comment;
 
 class RecetaController extends Controller
 {
@@ -26,9 +27,17 @@ class RecetaController extends Controller
     public function nLike($id) {
         //$like = new Receta();
         //$like->n_likes()->where('recipe_id', '=', $id)->count();
-        $receta = DB::table('likes')->where('recipe_id', $id)->count();
-        //$like = Receta::find($id)->n_likes()->count();
-        return response()->json($receta);
+        // $receta = DB::table('likes')->where('recipe_id', $id)->count();
+        $like = [Receta::find($id)->n_likes->count(), Receta::find($id)->n_comment->count()];
+        return response()->json($like);
+    }
+
+    public function allComments($id) {
+        //$comment = Receta::find($id)->n_comment;
+        $comments = Comment::with('nameUser')
+            ->where('recipe_id', '=', $id)
+            ->get()->toArray();
+        return response()->json($comments);
     }
 
     /**

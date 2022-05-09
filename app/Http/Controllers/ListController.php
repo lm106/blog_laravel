@@ -4,20 +4,28 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Models\Like;
+use App\Models\List_private;
 
-class LikeController extends Controller
+class ListController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         //
-        $like = Like::all()->toArray();
-        return array_reverse($like);
+        // $n_recetas= List_private::select('user_id','name', DB::raw('count(recipe_id) as n_recetas'))->groupBy('user_id','name')
+        //     ->havingRaw('count(recipe_id) > 1')->get();
+
+        //Muestra todos las listas de todos los usuarios
+        // $n_recetas= List_private::select('user_id','name',DB::raw('COUNT(recipe_id) as n_recetas'))
+        // ->distinct('user_id','name')->groupBy('user_id','name')->get();
+        $user_id=$request->session()->get('user')[0]->id;
+        $list_n_recetas= List_private::select('user_id','name',DB::raw('COUNT(recipe_id) as n_recetas'))
+        ->distinct('user_id','name')->groupBy('user_id','name')->where('user_id','=', $user_id)->get();
+        return response()->json($list_n_recetas); 
     }
 
     /**
@@ -25,21 +33,9 @@ class LikeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request)
+    public function create()
     {
-    
-        $request->validate([
-            'user_id'=>'required',
-            'recipe_id'=>'required'
-        ]);
-
-        $like = new Like();
-        $like->user_id = $request->get('user_id');
-        $like->recipe_id = $request->get('recipe_id');
-        $like -> save();
-
-        return response()->json($like);
-
+        //
     }
 
     /**
@@ -51,7 +47,6 @@ class LikeController extends Controller
     public function store(Request $request)
     {
         //
-        Like::create($request->all());
     }
 
     /**
@@ -63,8 +58,6 @@ class LikeController extends Controller
     public function show($id)
     {
         //
-        $like = DB::table('likes')->where('user_id', $id);
-        return response()->json($like);
     }
 
     /**
@@ -98,8 +91,6 @@ class LikeController extends Controller
      */
     public function destroy($id)
     {
-        $like = Like::findOrFail($id);
-        $like->delete();
-
+        //
     }
 }

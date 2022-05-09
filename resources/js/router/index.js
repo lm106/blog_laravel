@@ -53,9 +53,19 @@ const router = [
   }, 
   {
     path: '/edit_user/:id',
-    name: 'editUser',
+    name: 'edit_user',
     props: true,
     component: require('../components/user/admin/edit_user.vue').default
+  },
+  {
+    path: '/list_private',
+    component: require('../components/list_private/lists_private.vue').default
+  },
+  {
+    path: '/list_private/:id',
+    name: 'list_private',
+    props: true,
+    component: require('../components/list_private/list_private.vue').default
   }
   
 ]

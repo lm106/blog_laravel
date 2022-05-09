@@ -6,16 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 
-class Comment extends Model
+class LikeComment extends Model
 {
     use HasFactory;
     use Notifiable;
     protected $fillable = [
-        'description', 'user_id', 'recipe_id'
+        'user_id', 'comment_id'
     ];
-    protected $table = 'comment';
+    protected $table = 'like_comment';
 
-    public function nameUser() {
-        return $this->belongsTo(User::class, 'user_id');
-    }
 }

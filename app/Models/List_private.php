@@ -6,16 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 
-class Comment extends Model
+class List_private extends Model
 {
     use HasFactory;
     use Notifiable;
     protected $fillable = [
-        'description', 'user_id', 'recipe_id'
+        'name', 'user_id', 'recipe_id'
     ];
-    protected $table = 'comment';
-
-    public function nameUser() {
-        return $this->belongsTo(User::class, 'user_id');
-    }
+    protected $table = 'list';
 }
