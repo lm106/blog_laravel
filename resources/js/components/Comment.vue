@@ -75,10 +75,15 @@ export default {
         }, 
 
         getLike() {
-            if (this.like_comment.length == 0) {
+            if (this.getUser.length == 0 || this.like_comment.length == 0) {
                 return img_dir.url + img_dir.dislike;
             } else {
-                return img_dir.url + img_dir.like;
+                if (this.like_comment[0].user_id == this.getUser.id) {
+                    return img_dir.url + img_dir.like;
+                } else {
+                    return img_dir.url + img_dir.dislike;
+                }
+                
             }
         }
     }, 

@@ -44,7 +44,7 @@ class RecetaController extends Controller
 
     public function allLikesComments($id) {
         $comments = DB::table('like_comment')
-            ->select('like_comment.id as id', 'like_comment.user_id as user_id_like', 'like_comment.comment_id',
+            ->select('like_comment.id as id', 'like_comment.user_id', 'like_comment.comment_id',
                     'user.id as user_id_comment')->where('like_comment.comment_id', '=', $id)
             ->crossJoin('user', 'user.id', '=', 'like_comment.user_id')->get();
         return response()->json($comments);
