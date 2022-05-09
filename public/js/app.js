@@ -9127,8 +9127,17 @@ function warn(msg, ...args) {
 let activeEffectScope;
 class EffectScope {
     constructor(detached = false) {
+        /**
+         * @internal
+         */
         this.active = true;
+        /**
+         * @internal
+         */
         this.effects = [];
+        /**
+         * @internal
+         */
         this.cleanups = [];
         if (!detached && activeEffectScope) {
             this.parent = activeEffectScope;
@@ -9138,21 +9147,30 @@ class EffectScope {
     }
     run(fn) {
         if (this.active) {
+            const currentEffectScope = activeEffectScope;
             try {
                 activeEffectScope = this;
                 return fn();
             }
             finally {
-                activeEffectScope = this.parent;
+                activeEffectScope = currentEffectScope;
             }
         }
         else if ((true)) {
             warn(`cannot run an inactive effect scope.`);
         }
     }
+    /**
+     * This should only be called on non-detached scopes
+     * @internal
+     */
     on() {
         activeEffectScope = this;
     }
+    /**
+     * This should only be called on non-detached scopes
+     * @internal
+     */
     off() {
         activeEffectScope = this.parent;
     }
@@ -9294,10 +9312,17 @@ class ReactiveEffect {
             activeEffect = this.parent;
             shouldTrack = lastShouldTrack;
             this.parent = undefined;
+            if (this.deferStop) {
+                this.stop();
+            }
         }
     }
     stop() {
-        if (this.active) {
+        // stopped while running itself - defer the cleanup
+        if (activeEffect === this) {
+            this.deferStop = true;
+        }
+        else if (this.active) {
             cleanupEffect(this);
             if (this.onStop) {
                 this.onStop();
@@ -9381,9 +9406,7 @@ function trackEffects(dep, debuggerEventExtraInfo) {
         dep.add(activeEffect);
         activeEffect.deps.push(dep);
         if (( true) && activeEffect.onTrack) {
-            activeEffect.onTrack(Object.assign({
-                effect: activeEffect
-            }, debuggerEventExtraInfo));
+            activeEffect.onTrack(Object.assign({ effect: activeEffect }, debuggerEventExtraInfo));
         }
     }
 }
@@ -9482,7 +9505,9 @@ function triggerEffects(dep, debuggerEventExtraInfo) {
 }
 
 const isNonTrackableKeys = /*#__PURE__*/ (0,_vue_shared__WEBPACK_IMPORTED_MODULE_0__.makeMap)(`__proto__,__v_isRef,__isVue`);
-const builtInSymbols = new Set(Object.getOwnPropertyNames(Symbol)
+const builtInSymbols = new Set(
+/*#__PURE__*/
+Object.getOwnPropertyNames(Symbol)
     .map(key => Symbol[key])
     .filter(_vue_shared__WEBPACK_IMPORTED_MODULE_0__.isSymbol));
 const get = /*#__PURE__*/ createGetter();
@@ -9634,13 +9659,13 @@ const readonlyHandlers = {
     get: readonlyGet,
     set(target, key) {
         if ((true)) {
-            console.warn(`Set operation on key "${String(key)}" failed: target is readonly.`, target);
+            warn(`Set operation on key "${String(key)}" failed: target is readonly.`, target);
         }
         return true;
     },
     deleteProperty(target, key) {
         if ((true)) {
-            console.warn(`Delete operation on key "${String(key)}" failed: target is readonly.`, target);
+            warn(`Delete operation on key "${String(key)}" failed: target is readonly.`, target);
         }
         return true;
     }
@@ -10243,7 +10268,7 @@ function computed(getterOrOptions, debugOptions, isSSR = false) {
 }
 
 var _a;
-const tick = Promise.resolve();
+const tick = /*#__PURE__*/ Promise.resolve();
 const queue = [];
 let queued = false;
 const scheduler = (fn) => {
@@ -10694,7 +10719,7 @@ let preFlushIndex = 0;
 const pendingPostFlushCbs = [];
 let activePostFlushCbs = null;
 let postFlushIndex = 0;
-const resolvedPromise = Promise.resolve();
+const resolvedPromise = /*#__PURE__*/ Promise.resolve();
 let currentFlushPromise = null;
 let currentPreFlushParentJob = null;
 const RECURSION_LIMIT = 100;
@@ -11113,6 +11138,8 @@ function devtoolsComponentEmit(component, event, params) {
 }
 
 function emit$1(instance, event, ...rawArgs) {
+    if (instance.isUnmounted)
+        return;
     const props = instance.vnode.props || _vue_shared__WEBPACK_IMPORTED_MODULE_1__.EMPTY_OBJ;
     if ((true)) {
         const { emitsOptions, propsOptions: [propsOptions] } = instance;
@@ -12102,13 +12129,11 @@ function watchEffect(effect, options) {
 }
 function watchPostEffect(effect, options) {
     return doWatch(effect, null, (( true)
-        ? Object.assign(options || {}, { flush: 'post' })
-        : 0));
+        ? Object.assign(Object.assign({}, options), { flush: 'post' }) : 0));
 }
 function watchSyncEffect(effect, options) {
     return doWatch(effect, null, (( true)
-        ? Object.assign(options || {}, { flush: 'sync' })
-        : 0));
+        ? Object.assign(Object.assign({}, options), { flush: 'sync' }) : 0));
 }
 // initial value for watchers to trigger on undefined initial values
 const INITIAL_WATCHER_VALUE = {};
@@ -12411,10 +12436,24 @@ const BaseTransitionImpl = {
             if (!children || !children.length) {
                 return;
             }
-            // warn multiple elements
-            if (( true) && children.length > 1) {
-                warn('<transition> can only be used on a single element or component. Use ' +
-                    '<transition-group> for lists.');
+            let child = children[0];
+            if (children.length > 1) {
+                let hasFound = false;
+                // locate first non-comment child
+                for (const c of children) {
+                    if (c.type !== Comment) {
+                        if (( true) && hasFound) {
+                            // warn more than one non-comment child
+                            warn('<transition> can only be used on a single element or component. ' +
+                                'Use <transition-group> for lists.');
+                            break;
+                        }
+                        child = c;
+                        hasFound = true;
+                        if (false)
+                            {}
+                    }
+                }
             }
             // there's no need to track reactivity for these props so use the raw
             // props for a bit better perf
@@ -12423,11 +12462,11 @@ const BaseTransitionImpl = {
             // check mode
             if (( true) &&
                 mode &&
-                mode !== 'in-out' && mode !== 'out-in' && mode !== 'default') {
+                mode !== 'in-out' &&
+                mode !== 'out-in' &&
+                mode !== 'default') {
                 warn(`invalid <transition> mode: ${mode}`);
             }
-            // at this point children has a guaranteed length of 1.
-            const child = children[0];
             if (state.isLeaving) {
                 return emptyPlaceholder(child);
             }
@@ -12650,20 +12689,24 @@ function setTransitionHooks(vnode, hooks) {
         vnode.transition = hooks;
     }
 }
-function getTransitionRawChildren(children, keepComment = false) {
+function getTransitionRawChildren(children, keepComment = false, parentKey) {
     let ret = [];
     let keyedFragmentCount = 0;
     for (let i = 0; i < children.length; i++) {
-        const child = children[i];
+        let child = children[i];
+        // #5360 inherit parent key in case of <template v-for>
+        const key = parentKey == null
+            ? child.key
+            : String(parentKey) + String(child.key != null ? child.key : i);
         // handle fragment children case, e.g. v-for
         if (child.type === Fragment) {
             if (child.patchFlag & 128 /* KEYED_FRAGMENT */)
                 keyedFragmentCount++;
-            ret = ret.concat(getTransitionRawChildren(child.children, keepComment));
+            ret = ret.concat(getTransitionRawChildren(child.children, keepComment, key));
         }
         // comment placeholders should be skipped, e.g. v-if
         else if (keepComment || child.type !== Comment) {
-            ret.push(child);
+            ret.push(key != null ? cloneVNode(child, { key }) : child);
         }
     }
     // #1126 if a transition children list contains multiple sub fragments, these
@@ -13633,6 +13676,10 @@ function updateProps(instance, rawProps, rawPrevProps, optimized) {
             const propsToUpdate = instance.vnode.dynamicProps;
             for (let i = 0; i < propsToUpdate.length; i++) {
                 let key = propsToUpdate[i];
+                // skip if the prop key is a declared emit event listener
+                if (isEmitListener(instance.emitsOptions, key)) {
+                    continue;
+                }
                 // PROPS flag guarantees rawProps to be non-null
                 const value = rawProps[key];
                 if (options) {
@@ -14158,7 +14205,8 @@ function withDirectives(vnode, directives) {
         ( true) && warn(`withDirectives can only be used inside render functions.`);
         return vnode;
     }
-    const instance = internalInstance.proxy;
+    const instance = getExposeProxy(internalInstance) ||
+        internalInstance.proxy;
     const bindings = vnode.dirs || (vnode.dirs = []);
     for (let i = 0; i < directives.length; i++) {
         let [dir, value, arg, modifiers = _vue_shared__WEBPACK_IMPORTED_MODULE_1__.EMPTY_OBJ] = directives[i];
@@ -14230,6 +14278,9 @@ function createAppContext() {
 let uid = 0;
 function createAppAPI(render, hydrate) {
     return function createApp(rootComponent, rootProps = null) {
+        if (!(0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isFunction)(rootComponent)) {
+            rootComponent = Object.assign({}, rootComponent);
+        }
         if (rootProps != null && !(0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isObject)(rootProps)) {
             ( true) && warn(`root props passed to app.mount() must be an object.`);
             rootProps = null;
@@ -14427,6 +14478,9 @@ function setRef(rawRef, oldRawRef, parentSuspense, vnode, isUnmount = false) {
                         if (!(0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isArray)(existing)) {
                             if (_isString) {
                                 refs[ref] = [refValue];
+                                if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.hasOwn)(setupState, ref)) {
+                                    setupState[ref] = refs[ref];
+                                }
                             }
                             else {
                                 ref.value = [refValue];
@@ -14803,7 +14857,7 @@ function startMeasure(instance, type) {
         perf.mark(`vue-${type}-${instance.uid}`);
     }
     if (true) {
-        devtoolsPerfStart(instance, type, supported ? perf.now() : Date.now());
+        devtoolsPerfStart(instance, type, isSupported() ? perf.now() : Date.now());
     }
 }
 function endMeasure(instance, type) {
@@ -14816,7 +14870,7 @@ function endMeasure(instance, type) {
         perf.clearMarks(endTag);
     }
     if (true) {
-        devtoolsPerfEnd(instance, type, supported ? perf.now() : Date.now());
+        devtoolsPerfEnd(instance, type, isSupported() ? perf.now() : Date.now());
     }
 }
 function isSupported() {
@@ -15971,7 +16025,23 @@ function baseCreateRenderer(options, createHydrationFns) {
     const remove = vnode => {
         const { type, el, anchor, transition } = vnode;
         if (type === Fragment) {
-            removeFragment(el, anchor);
+            if (( true) &&
+                vnode.patchFlag > 0 &&
+                vnode.patchFlag & 2048 /* DEV_ROOT_FRAGMENT */ &&
+                transition &&
+                !transition.persisted) {
+                vnode.children.forEach(child => {
+                    if (child.type === Comment) {
+                        hostRemove(child.el);
+                    }
+                    else {
+                        remove(child);
+                    }
+                });
+            }
+            else {
+                removeFragment(el, anchor);
+            }
             return;
         }
         if (type === Static) {
@@ -16995,7 +17065,10 @@ function renderSlot(slots, name, props = {},
 // this is not a user-facing function, so the fallback is always generated by
 // the compiler and guaranteed to be a function returning an array
 fallback, noSlotted) {
-    if (currentRenderingInstance.isCE) {
+    if (currentRenderingInstance.isCE ||
+        (currentRenderingInstance.parent &&
+            isAsyncWrapper(currentRenderingInstance.parent) &&
+            currentRenderingInstance.parent.isCE)) {
         return createVNode('slot', name === 'default' ? null : { name }, fallback && fallback());
     }
     let slot = slots[name];
@@ -17068,7 +17141,10 @@ const getPublicInstance = (i) => {
         return getExposeProxy(i) || i.proxy;
     return getPublicInstance(i.parent);
 };
-const publicPropertiesMap = (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.extend)(Object.create(null), {
+const publicPropertiesMap = 
+// Move PURE marker to new line to workaround compiler discarding it
+// due to type annotation
+/*#__PURE__*/ (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.extend)(Object.create(null), {
     $: i => i,
     $el: i => i.vnode.el,
     $data: i => i.data,
@@ -17241,9 +17317,10 @@ const PublicInstanceProxyHandlers = {
     },
     defineProperty(target, key, descriptor) {
         if (descriptor.get != null) {
-            this.set(target, key, descriptor.get(), null);
+            // invalidate key cache of a getter based property #5417
+            target._.accessCache[key] = 0;
         }
-        else if (descriptor.value != null) {
+        else if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.hasOwn)(descriptor, 'value')) {
             this.set(target, key, descriptor.value, null);
         }
         return Reflect.defineProperty(target, key, descriptor);
@@ -17450,6 +17527,7 @@ function setupComponent(instance, isSSR = false) {
     return setupResult;
 }
 function setupStatefulComponent(instance, isSSR) {
+    var _a;
     const Component = instance.type;
     if ((true)) {
         if (Component.name) {
@@ -17507,6 +17585,13 @@ function setupStatefulComponent(instance, isSSR) {
                 // async setup returned Promise.
                 // bail here and wait for re-entry.
                 instance.asyncDep = setupResult;
+                if (( true) && !instance.suspense) {
+                    const name = (_a = Component.name) !== null && _a !== void 0 ? _a : 'Anonymous';
+                    warn(`Component <${name}>: setup function returned a promise, but no ` +
+                        `<Suspense> boundary was found in the parent component tree. ` +
+                        `A component with async setup() must be nested in a <Suspense> ` +
+                        `in order to be rendered.`);
+                }
             }
         }
         else {
@@ -18134,7 +18219,7 @@ function isMemoSame(cached, memo) {
 }
 
 // Core API ------------------------------------------------------------------
-const version = "3.2.31";
+const version = "3.2.33";
 const _ssrUtils = {
     createComponentInstance,
     setupComponent,
@@ -18325,7 +18410,7 @@ __webpack_require__.r(__webpack_exports__);
 
 const svgNS = 'http://www.w3.org/2000/svg';
 const doc = (typeof document !== 'undefined' ? document : null);
-const templateContainer = doc && doc.createElement('template');
+const templateContainer = doc && /*#__PURE__*/ doc.createElement('template');
 const nodeOps = {
     insert: (child, parent, anchor) => {
         parent.insertBefore(child, anchor || null);
@@ -18476,6 +18561,8 @@ function setStyle(style, name, val) {
         val.forEach(v => setStyle(style, name, v));
     }
     else {
+        if (val == null)
+            val = '';
         if (name.startsWith('--')) {
             // custom property definition
             style.setProperty(name, val);
@@ -18570,31 +18657,28 @@ prevChildren, parentComponent, parentSuspense, unmountChildren) {
         }
         return;
     }
+    let needRemove = false;
     if (value === '' || value == null) {
         const type = typeof el[key];
         if (type === 'boolean') {
             // e.g. <select multiple> compiles to { multiple: '' }
-            el[key] = (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.includeBooleanAttr)(value);
-            return;
+            value = (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.includeBooleanAttr)(value);
         }
         else if (value == null && type === 'string') {
             // e.g. <div :id="null">
-            el[key] = '';
-            el.removeAttribute(key);
-            return;
+            value = '';
+            needRemove = true;
         }
         else if (type === 'number') {
             // e.g. <img :width="null">
             // the value of some IDL attr must be greater than 0, e.g. input.size = 0 -> error
-            try {
-                el[key] = 0;
-            }
-            catch (_a) { }
-            el.removeAttribute(key);
-            return;
+            value = 0;
+            needRemove = true;
         }
     }
-    // some properties perform value validation and throw
+    // some properties perform value validation and throw,
+    // some properties has getter, no setter, will error in 'use strict'
+    // eg. <select :type="null"></select> <select :willValidate="null"></select>
     try {
         el[key] = value;
     }
@@ -18604,31 +18688,35 @@ prevChildren, parentComponent, parentSuspense, unmountChildren) {
                 `value ${value} is invalid.`, e);
         }
     }
+    needRemove && el.removeAttribute(key);
 }
 
 // Async edge case fix requires storing an event listener's attach timestamp.
-let _getNow = Date.now;
-let skipTimestampCheck = false;
-if (typeof window !== 'undefined') {
-    // Determine what event timestamp the browser is using. Annoyingly, the
-    // timestamp can either be hi-res (relative to page load) or low-res
-    // (relative to UNIX epoch), so in order to compare time we have to use the
-    // same timestamp type when saving the flush timestamp.
-    if (_getNow() > document.createEvent('Event').timeStamp) {
-        // if the low-res timestamp which is bigger than the event timestamp
-        // (which is evaluated AFTER) it means the event is using a hi-res timestamp,
-        // and we need to use the hi-res version for event listeners as well.
-        _getNow = () => performance.now();
+const [_getNow, skipTimestampCheck] = /*#__PURE__*/ (() => {
+    let _getNow = Date.now;
+    let skipTimestampCheck = false;
+    if (typeof window !== 'undefined') {
+        // Determine what event timestamp the browser is using. Annoyingly, the
+        // timestamp can either be hi-res (relative to page load) or low-res
+        // (relative to UNIX epoch), so in order to compare time we have to use the
+        // same timestamp type when saving the flush timestamp.
+        if (Date.now() > document.createEvent('Event').timeStamp) {
+            // if the low-res timestamp which is bigger than the event timestamp
+            // (which is evaluated AFTER) it means the event is using a hi-res timestamp,
+            // and we need to use the hi-res version for event listeners as well.
+            _getNow = () => performance.now();
+        }
+        // #3485: Firefox <= 53 has incorrect Event.timeStamp implementation
+        // and does not fire microtasks in between event propagation, so safe to exclude.
+        const ffMatch = navigator.userAgent.match(/firefox\/(\d+)/i);
+        skipTimestampCheck = !!(ffMatch && Number(ffMatch[1]) <= 53);
     }
-    // #3485: Firefox <= 53 has incorrect Event.timeStamp implementation
-    // and does not fire microtasks in between event propagation, so safe to exclude.
-    const ffMatch = navigator.userAgent.match(/firefox\/(\d+)/i);
-    skipTimestampCheck = !!(ffMatch && Number(ffMatch[1]) <= 53);
-}
+    return [_getNow, skipTimestampCheck];
+})();
 // To avoid the overhead of repeatedly calling performance.now(), we cache
 // and use the same timestamp for all event listeners attached in the same tick.
 let cachedNow = 0;
-const p = Promise.resolve();
+const p = /*#__PURE__*/ Promise.resolve();
 const reset = () => {
     cachedNow = 0;
 };
@@ -18753,13 +18841,13 @@ function shouldSetAsProp(el, key, value, isSVG) {
         }
         return false;
     }
-    // spellcheck and draggable are numerated attrs, however their
-    // corresponding DOM properties are actually booleans - this leads to
-    // setting it with a string "false" value leading it to be coerced to
-    // `true`, so we need to always treat them as attributes.
+    // these are enumerated attrs, however their corresponding DOM properties
+    // are actually booleans - this leads to setting it with a string "false"
+    // value leading it to be coerced to `true`, so we need to always treat
+    // them as attributes.
     // Note that `contentEditable` doesn't have this problem: its DOM
     // property is also enumerated string values.
-    if (key === 'spellcheck' || key === 'draggable') {
+    if (key === 'spellcheck' || key === 'draggable' || key === 'translate') {
         return false;
     }
     // #1787, #2840 form property on form elements is readonly and must be set as
@@ -19864,7 +19952,7 @@ function initVShowForSSR() {
     };
 }
 
-const rendererOptions = (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.extend)({ patchProp }, nodeOps);
+const rendererOptions = /*#__PURE__*/ (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.extend)({ patchProp }, nodeOps);
 // lazy create the renderer - this makes core renderer logic tree-shakable
 // in case the user only imports reactivity utilities from Vue.
 let renderer;
@@ -22571,15 +22659,15 @@ __webpack_require__.r(__webpack_exports__);
        // siendo "miElementoCheckbox" el id del input checkbox
       var miCheckbox = document.getElementById('miElementoCheckbox');
       var msg = document.getElementById('msg');
-        alert('El valor inicial del checkbox es ' + miCheckbox.checked);
-        miCheckbox.addEventListener('click', function() {
+       alert('El valor inicial del checkbox es ' + miCheckbox.checked);
+       miCheckbox.addEventListener('click', function() {
           if(miCheckbox.checked) {
           msg.innerText = 'El elemento está marcado';
           } else {
           msg.innerText = 'Ahora está desmarcado';
           }
       });
-         * **/
+        * **/
 
 
       this.ids = array;
@@ -22832,6 +22920,11 @@ __webpack_require__.r(__webpack_exports__);
 
     axios.get('/recetas').then(function (res) {
       _this.recipes = res.data;
+
+      for (var i = 0; i < _this.recipes.length; i++) {
+        _this.recipes[i].short_description = _this.recipes[i].description.substring(0, 200) + "...";
+        _this.recipes[i].short_ingredients = _this.recipes[i].ingredients.substring(0, 200) + "...";
+      }
     }), axios.get("/profile/").then(function (res) {
       _this.user = res.data; //Recoger los datos del usuario en la session
     }, function (error) {
@@ -22846,6 +22939,8 @@ __webpack_require__.r(__webpack_exports__);
         image: '',
         ingredients: '',
         description: '',
+        short_description: '',
+        short_ingredients: '',
         user_id: ''
       }],
       user: [],
@@ -22865,13 +22960,16 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function () {
         console.log('saved');
         window.location.href = "/recipes_manager";
-        console.log(_this2.recipe[0]);
+        console.log(_this2.recipe[0].description);
       }, function (error) {
         console.log(error.response.data);
       });
     },
     test: function test() {
       console.log(this.user[0].id);
+    },
+    showRecipe: function showRecipe(id) {
+      window.location.href = '/recipe_description/' + id;
     }
   }
 });
@@ -24031,14 +24129,14 @@ var _hoisted_2 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
 );
 
 var _hoisted_3 = {
-  "class": "modal fade",
+  "class": "modal fade bd-example-modal-xl",
   id: "exampleModal",
   tabindex: "-1",
   "aria-labelledby": "exampleModalLabel",
   "aria-hidden": "true"
 };
 var _hoisted_4 = {
-  "class": "modal-dialog"
+  "class": "modal-dialog modal-xl"
 };
 var _hoisted_5 = {
   "class": "modal-content"
@@ -24084,7 +24182,7 @@ var _hoisted_11 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElement
 );
 
 var _hoisted_12 = {
-  "class": "mb-5"
+  "class": "mb-3"
 };
 
 var _hoisted_13 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
@@ -24094,24 +24192,13 @@ var _hoisted_13 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElement
 /* HOISTED */
 );
 
-var _hoisted_14 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-  "class": "modal-footer"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
-  type: "button",
-  "class": "btn btn-secondary",
-  "data-bs-dismiss": "modal"
-}, "Cerrar"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
-  type: "button submit",
-  "class": "btn btn-primary"
-}, "Guardar")], -1
-/* HOISTED */
-);
+var _hoisted_14 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<div class=\"mb-5\"><label for=\"formFile\" class=\"form-label\">Imagen:</label><input class=\"form-control\" type=\"file\" id=\"formFile\" accept=\".jpg,.png\"></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-secondary\" data-bs-dismiss=\"modal\">Cerrar</button><button type=\"button submit\" class=\"btn btn-primary\">Guardar</button></div>", 2);
 
-var _hoisted_15 = {
+var _hoisted_16 = {
   "class": "table"
 };
 
-var _hoisted_16 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("thead", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", {
+var _hoisted_17 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("thead", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", {
   scope: "col"
 }, "Id"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", {
   scope: "col"
@@ -24127,9 +24214,6 @@ var _hoisted_16 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElement
 /* HOISTED */
 );
 
-var _hoisted_17 = {
-  scope: "row"
-};
 var _hoisted_18 = {
   scope: "row"
 };
@@ -24139,8 +24223,26 @@ var _hoisted_19 = {
 var _hoisted_20 = {
   scope: "row"
 };
+var _hoisted_21 = {
+  scope: "row"
+};
+var _hoisted_22 = {
+  scope: "row"
+};
+var _hoisted_23 = ["onClick"];
 
-var _hoisted_21 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", {
+var _hoisted_24 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
+  "class": "bi bi-info-circle-fill",
+  style: {
+    "color": "blue"
+  }
+}, null, -1
+/* HOISTED */
+);
+
+var _hoisted_25 = [_hoisted_24];
+
+var _hoisted_26 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", {
   scope: "row"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
   style: {
@@ -24153,7 +24255,7 @@ var _hoisted_21 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElement
 /* HOISTED */
 );
 
-var _hoisted_22 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", {
+var _hoisted_27 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", {
   scope: "row"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
   style: {
@@ -24184,35 +24286,54 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, null, 512
   /* NEED_PATCH */
   ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.recipe.title]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [_hoisted_11, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("textarea", {
+    rows: "10",
     "class": "form-control",
     id: "recipe-description",
     "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
       return $data.recipe.description = $event;
-    })
+    }),
+    style: {
+      "resize": "vertical"
+    }
   }, null, 512
   /* NEED_PATCH */
   ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.recipe.description]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [_hoisted_13, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("textarea", {
+    placeholder: "Introducir ingredientes separados por comas",
+    rows: "6",
     "class": "form-control",
     id: "recipe-ingredients",
     "onUpdate:modelValue": _cache[2] || (_cache[2] = function ($event) {
       return $data.recipe.ingredients = $event;
-    })
+    }),
+    style: {
+      "resize": "vertical"
+    }
   }, null, 512
   /* NEED_PATCH */
   ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.recipe.ingredients]])]), _hoisted_14], 32
   /* HYDRATE_EVENTS */
-  )])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_15, [_hoisted_16, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", null, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.recipes, function (r) {
+  )])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_16, [_hoisted_17, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", null, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.recipes, function (r) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("tr", {
       key: r
-    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_17, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(r.id), 1
+    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_18, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(r.id), 1
     /* TEXT */
-    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_18, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(r.title), 1
+    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_19, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(r.title), 1
     /* TEXT */
-    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_19, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(r.description), 1
+    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_20, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(r.short_description), 1
     /* TEXT */
-    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_20, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(r.ingredients), 1
+    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_21, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(r.short_ingredients), 1
     /* TEXT */
-    ), _hoisted_21, _hoisted_22]);
+    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_22, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+      onClick: function onClick($event) {
+        return $options.showRecipe(r.id);
+      },
+      style: {
+        "border": "none",
+        "background-color": "transparent"
+      }
+    }, _hoisted_25, 8
+    /* PROPS */
+    , _hoisted_23)]), _hoisted_26, _hoisted_27]);
   }), 128
   /* KEYED_FRAGMENT */
   ))])])]);
@@ -24242,7 +24363,7 @@ var _hoisted_2 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNod
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_router_link = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("router-link");
 
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <h2> {{ title }}&nbsp;{{ user.name }}</h2> "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <ul class=\"success\">\r\n            <li v-if=\"getError.message_1\">{{ getError.message_1 }}</li>\r\n            <li v-if=\"getError.message_2\">{{ getError.message_2 }}</li>\r\n        </ul>\r\n        <form  class='form_edit_signup' @submit.prevent=\"update()\">\r\n        <div id='input_data'>\r\n            <label>Nombre:</label><br>\r\n            <input type=\"text\" v-model=\"ser.name\"/><br>\r\n            <label>Apellidos:</label><br>\r\n            <input type=\"text\"  v-model=\"user.name_last\"/><br>\r\n            <label>Email:</label><br>\r\n            <input type=\"email\" readonly v-model=\"user.email\"/><br>\r\n            <label >Password:</label><br>\r\n            <input type=\"password\"  v-model=\"user.password\"/><br>\r\n        </div>\r\n        <input type=\"submit\"  id=\"update\" value=\"Actualizar datos\">\r\n        </form> "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <p>{{ user }}</p> "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_router_link, {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <h2> {{ title }}&nbsp;{{ user.name }}</h2> "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <ul class=\"success\">\n            <li v-if=\"getError.message_1\">{{ getError.message_1 }}</li>\n            <li v-if=\"getError.message_2\">{{ getError.message_2 }}</li>\n        </ul>\n        <form  class='form_edit_signup' @submit.prevent=\"update()\">\n        <div id='input_data'>\n            <label>Nombre:</label><br>\n            <input type=\"text\" v-model=\"ser.name\"/><br>\n            <label>Apellidos:</label><br>\n            <input type=\"text\"  v-model=\"user.name_last\"/><br>\n            <label>Email:</label><br>\n            <input type=\"email\" readonly v-model=\"user.email\"/><br>\n            <label >Password:</label><br>\n            <input type=\"password\"  v-model=\"user.password\"/><br>\n        </div>\n        <input type=\"submit\"  id=\"update\" value=\"Actualizar datos\">\n        </form> "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <p>{{ user }}</p> "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_router_link, {
     to: "/admin_list"
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
@@ -30059,7 +30180,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.foot{\r\n        background-color: #ab8a62;\r\n        margin-top: auto;\n}\n#contact{\r\n        text-decoration: none;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.foot{\n        background-color: #ab8a62;\n        margin-top: auto;\n}\n#contact{\n        text-decoration: none;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -30083,7 +30204,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nsection{\r\n        margin-top: 3rem;\r\n        margin-bottom: 2rem;\n}\n.contenedor{\r\n        background-color: #ECE5E9;\r\n        width: 850px;\r\n        height: 700px;\n}\nh2{\r\n        color: #AB8A62;\n}\ntextarea{\r\n        min-height: 250;\r\n        resize: none;\r\n        background: #ECE5E9;\r\n        border: 1px solid #AB8A62;\r\n        box-sizing: border-box;\r\n        border-radius: 4px;\n}\n.btn-primary{\r\n        background-color: #AB8A62;\r\n        color:white;\r\n        border-color: #AB8A62;\n}\n.btn-primary:hover{\r\n        background-color: #917450;\r\n        color:white;\r\n        border-color: #917450;\n}\ninput{\r\n        background: #ECE5E9;\r\n        border: 1px solid #AB8A62;\r\n        box-sizing: border-box;\r\n        border-radius: 4px;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nsection{\n        margin-top: 3rem;\n        margin-bottom: 2rem;\n}\n.contenedor{\n        background-color: #ECE5E9;\n        width: 850px;\n        height: 700px;\n}\nh2{\n        color: #AB8A62;\n}\ntextarea{\n        min-height: 250;\n        resize: none;\n        background: #ECE5E9;\n        border: 1px solid #AB8A62;\n        box-sizing: border-box;\n        border-radius: 4px;\n}\n.btn-primary{\n        background-color: #AB8A62;\n        color:white;\n        border-color: #AB8A62;\n}\n.btn-primary:hover{\n        background-color: #917450;\n        color:white;\n        border-color: #917450;\n}\ninput{\n        background: #ECE5E9;\n        border: 1px solid #AB8A62;\n        box-sizing: border-box;\n        border-radius: 4px;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -30107,7 +30228,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.receta {\r\n        width: 18rem;\r\n        margin-right: 1rem;\r\n        margin-bottom: 1rem;\n}\n.content {\r\n        margin: 6rem;\n}\n.filter {\r\n        background-color: white;\r\n        color: rgb(0, 0, 0);\r\n        font: bold;\n}\n.image_filter {\r\n        width: 1rem;\r\n        height: 1rem;\n}\r\n    \r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.receta {\n        width: 18rem;\n        margin-right: 1rem;\n        margin-bottom: 1rem;\n}\n.content {\n        margin: 6rem;\n}\n.filter {\n        background-color: white;\n        color: rgb(0, 0, 0);\n        font: bold;\n}\n.image_filter {\n        width: 1rem;\n        height: 1rem;\n}\n    \n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -30131,7 +30252,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.photo {\r\n        height: 100%;\r\n        -o-object-fit: cover;\r\n           object-fit: cover;\n}\r\n\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.photo {\n        height: 100%;\n        -o-object-fit: cover;\n           object-fit: cover;\n}\n\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -30155,7 +30276,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n#content {\r\n        margin-top: 6rem;\r\n        margin-right: 4%;\r\n        margin-left: 4%;\n}\n.recipe {\r\n        background-color: #ECE5E9;\r\n        margin-right: 6%;\r\n        margin-left: 6%;\r\n        box-shadow: 0px 20px 25px -5px rgba(0, 0, 0, 0.1), 0px 10px 10px -5px rgba(0, 0, 0, 0.04);\r\n        border-radius: 6px;\r\n        margin-top: -4rem;\n}\nh1 {\r\n        text-align: center;\r\n        font-family: 'Rouge Script';\r\n        font-style: normal;\r\n        align-items: center;\r\n        margin-top: -2.1rem;\n}\n#title {\r\n        background: #EFC6CD;\r\n        height: 1rem;\r\n        border-radius: 30px;\n}\n.ingredient {\r\n        background: #F8EBEC;\r\n        margin-right: 1rem;\r\n        margin-bottom: 1rem;\r\n        max-width: 100%;\r\n        max-height: 100%;\n}\n.hijo {\r\n        width: 100%;\r\n        height: 100%;\n}\n.descrip {\r\n        margin: 3%;\r\n        text-align: justify;\r\n        text-indent: 3%;\n}\n.picture_recipe {\r\n        min-width: 8rem;\r\n        height: 100%;\r\n        width: 100%;\r\n        -o-object-fit: contain;\r\n           object-fit: contain;\n}\n#like_position {\r\n        text-align: right;\n}\n#save_position {\r\n        text-align: left;\n}\n.save_like {\r\n        width: 15%;\r\n        min-width: 2.5rem;\n}\n.comment_image {\r\n        width: 15%;\r\n        min-width: 1.6rem;\n}\n.coments, .coment_user {\r\n        margin-top: 3rem;\r\n        margin-right: 6%;\r\n        margin-left: 6%;        \r\n        width: 100%;\r\n        margin-bottom: 1rem;\r\n\r\n        display: inline-block;\r\n        min-width: 100px;\n}\n.coments {\r\n        background-color: #D5888D;\r\n        border-radius: 6px;\n}\n.txt_coment {\r\n        background-color:transparent;\r\n        border-color:transparent;\r\n        color: white;\n}\n.txt_coment:focus {\r\n        background-color:transparent;\r\n        border-color:transparent;\r\n        box-shadow: 0 0 0 0 transparent;\r\n        color: white;\n}\n.margin_comment {\r\n        margin-bottom: 1%;\r\n        box-shadow: 0px 20px 20px -5px rgba(0, 0, 0, 0.1), 0px 10px 10px -5px rgba(0, 0, 0, 0.04);\r\n        border-radius: 6px;\r\n        background-color: #EDEBEB;\n}\r\n\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n#content {\n        margin-top: 6rem;\n        margin-right: 4%;\n        margin-left: 4%;\n}\n.recipe {\n        background-color: #ECE5E9;\n        margin-right: 6%;\n        margin-left: 6%;\n        box-shadow: 0px 20px 25px -5px rgba(0, 0, 0, 0.1), 0px 10px 10px -5px rgba(0, 0, 0, 0.04);\n        border-radius: 6px;\n        margin-top: -4rem;\n}\nh1 {\n        text-align: center;\n        font-family: 'Rouge Script';\n        font-style: normal;\n        align-items: center;\n        margin-top: -2.1rem;\n}\n#title {\n        background: #EFC6CD;\n        height: 1rem;\n        border-radius: 30px;\n}\n.ingredient {\n        background: #F8EBEC;\n        margin-right: 1rem;\n        margin-bottom: 1rem;\n        max-width: 100%;\n        max-height: 100%;\n}\n.hijo {\n        width: 100%;\n        height: 100%;\n}\n.descrip {\n        margin: 3%;\n        text-align: justify;\n        text-indent: 3%;\n}\n.picture_recipe {\n        min-width: 8rem;\n        height: 100%;\n        width: 100%;\n        -o-object-fit: contain;\n           object-fit: contain;\n}\n#like_position {\n        text-align: right;\n}\n#save_position {\n        text-align: left;\n}\n.save_like {\n        width: 15%;\n        min-width: 2.5rem;\n}\n.comment_image {\n        width: 15%;\n        min-width: 1.6rem;\n}\n.coments, .coment_user {\n        margin-top: 3rem;\n        margin-right: 6%;\n        margin-left: 6%;        \n        width: 100%;\n        margin-bottom: 1rem;\n\n        display: inline-block;\n        min-width: 100px;\n}\n.coments {\n        background-color: #D5888D;\n        border-radius: 6px;\n}\n.txt_coment {\n        background-color:transparent;\n        border-color:transparent;\n        color: white;\n}\n.txt_coment:focus {\n        background-color:transparent;\n        border-color:transparent;\n        box-shadow: 0 0 0 0 transparent;\n        color: white;\n}\n.margin_comment {\n        margin-bottom: 1%;\n        box-shadow: 0px 20px 20px -5px rgba(0, 0, 0, 0.1), 0px 10px 10px -5px rgba(0, 0, 0, 0.04);\n        border-radius: 6px;\n        background-color: #EDEBEB;\n}\n\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -30179,7 +30300,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n#log-in{\r\n  text-decoration: none;\r\n  color:black\n}\n#menu_login{\r\n  margin-top: 15px;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n#log-in{\n  text-decoration: none;\n  color:black\n}\n#menu_login{\n  margin-top: 15px;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -30203,7 +30324,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.section{\r\n    margin-top:5rem;\n}\n#content_table{\r\n    margin: 20px;\r\n    width: 95%;\n}\n#rol_column{\r\n    width:30%;\n}\n.btn_table{\r\n    width: 10px;\n}\n.btn_edit_delete{\r\n    border:none; \r\n    background-color:transparent\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.section{\n    margin-top:5rem;\n}\n#content_table{\n    margin: 20px;\n    width: 95%;\n}\n#rol_column{\n    width:30%;\n}\n.btn_table{\n    width: 10px;\n}\n.btn_edit_delete{\n    border:none; \n    background-color:transparent\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -30227,7 +30348,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n#section_login {\r\n    width: 50%;\r\n    margin: 5rem auto;\r\n    text-align: center;\r\n    width: 661px;\r\n    height: 539px;\r\n    left: 182px;\r\n    top: 235px;\r\n    background: #F8EBEC;\r\n    padding-top: 50px;\n}\n#form_login {\r\n    width: 80%;\r\n    text-align: start;\r\n    padding-top: 10%;\r\n    color: #AB8A62;\r\n    margin: 0 auto;\n}\n#form_login label{\r\n  font-size: 16px;\n}\n.input_login {\r\n    background: none;\r\n    border-top: none;\r\n    border-left: none;\r\n    border-right: none;\r\n    border-radius: 0px;\r\n    width: 100%;\r\n    margin: 5px 0px 10px 0px;\n}\n#submit {\r\n    font-size: 16px;\r\n    background: #AB8A62;\r\n    color: white;\r\n    margin-left: 38%;\r\n    margin-top: 15%;\r\n    padding: 5px 20px;\n}\n#label_password{\r\n  margin-top:2%;\n}\n#registrar_login{\r\n  margin-top: 15px;\r\n  color: #AB8A62;\n}\n.signup_login{\r\n color: #AB8A62;\n}\r\n\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n#section_login {\n    width: 50%;\n    margin: 5rem auto;\n    text-align: center;\n    width: 661px;\n    height: 539px;\n    left: 182px;\n    top: 235px;\n    background: #F8EBEC;\n    padding-top: 50px;\n}\n#form_login {\n    width: 80%;\n    text-align: start;\n    padding-top: 10%;\n    color: #AB8A62;\n    margin: 0 auto;\n}\n#form_login label{\n  font-size: 16px;\n}\n.input_login {\n    background: none;\n    border-top: none;\n    border-left: none;\n    border-right: none;\n    border-radius: 0px;\n    width: 100%;\n    margin: 5px 0px 10px 0px;\n}\n#submit {\n    font-size: 16px;\n    background: #AB8A62;\n    color: white;\n    margin-left: 38%;\n    margin-top: 15%;\n    padding: 5px 20px;\n}\n#label_password{\n  margin-top:2%;\n}\n#registrar_login{\n  margin-top: 15px;\n  color: #AB8A62;\n}\n.signup_login{\n color: #AB8A62;\n}\n\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -30251,7 +30372,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.section_form {\r\n    width: 750px;\r\n    left: 91px;\r\n    top: 155px;\r\n    margin: 5rem auto;\r\n    background: #ECE5E9;\r\n    padding-top: 2%;\r\n    text-align: center;\r\n    box-shadow: 0px 5px 5px #80808070;\n}\n.form_edit_signup {\r\n    width: 40%;\r\n    margin: 0 auto;\r\n    text-align: start;\r\n    color: #AB8A62;\n}\n#input_data input{\r\n    padding-right: 40%;\n}\n#input_data label{\r\n    margin: 5px 0px;\n}\n#update {\r\n    margin: 30% 0% 10% 30%;\r\n    background: #D5888D;\r\n    border: none;\r\n    padding: 5px 20px;\r\n    color: white;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.section_form {\n    width: 750px;\n    left: 91px;\n    top: 155px;\n    margin: 5rem auto;\n    background: #ECE5E9;\n    padding-top: 2%;\n    text-align: center;\n    box-shadow: 0px 5px 5px #80808070;\n}\n.form_edit_signup {\n    width: 40%;\n    margin: 0 auto;\n    text-align: start;\n    color: #AB8A62;\n}\n#input_data input{\n    padding-right: 40%;\n}\n#input_data label{\n    margin: 5px 0px;\n}\n#update {\n    margin: 30% 0% 10% 30%;\n    background: #D5888D;\n    border: none;\n    padding: 5px 20px;\n    color: white;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -30275,7 +30396,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.input_signup{\r\n  padding-right:40%;\n}\n#btn_signup {\r\n    margin-top: 20%;\r\n    /* text-align: center; */\r\n    /* margin: 0 auto; */\r\n    margin-left: 30%;\r\n    color: white;\r\n    padding: 5px 25px;\r\n    background: #AB8A62;\n}\n.label_signup {\r\n    margin: 5px 0px;\n}\n.signup{\r\n  padding: 5px 0px 15px 0px;\r\n  color:#AB8A62;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.input_signup{\n  padding-right:40%;\n}\n#btn_signup {\n    margin-top: 20%;\n    /* text-align: center; */\n    /* margin: 0 auto; */\n    margin-left: 30%;\n    color: white;\n    padding: 5px 25px;\n    background: #AB8A62;\n}\n.label_signup {\n    margin: 5px 0px;\n}\n.signup{\n  padding: 5px 0px 15px 0px;\n  color:#AB8A62;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -48408,7 +48529,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Foot_vue_vue_type_template_id_89c0c74e__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Foot.vue?vue&type=template&id=89c0c74e */ "./resources/js/components/Foot.vue?vue&type=template&id=89c0c74e");
 /* harmony import */ var _Foot_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Foot.vue?vue&type=script&lang=js */ "./resources/js/components/Foot.vue?vue&type=script&lang=js");
 /* harmony import */ var _Foot_vue_vue_type_style_index_0_id_89c0c74e_lang_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Foot.vue?vue&type=style&index=0&id=89c0c74e&lang=css */ "./resources/js/components/Foot.vue?vue&type=style&index=0&id=89c0c74e&lang=css");
-/* harmony import */ var C_Users_Usuario_Documents_uni_xampp_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var _Applications_XAMPP_xamppfiles_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
@@ -48416,7 +48537,7 @@ __webpack_require__.r(__webpack_exports__);
 ;
 
 
-const __exports__ = /*#__PURE__*/(0,C_Users_Usuario_Documents_uni_xampp_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__["default"])(_Foot_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Foot_vue_vue_type_template_id_89c0c74e__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/components/Foot.vue"]])
+const __exports__ = /*#__PURE__*/(0,_Applications_XAMPP_xamppfiles_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__["default"])(_Foot_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Foot_vue_vue_type_template_id_89c0c74e__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/components/Foot.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -48439,7 +48560,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _FormContacto_vue_vue_type_template_id_8b3720c4__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./FormContacto.vue?vue&type=template&id=8b3720c4 */ "./resources/js/components/FormContacto.vue?vue&type=template&id=8b3720c4");
 /* harmony import */ var _FormContacto_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./FormContacto.vue?vue&type=script&lang=js */ "./resources/js/components/FormContacto.vue?vue&type=script&lang=js");
 /* harmony import */ var _FormContacto_vue_vue_type_style_index_0_id_8b3720c4_lang_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./FormContacto.vue?vue&type=style&index=0&id=8b3720c4&lang=css */ "./resources/js/components/FormContacto.vue?vue&type=style&index=0&id=8b3720c4&lang=css");
-/* harmony import */ var C_Users_Usuario_Documents_uni_xampp_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var _Applications_XAMPP_xamppfiles_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
@@ -48447,7 +48568,7 @@ __webpack_require__.r(__webpack_exports__);
 ;
 
 
-const __exports__ = /*#__PURE__*/(0,C_Users_Usuario_Documents_uni_xampp_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__["default"])(_FormContacto_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_FormContacto_vue_vue_type_template_id_8b3720c4__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/components/FormContacto.vue"]])
+const __exports__ = /*#__PURE__*/(0,_Applications_XAMPP_xamppfiles_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__["default"])(_FormContacto_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_FormContacto_vue_vue_type_template_id_8b3720c4__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/components/FormContacto.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -48470,7 +48591,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Inicio_vue_vue_type_template_id_2bdc2210__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Inicio.vue?vue&type=template&id=2bdc2210 */ "./resources/js/components/Inicio.vue?vue&type=template&id=2bdc2210");
 /* harmony import */ var _Inicio_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Inicio.vue?vue&type=script&lang=js */ "./resources/js/components/Inicio.vue?vue&type=script&lang=js");
 /* harmony import */ var _Inicio_vue_vue_type_style_index_0_id_2bdc2210_lang_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Inicio.vue?vue&type=style&index=0&id=2bdc2210&lang=css */ "./resources/js/components/Inicio.vue?vue&type=style&index=0&id=2bdc2210&lang=css");
-/* harmony import */ var C_Users_Usuario_Documents_uni_xampp_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var _Applications_XAMPP_xamppfiles_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
@@ -48478,7 +48599,7 @@ __webpack_require__.r(__webpack_exports__);
 ;
 
 
-const __exports__ = /*#__PURE__*/(0,C_Users_Usuario_Documents_uni_xampp_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__["default"])(_Inicio_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Inicio_vue_vue_type_template_id_2bdc2210__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/components/Inicio.vue"]])
+const __exports__ = /*#__PURE__*/(0,_Applications_XAMPP_xamppfiles_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__["default"])(_Inicio_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Inicio_vue_vue_type_template_id_2bdc2210__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/components/Inicio.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -48501,7 +48622,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Receta_vue_vue_type_template_id_cee2b7a6__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Receta.vue?vue&type=template&id=cee2b7a6 */ "./resources/js/components/Receta.vue?vue&type=template&id=cee2b7a6");
 /* harmony import */ var _Receta_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Receta.vue?vue&type=script&lang=js */ "./resources/js/components/Receta.vue?vue&type=script&lang=js");
 /* harmony import */ var _Receta_vue_vue_type_style_index_0_id_cee2b7a6_lang_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Receta.vue?vue&type=style&index=0&id=cee2b7a6&lang=css */ "./resources/js/components/Receta.vue?vue&type=style&index=0&id=cee2b7a6&lang=css");
-/* harmony import */ var C_Users_Usuario_Documents_uni_xampp_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var _Applications_XAMPP_xamppfiles_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
@@ -48509,7 +48630,7 @@ __webpack_require__.r(__webpack_exports__);
 ;
 
 
-const __exports__ = /*#__PURE__*/(0,C_Users_Usuario_Documents_uni_xampp_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__["default"])(_Receta_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Receta_vue_vue_type_template_id_cee2b7a6__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/components/Receta.vue"]])
+const __exports__ = /*#__PURE__*/(0,_Applications_XAMPP_xamppfiles_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__["default"])(_Receta_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Receta_vue_vue_type_template_id_cee2b7a6__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/components/Receta.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -48532,7 +48653,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Recipe_description_vue_vue_type_template_id_11b88968__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Recipe-description.vue?vue&type=template&id=11b88968 */ "./resources/js/components/Recipe-description.vue?vue&type=template&id=11b88968");
 /* harmony import */ var _Recipe_description_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Recipe-description.vue?vue&type=script&lang=js */ "./resources/js/components/Recipe-description.vue?vue&type=script&lang=js");
 /* harmony import */ var _Recipe_description_vue_vue_type_style_index_0_id_11b88968_lang_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Recipe-description.vue?vue&type=style&index=0&id=11b88968&lang=css */ "./resources/js/components/Recipe-description.vue?vue&type=style&index=0&id=11b88968&lang=css");
-/* harmony import */ var C_Users_Usuario_Documents_uni_xampp_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var _Applications_XAMPP_xamppfiles_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
@@ -48540,7 +48661,7 @@ __webpack_require__.r(__webpack_exports__);
 ;
 
 
-const __exports__ = /*#__PURE__*/(0,C_Users_Usuario_Documents_uni_xampp_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__["default"])(_Recipe_description_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Recipe_description_vue_vue_type_template_id_11b88968__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/components/Recipe-description.vue"]])
+const __exports__ = /*#__PURE__*/(0,_Applications_XAMPP_xamppfiles_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__["default"])(_Recipe_description_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Recipe_description_vue_vue_type_template_id_11b88968__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/components/Recipe-description.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -48563,7 +48684,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _navbar_vue_vue_type_template_id_11e733ca__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./navbar.vue?vue&type=template&id=11e733ca */ "./resources/js/components/navbar.vue?vue&type=template&id=11e733ca");
 /* harmony import */ var _navbar_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./navbar.vue?vue&type=script&lang=js */ "./resources/js/components/navbar.vue?vue&type=script&lang=js");
 /* harmony import */ var _navbar_vue_vue_type_style_index_0_id_11e733ca_lang_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./navbar.vue?vue&type=style&index=0&id=11e733ca&lang=css */ "./resources/js/components/navbar.vue?vue&type=style&index=0&id=11e733ca&lang=css");
-/* harmony import */ var C_Users_Usuario_Documents_uni_xampp_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var _Applications_XAMPP_xamppfiles_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
@@ -48571,7 +48692,7 @@ __webpack_require__.r(__webpack_exports__);
 ;
 
 
-const __exports__ = /*#__PURE__*/(0,C_Users_Usuario_Documents_uni_xampp_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__["default"])(_navbar_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_navbar_vue_vue_type_template_id_11e733ca__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/components/navbar.vue"]])
+const __exports__ = /*#__PURE__*/(0,_Applications_XAMPP_xamppfiles_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__["default"])(_navbar_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_navbar_vue_vue_type_template_id_11e733ca__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/components/navbar.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -48593,13 +48714,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _recetamostrar_vue_vue_type_template_id_236cbf65__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./recetamostrar.vue?vue&type=template&id=236cbf65 */ "./resources/js/components/recetas/recetamostrar.vue?vue&type=template&id=236cbf65");
 /* harmony import */ var _recetamostrar_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./recetamostrar.vue?vue&type=script&lang=js */ "./resources/js/components/recetas/recetamostrar.vue?vue&type=script&lang=js");
-/* harmony import */ var C_Users_Usuario_Documents_uni_xampp_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var _Applications_XAMPP_xamppfiles_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,C_Users_Usuario_Documents_uni_xampp_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_recetamostrar_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_recetamostrar_vue_vue_type_template_id_236cbf65__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/components/recetas/recetamostrar.vue"]])
+const __exports__ = /*#__PURE__*/(0,_Applications_XAMPP_xamppfiles_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_recetamostrar_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_recetamostrar_vue_vue_type_template_id_236cbf65__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/components/recetas/recetamostrar.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -48621,13 +48742,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _recipes_manager_vue_vue_type_template_id_2c9f548a__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./recipes-manager.vue?vue&type=template&id=2c9f548a */ "./resources/js/components/recipes-manager.vue?vue&type=template&id=2c9f548a");
 /* harmony import */ var _recipes_manager_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./recipes-manager.vue?vue&type=script&lang=js */ "./resources/js/components/recipes-manager.vue?vue&type=script&lang=js");
-/* harmony import */ var C_Users_Usuario_Documents_uni_xampp_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var _Applications_XAMPP_xamppfiles_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,C_Users_Usuario_Documents_uni_xampp_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_recipes_manager_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_recipes_manager_vue_vue_type_template_id_2c9f548a__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/components/recipes-manager.vue"]])
+const __exports__ = /*#__PURE__*/(0,_Applications_XAMPP_xamppfiles_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_recipes_manager_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_recipes_manager_vue_vue_type_template_id_2c9f548a__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/components/recipes-manager.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -48649,13 +48770,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _edit_user_vue_vue_type_template_id_2ad14ea7__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./edit_user.vue?vue&type=template&id=2ad14ea7 */ "./resources/js/components/user/admin/edit_user.vue?vue&type=template&id=2ad14ea7");
 /* harmony import */ var _edit_user_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./edit_user.vue?vue&type=script&lang=js */ "./resources/js/components/user/admin/edit_user.vue?vue&type=script&lang=js");
-/* harmony import */ var C_Users_Usuario_Documents_uni_xampp_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var _Applications_XAMPP_xamppfiles_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,C_Users_Usuario_Documents_uni_xampp_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_edit_user_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_edit_user_vue_vue_type_template_id_2ad14ea7__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/components/user/admin/edit_user.vue"]])
+const __exports__ = /*#__PURE__*/(0,_Applications_XAMPP_xamppfiles_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_edit_user_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_edit_user_vue_vue_type_template_id_2ad14ea7__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/components/user/admin/edit_user.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -48678,7 +48799,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _list_user_vue_vue_type_template_id_b0649ada__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./list_user.vue?vue&type=template&id=b0649ada */ "./resources/js/components/user/admin/list_user.vue?vue&type=template&id=b0649ada");
 /* harmony import */ var _list_user_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./list_user.vue?vue&type=script&lang=js */ "./resources/js/components/user/admin/list_user.vue?vue&type=script&lang=js");
 /* harmony import */ var _list_user_vue_vue_type_style_index_0_id_b0649ada_lang_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./list_user.vue?vue&type=style&index=0&id=b0649ada&lang=css */ "./resources/js/components/user/admin/list_user.vue?vue&type=style&index=0&id=b0649ada&lang=css");
-/* harmony import */ var C_Users_Usuario_Documents_uni_xampp_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var _Applications_XAMPP_xamppfiles_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
@@ -48686,7 +48807,7 @@ __webpack_require__.r(__webpack_exports__);
 ;
 
 
-const __exports__ = /*#__PURE__*/(0,C_Users_Usuario_Documents_uni_xampp_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__["default"])(_list_user_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_list_user_vue_vue_type_template_id_b0649ada__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/components/user/admin/list_user.vue"]])
+const __exports__ = /*#__PURE__*/(0,_Applications_XAMPP_xamppfiles_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__["default"])(_list_user_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_list_user_vue_vue_type_template_id_b0649ada__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/components/user/admin/list_user.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -48709,7 +48830,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _login_vue_vue_type_template_id_1ef8bba0__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./login.vue?vue&type=template&id=1ef8bba0 */ "./resources/js/components/user/login.vue?vue&type=template&id=1ef8bba0");
 /* harmony import */ var _login_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./login.vue?vue&type=script&lang=js */ "./resources/js/components/user/login.vue?vue&type=script&lang=js");
 /* harmony import */ var _login_vue_vue_type_style_index_0_id_1ef8bba0_lang_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./login.vue?vue&type=style&index=0&id=1ef8bba0&lang=css */ "./resources/js/components/user/login.vue?vue&type=style&index=0&id=1ef8bba0&lang=css");
-/* harmony import */ var C_Users_Usuario_Documents_uni_xampp_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var _Applications_XAMPP_xamppfiles_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
@@ -48717,7 +48838,7 @@ __webpack_require__.r(__webpack_exports__);
 ;
 
 
-const __exports__ = /*#__PURE__*/(0,C_Users_Usuario_Documents_uni_xampp_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__["default"])(_login_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_login_vue_vue_type_template_id_1ef8bba0__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/components/user/login.vue"]])
+const __exports__ = /*#__PURE__*/(0,_Applications_XAMPP_xamppfiles_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__["default"])(_login_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_login_vue_vue_type_template_id_1ef8bba0__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/components/user/login.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -48740,7 +48861,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _profile_vue_vue_type_template_id_4d5ea6a0__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./profile.vue?vue&type=template&id=4d5ea6a0 */ "./resources/js/components/user/profile.vue?vue&type=template&id=4d5ea6a0");
 /* harmony import */ var _profile_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./profile.vue?vue&type=script&lang=js */ "./resources/js/components/user/profile.vue?vue&type=script&lang=js");
 /* harmony import */ var _profile_vue_vue_type_style_index_0_id_4d5ea6a0_lang_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./profile.vue?vue&type=style&index=0&id=4d5ea6a0&lang=css */ "./resources/js/components/user/profile.vue?vue&type=style&index=0&id=4d5ea6a0&lang=css");
-/* harmony import */ var C_Users_Usuario_Documents_uni_xampp_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var _Applications_XAMPP_xamppfiles_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
@@ -48748,7 +48869,7 @@ __webpack_require__.r(__webpack_exports__);
 ;
 
 
-const __exports__ = /*#__PURE__*/(0,C_Users_Usuario_Documents_uni_xampp_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__["default"])(_profile_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_profile_vue_vue_type_template_id_4d5ea6a0__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/components/user/profile.vue"]])
+const __exports__ = /*#__PURE__*/(0,_Applications_XAMPP_xamppfiles_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__["default"])(_profile_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_profile_vue_vue_type_template_id_4d5ea6a0__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/components/user/profile.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -48771,7 +48892,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _signup_vue_vue_type_template_id_6c4a90e1__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./signup.vue?vue&type=template&id=6c4a90e1 */ "./resources/js/components/user/signup.vue?vue&type=template&id=6c4a90e1");
 /* harmony import */ var _signup_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./signup.vue?vue&type=script&lang=js */ "./resources/js/components/user/signup.vue?vue&type=script&lang=js");
 /* harmony import */ var _signup_vue_vue_type_style_index_0_id_6c4a90e1_lang_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./signup.vue?vue&type=style&index=0&id=6c4a90e1&lang=css */ "./resources/js/components/user/signup.vue?vue&type=style&index=0&id=6c4a90e1&lang=css");
-/* harmony import */ var C_Users_Usuario_Documents_uni_xampp_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var _Applications_XAMPP_xamppfiles_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
@@ -48779,7 +48900,7 @@ __webpack_require__.r(__webpack_exports__);
 ;
 
 
-const __exports__ = /*#__PURE__*/(0,C_Users_Usuario_Documents_uni_xampp_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__["default"])(_signup_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_signup_vue_vue_type_template_id_6c4a90e1__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/components/user/signup.vue"]])
+const __exports__ = /*#__PURE__*/(0,_Applications_XAMPP_xamppfiles_htdocs_blog_recetas_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__["default"])(_signup_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_signup_vue_vue_type_template_id_6c4a90e1__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/components/user/signup.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -49369,7 +49490,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
 /* harmony import */ var _vue_devtools_api__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @vue/devtools-api */ "./node_modules/@vue/devtools-api/lib/esm/index.js");
 /*!
-  * vue-router v4.0.14
+  * vue-router v4.0.15
   * (c) 2022 Eduardo San Martin Morote
   * @license MIT
   */
@@ -50354,9 +50475,9 @@ function tokensToParser(segments, extraOptions) {
                     const text = Array.isArray(param) ? param.join('/') : param;
                     if (!text) {
                         if (optional) {
-                            // if we have more than one optional param like /:a?-static we
-                            // don't need to care about the optional param
-                            if (segment.length < 2) {
+                            // if we have more than one optional param like /:a?-static and there are more segments, we don't need to
+                            // care about the optional param
+                            if (segment.length < 2 && segments.length > 1) {
                                 // remove the last slash as we could be at the end
                                 if (path.endsWith('/'))
                                     path = path.slice(0, -1);
@@ -51610,6 +51731,9 @@ const RouterViewImpl = /*#__PURE__*/ (0,vue__WEBPACK_IMPORTED_MODULE_0__.defineC
         },
         route: Object,
     },
+    // Better compat for @vue/compat users
+    // https://github.com/vuejs/router/issues/1315
+    compatConfig: { MODE: 3 },
     setup(props, { attrs, slots }) {
         ( true) && warnDeprecatedUsage();
         const injectedRoute = (0,vue__WEBPACK_IMPORTED_MODULE_0__.inject)(routerViewLocationKey);
@@ -52561,6 +52685,9 @@ function createRouter(options) {
     let removeHistoryListener;
     // attach listener to history to trigger navigations
     function setupListeners() {
+        // avoid setting up listeners twice due to an invalid first navigation
+        if (removeHistoryListener)
+            return;
         removeHistoryListener = routerHistory.listen((to, _from, info) => {
             // cannot be a redirect route because it was in history
             const toLocation = resolve(to);
@@ -52762,6 +52889,7 @@ function createRouter(options) {
                     // invalidate the current navigation
                     pendingLocation = START_LOCATION_NORMALIZED;
                     removeHistoryListener && removeHistoryListener();
+                    removeHistoryListener = null;
                     currentRoute.value = START_LOCATION_NORMALIZED;
                     started = false;
                     ready = false;
@@ -52978,9 +53106,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "withScopeId": () => (/* reexport safe */ _vue_runtime_dom__WEBPACK_IMPORTED_MODULE_0__.withScopeId)
 /* harmony export */ });
 /* harmony import */ var _vue_runtime_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @vue/runtime-dom */ "./node_modules/@vue/runtime-dom/dist/runtime-dom.esm-bundler.js");
-/* harmony import */ var _vue_runtime_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @vue/runtime-dom */ "./node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js");
+/* harmony import */ var _vue_runtime_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @vue/runtime-dom */ "./node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js");
 /* harmony import */ var _vue_compiler_dom__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @vue/compiler-dom */ "./node_modules/@vue/compiler-dom/dist/compiler-dom.esm-bundler.js");
-/* harmony import */ var _vue_shared__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @vue/shared */ "./node_modules/@vue/shared/dist/shared.esm-bundler.js");
+/* harmony import */ var _vue_shared__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @vue/shared */ "./node_modules/@vue/shared/dist/shared.esm-bundler.js");
 
 
 
@@ -52989,7 +53117,7 @@ __webpack_require__.r(__webpack_exports__);
 
 function initDev() {
     {
-        (0,_vue_runtime_dom__WEBPACK_IMPORTED_MODULE_2__.initCustomFormatter)();
+        (0,_vue_runtime_dom__WEBPACK_IMPORTED_MODULE_1__.initCustomFormatter)();
     }
 }
 
@@ -52999,13 +53127,13 @@ if ((true)) {
 }
 const compileCache = Object.create(null);
 function compileToFunction(template, options) {
-    if (!(0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isString)(template)) {
+    if (!(0,_vue_shared__WEBPACK_IMPORTED_MODULE_2__.isString)(template)) {
         if (template.nodeType) {
             template = template.innerHTML;
         }
         else {
-            ( true) && (0,_vue_runtime_dom__WEBPACK_IMPORTED_MODULE_2__.warn)(`invalid template option: `, template);
-            return _vue_shared__WEBPACK_IMPORTED_MODULE_1__.NOOP;
+            ( true) && (0,_vue_runtime_dom__WEBPACK_IMPORTED_MODULE_1__.warn)(`invalid template option: `, template);
+            return _vue_shared__WEBPACK_IMPORTED_MODULE_2__.NOOP;
         }
     }
     const key = template;
@@ -53016,7 +53144,7 @@ function compileToFunction(template, options) {
     if (template[0] === '#') {
         const el = document.querySelector(template);
         if (( true) && !el) {
-            (0,_vue_runtime_dom__WEBPACK_IMPORTED_MODULE_2__.warn)(`Template element not found or is empty: ${template}`);
+            (0,_vue_runtime_dom__WEBPACK_IMPORTED_MODULE_1__.warn)(`Template element not found or is empty: ${template}`);
         }
         // __UNSAFE__
         // Reason: potential execution of JS expressions in in-DOM template.
@@ -53024,7 +53152,7 @@ function compileToFunction(template, options) {
         // by the server, the template should not contain any user data.
         template = el ? el.innerHTML : ``;
     }
-    const { code } = (0,_vue_compiler_dom__WEBPACK_IMPORTED_MODULE_3__.compile)(template, (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.extend)({
+    const { code } = (0,_vue_compiler_dom__WEBPACK_IMPORTED_MODULE_3__.compile)(template, (0,_vue_shared__WEBPACK_IMPORTED_MODULE_2__.extend)({
         hoistStatic: true,
         onError: ( true) ? onError : 0,
         onWarn: ( true) ? e => onError(e, true) : 0
@@ -53034,8 +53162,8 @@ function compileToFunction(template, options) {
             ? err.message
             : `Template compilation error: ${err.message}`;
         const codeFrame = err.loc &&
-            (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.generateCodeFrame)(template, err.loc.start.offset, err.loc.end.offset);
-        (0,_vue_runtime_dom__WEBPACK_IMPORTED_MODULE_2__.warn)(codeFrame ? `${message}\n${codeFrame}` : message);
+            (0,_vue_shared__WEBPACK_IMPORTED_MODULE_2__.generateCodeFrame)(template, err.loc.start.offset, err.loc.end.offset);
+        (0,_vue_runtime_dom__WEBPACK_IMPORTED_MODULE_1__.warn)(codeFrame ? `${message}\n${codeFrame}` : message);
     }
     // The wildcard import results in a huge object with every export
     // with keys that cannot be mangled, and can be quite heavy size-wise.
@@ -53045,7 +53173,7 @@ function compileToFunction(template, options) {
     render._rc = true;
     return (compileCache[key] = render);
 }
-(0,_vue_runtime_dom__WEBPACK_IMPORTED_MODULE_2__.registerRuntimeCompiler)(compileToFunction);
+(0,_vue_runtime_dom__WEBPACK_IMPORTED_MODULE_1__.registerRuntimeCompiler)(compileToFunction);
 
 
 
