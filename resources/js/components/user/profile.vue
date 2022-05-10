@@ -17,8 +17,14 @@
             <input type="email" readonly v-model="getUser.email"/><br>
             <label >Password:</label><br>
             <input type="password"  v-model="getUser.password"/><br>
+            <label >Avatar:</label><br>
+            <input type="file" class="mb-3" accept=".jpeg,.png,.jpg,.svg" name="avatar" @change="onChange"/>
+            <div class="avatar-container mb-3">
+            <img v-bind:src="imagePreview" width="100" height="100" v-show="showPreview"/> 
+            </div>
+            <input type="submit"  class="update mb-3" value="Actualizar datos">
         </div>
-        <input type="submit"  class="update" value="Actualizar datos">
+        
         </form>
         <form @submit.prevent="delete_user()">
         <input type="submit"  class="update" id="delete" value="Eliminar cuenta">
@@ -29,44 +35,28 @@
 
 <script>
 export default {
+  
     beforeCreate() {
-        /* Para ver todos los usuarios */
-        // axios.get('/profile').then(res => {
-        //     vm.user = res.data;
-        //     console.log(res);
-        // })
-        //  console.log(this.user_id);
         axios.get('/profile').then(res => {
             this.user = res.data;
-            // console.log(res);
-            // console.log(this.user);
-
         },
         (error) => {
             console.log(error.response.data);
         })
-
-        // axios.get('/profile')
-        // .then(function (response) {
-        //     // handle success
-        //     this.user=response.data;
-        //     console.log(response);
-        // })
-        // .then((response) => {
-        //     this.user = response.data;
-        // })
-        // console.log("usuario:" + vm.user)
     },
     name: 'Profile',
     data() {
       return {
-            title: 'Perfil',   
+            title: 'Mi Perfil',   
             user: [],
             message:[{
                 message_1:'',
                 message_2:''
             }],
-            error:''
+            error:'',
+            avatar:'',
+            imagePreview: null,
+            showPreview: false
         }
     },
     computed:{
@@ -78,21 +68,37 @@ export default {
         }
     }, 
     methods:{
+        onChange(event){
+            this.avatar = event.target.files[0];
+            this.avatar_path = 'images/' + this.avatar.name
+            let reader  = new FileReader();
+
+            reader.addEventListener("load", function () {
+                this.showPreview = true;
+                this.imagePreview = reader.result;
+            }.bind(this), false);
+
+            if( this.avatar ){
+                if ( /\.(jpe?g|png|gif|svg)$/i.test( this.avatar.name) ) {
+                    reader.readAsDataURL( this.avatar );
+                }
+            }
+
+        },
+        oldonChange(){
+            this.photo =this.$refs.file.files[0];
+            this.photo_path = 'images/' + this.photo.name
+            console.log(this.photo)
+        },
         update(){
-            // console.log("---");
-            // console.log(this.user);
-            // var user_new=this.user;
             if(this.validate()){
                 axios.post('/edit', { name: this.user.name, name_last: this.user.name_last, email: this.user.email, password: this.user.password}).then((res) => {
-                    // console.log(res);
-                // console.log('saved update');
                 }, function (error) {
                     console.log(error.response.data); 
                 });
             }
         },
         validate(){
-            // console.log('he');
             this.getError.message_1='';
             this.getError.message_2='';
             var flag=true;
@@ -141,15 +147,35 @@ export default {
     margin: 0 auto;
     text-align: start;
     color: #AB8A62;
+  
 }
-#input_data input{
-    padding-right: 40%;
+
+ img{
+    text-align: center;
+  
+}
+#input_data input {
+    width: 100%;
+}
+#input_data input[type=file]{
+    border:none
+
+}
+
+#input_data input[type=file]{
+    color: black;
+    
 }
 #input_data label{
     margin: 5px 0px;
 }
+
+.avatar-container{
+    text-align: center;
+}
+
 .update {
-    margin: 30% 0% 10% 30%;
+   
     background: #D5888D;
     border: none;
     padding: 5px 20px;

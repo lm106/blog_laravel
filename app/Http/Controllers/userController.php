@@ -66,6 +66,8 @@ class userController extends Controller
         $user->name_last = $request->get('name_last');
         $user->email = $request->get('email');
         $user->password = $request->get('password');
+        $user->photo = $request->get('photo');
+
         $user->type= $request->get('type');
         $user -> save();
         // $request->session()->put(['login'=>'user']);

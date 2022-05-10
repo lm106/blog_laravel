@@ -16,7 +16,8 @@
           <div v-else-if="userType == 1">
           <div class="dropdown text-end position-absolute top-0 end-0 ">
             <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-              <img src="https://github.com/mdo.png" alt="mdo" width="52" height="52" class="rounded-circle">
+              <img v-bind:src="user[0].photo" width="52" height="52" class="rounded-circle">
+
             </a>
             
                 <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1">
@@ -32,13 +33,12 @@
           <div v-else-if="userType != 1">
             <div class="dropdown text-end position-absolute top-0 end-0 ">
             <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-              <img src="https://github.com/mdo.png" alt="mdo" width="52" height="52" class="rounded-circle">
+            <img v-bind:src="user[0].photo" width="52" height="52" class="rounded-circle">
+
             </a>
             
                 <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1">
-                <li><a class="dropdown-item" href="#">New project...</a></li>
-                <li><a class="dropdown-item" href="#">Settings</a></li>
-                <li><router-link class="dropdown-item" to="/perfil" >Perfil</router-link></li>
+                <li><router-link class="dropdown-item" to="/perfil" >Mi perfil</router-link></li>
                 <li><hr class="dropdown-divider"></li>
                 <li><button class="dropdown-item" @click="logout">Cerrar sesión</button></li>
               </ul>
@@ -74,7 +74,7 @@ export default {
         axios.get(`/profile`).then(res => {
             (res.data)?vm.user = res.data: vm.user=res.data[0];//Recoger los datos del usuario en la session
             // console.log(res.data);
-            // console.log(vm.user);
+             console.log(vm.user[0].photo);
         },
         (error) => {
             console.log(error.response.data);
