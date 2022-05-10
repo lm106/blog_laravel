@@ -42,6 +42,7 @@
                 <!-- like y guardado -->
                 <div class="container">
                     <div class="row">
+                    <div style="width:12%;">
                         <button type="button" class="col btn" id='save_position' data-bs-toggle="modal" data-bs-target="#exampleModal">
                                 <img v-bind:src="save" class="card-img-top save_like" alt="image">
                             </button>
@@ -78,7 +79,7 @@
                                     </div>
                                 </div>
                             </div>
-
+                    </div>
                             <!-- Segunda columna (like) -->
                         <div class="col" id="like_position">
                             <p style="font-weight: bold;">
@@ -408,6 +409,9 @@ export default {
 
     #save_position {
         text-align: left;
+        padding: 0px;
+        display: contents;
+        width: 505;;
     }
 
     .save_like, .edit {
