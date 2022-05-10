@@ -10,7 +10,7 @@
             <router-link to="/" id="myTitle">Blog de Recetas</router-link>
               
           </div>
-          <div v-if="user.length < 1" class="no-user text-end position-absolute top-0 end-0" id="menu_login">
+          <div v-if="!user" class="no-user text-end position-absolute top-0 end-0" id="menu_login">
             <router-link to="/login" id="log-in">Iniciar sesión</router-link>
           </div>
           <div v-else-if="userType == 1">
