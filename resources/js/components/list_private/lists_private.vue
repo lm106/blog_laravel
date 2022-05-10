@@ -51,14 +51,14 @@
                     <td scope="row" v-if="list.n_recetas > 1"> {{list.n_recetas}} recetas </td>
                     <td scope="row" v-if="list.n_recetas == 0"> No tiene recetas </td>
                     <td scope="row">
-                        <div class="dropdown top-0 end-0 ">
+                        <div class="dropdown top-0 end-0 " style="position: unset;">
                             <a class="d-block dropdown-toggle options" data-bs-toggle="dropdown" aria-expanded="false">
                                 <svg class="points"><circle cx="50%" cy="50%" r="2" fill="grey" stroke="grey" /></svg>
                                 <svg class="points"><circle cx="50%" cy="50%" r="2" fill="grey" stroke="grey" /></svg>
                                 <svg class="points"><circle cx="50%" cy="50%" r="2" fill="grey" stroke="grey" /></svg>
                             </a>
                             <ul class="dropdown-menu text-small dropdown-menu-end menu_desplegable">
-                                <li><router-link class="dropdown-item" to="/edit_list_private" style="color:#AB8A62; font-weight:bold;">
+                                <li><router-link class="dropdown-item"  :to="{name: 'edit_list_private', params: {name_list: list.name}}" style="color:#AB8A62; font-weight:bold;">
                                         <i class="bi bi-pencil-fill" style="color:#AB8A62"></i> Editar
                                     </router-link>
                                 </li>
