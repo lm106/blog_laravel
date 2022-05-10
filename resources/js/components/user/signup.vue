@@ -73,7 +73,7 @@ export default {
          })console.log(this.user.type);*/
          var vm=this;
         if(this.validate(0)){
-          axios.post('/signup', { name: this.user.name, name_last: this.user.name_last, email: this.user.email, password: this.user.password, type: '2', photo: 'images/default-avatar.jpeg'}).then(() => {
+          axios.post('/signup', { name: this.user.name, name_last: this.user.name_last, email: this.user.email, password: this.user.password, type: '2', photo_path: 'images/default-avatar.jpeg'}).then(() => {
             console.log('saved');
             window.location.href="/";
           }, function (error) {

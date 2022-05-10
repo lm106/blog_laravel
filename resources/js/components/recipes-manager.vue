@@ -63,7 +63,9 @@
                 <td scope="row"><img v-bind:src="r.image" width="100" height="100" /></td>
                 <td scope="row">{{r.short_description}}</td>
                 <td scope="row">{{r.short_ingredients}}</td>
-                <td scope="row"><button @click="showRecipe(r.id)" style="border:none; background-color:transparent"><i class="bi bi-info-circle-fill" style="color:blue" ></i></button></td>
+                <td scope="row"><router-link :to="{name: 'recipe_description', params: {id: r.id}}" >
+                <button style="border:none; background-color:transparent">
+                <i class="bi bi-info-circle-fill" style="color:blue" ></i></button></router-link></td>
                 <td scope="row"><button style="border:none; background-color:transparent"><i class="bi bi-pencil-fill" ></i></button></td>
                 <td scope="row"><button style="border:none; background-color:transparent"><i class="bi bi-trash3-fill" style="color:red"></i></button ></td>
             
@@ -150,9 +152,7 @@ export default {
             
             });
         },
-        showRecipe(id){
-            window.location.href = '/recipe_description/' + id
-        },
+       
         shortString(string){
             if(string.length >= 100) {
                 return string.substring(0,100) + "..."

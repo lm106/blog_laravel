@@ -66,7 +66,7 @@ class userController extends Controller
         $user->name_last = $request->get('name_last');
         $user->email = $request->get('email');
         $user->password = $request->get('password');
-        $user->photo = $request->get('photo');
+        $user->photo = $request->get('photo_path');
 
         $user->type= $request->get('type');
         $user -> save();
@@ -116,20 +116,32 @@ class userController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit(Request $request){
-        //El que queremos actualizar
         $user_update = new User();
+        $request->validate([
+            'photo.*' => 'mimes:jpeg,png,jpg,svg'
+        ]);
+        if($photo = $request->hasFile('photo')) { 
+            $photo = $request->file('photo') ;
+            $photoName = $photo->getClientOriginalName() ;
+            $destinationPath = public_path().'/images' ;
+            $photo->move($destinationPath,$photoName);
+        } 
+        //El que queremos actualizar
+     
         $user_update->name = $request->get('name');
         $user_update->name_last = $request->get('name_last');
         $user_update->email = $request->get('email');
         $user_update->password = $request->get('password');
         $user_update->type= $request->get('type');
+        $user_update->photo=$request->get('avatar_path');
         //El antiguo que está en session (token)
         $user_old = $request->session()->get('user');
         //En la base de datos
         $user_db=User::find($user_old[0]->id);
         if($user_old[0]->name !==$user_update->name) $user_db->name=$user_update->name;
         if($user_old[0]->name_last !==$user_update->name_last) $user_db->name_last=$user_update->name_last;
-        if($user_old[0]->password !==$user_update->password) $user_old->password=$user_update->password;
+        if($user_old[0]->password !==$user_update->password) $user_db->password=$user_update->password;
+        if($user_old[0]->photo !==$user_update->photo) $user_db->photo=$user_update->photo;
         $user_db->save();
         $request->session()->put(['user' => $user_update]);
         return response()->json($user_db);
@@ -145,6 +157,7 @@ class userController extends Controller
      */
     public function update(Request $request){
         //
+       
         $user_update = new User();
         $user_update->name = $request->get('name');
         $user_update->name_last = $request->get('name_last');
@@ -152,6 +165,7 @@ class userController extends Controller
         $user_update->password = $request->get('password');
         $user_update->type= $request->get('type');
         $user_update->id= $request->get('id');
+        $user_update->photo = $request->get('image_path');
         $user_db=User::find($user_update->id);
         if($user_db->name !==$user_update->name) $user_db->name=$user_update->name;
         if($user_db->name_last !==$user_update->name_last) $user_db->name_last=$user_update->name_last;
