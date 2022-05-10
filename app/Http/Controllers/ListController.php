@@ -101,14 +101,23 @@ class ListController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Mostrar el contenido de una lista
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
-    {
+    public function show_list(Request $request, $name){
         //
+        $user=$request->session()->get('user');
+        if($user != ""){
+            $user_id=$user[0]->id;
+            $list_recipe=List_private::select('receta.*')
+                ->where('list.user_id', '=', $user_id)
+                ->where('name', '=', $name)->rightJoin('receta', 'recipe_id', 'receta.id')->get();
+            return response()->json($list_recipe);
+        } else{
+            return 'not';
+        }
     }
 
     /**

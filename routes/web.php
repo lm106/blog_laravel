@@ -39,7 +39,7 @@ Route::view('/admin_list', 'welcome');
 Route::view('/edit_user/{id}', 'welcome');
 Route::view('/comment', 'welcome');
 Route::view('/lists_private', 'welcome');
-
+Route::view('/list_private/{name}', 'welcome');
 
 
 // Route::view('/logout', 'welcome');
@@ -96,7 +96,7 @@ Route::get('/lists', [ListController::class, 'index']);
 Route::post('/create_list', [ListController::class, 'create']);
 Route::get('/delete_list/{name}', [ListController::class, 'destroy']);
 Route::get('/lists_user', [ListController::class, 'show']);
-
 Route::post('/save_recipe', [ListController::class, 'save_recipe']);
 Route::post('/dissave_recipe', [ListController::class, 'dissave_recipe']);
 Route::post('/check_recipe_save', [ListController::class, 'check_recipe']);
+Route::get('/list_recipe/{name}', [ListController::class, 'show_list']);

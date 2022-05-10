@@ -48,6 +48,7 @@ export default {
             .then(respo => {
                 this.like[0] = respo.data[0];
                 this.comment = respo.data[1];
+                console.log(respo);
             }, 
             (error) => {
                 console.log(error.response.data);
@@ -59,7 +60,7 @@ export default {
             imagen: this.receta.image,
             descripcion: this.receta.description,
             titulo: this.receta.title,
-            like: ['', img_dir.like],
+            like: ['', img_dir.url+img_dir.like],
             save: img_dir.dissave,
             comment: ''
         }
