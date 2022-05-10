@@ -95,4 +95,8 @@ Route::post('/edit_comment', [CommentController::class, 'edit']);
 Route::get('/lists', [ListController::class, 'index']);
 Route::post('/create_list', [ListController::class, 'create']);
 Route::get('/delete_list/{name}', [ListController::class, 'destroy']);
-Route::post('/lists_user', [ListController::class, 'show']);
+Route::get('/lists_user', [ListController::class, 'show']);
+
+Route::post('/save_recipe', [ListController::class, 'save_recipe']);
+Route::post('/dissave_recipe', [ListController::class, 'dissave_recipe']);
+Route::post('/check_recipe_save', [ListController::class, 'check_recipe']);

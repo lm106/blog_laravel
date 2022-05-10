@@ -79,15 +79,6 @@
                                 </div>
                             </div>
 
-
-
-
-
-
-
-
-
-
                             <!-- Segunda columna (like) -->
                         <div class="col" id="like_position">
                             <p style="font-weight: bold;">
@@ -101,7 +92,7 @@
                 </div>
             </div>
         </div>
-
+        
         <!-- send comment -->
         <div class="container coments">
             <div class="row">

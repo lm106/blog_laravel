@@ -62,7 +62,7 @@ const router = [
     component: require('../components/list_private/lists_private.vue').default
   },
   {
-    path: '/list_private/:id',
+    path: '/list_private/:name_list',
     name: 'list_private',
     props: true,
     component: require('../components/list_private/list_private.vue').default

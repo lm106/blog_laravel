@@ -45,7 +45,7 @@
             </thead>
             <tbody v-if="lists_private">
                 <tr v-for=" (list, index) in lists_private" :key='list'>
-                    <td scope="row"><router-link :to="{name: 'list_private', params: {id: this.list.id}}" >{{list.name}}</router-link></td>
+                    <td scope="row"><router-link :to="{name: 'list_private', params: {name_list: list.name}}" >{{list.name}}</router-link></td>
                     
                     <td scope="row" v-if="list.n_recetas == 1"> {{list.n_recetas}} receta </td>
                     <td scope="row" v-if="list.n_recetas > 1"> {{list.n_recetas}} recetas </td>
@@ -72,10 +72,10 @@
                     <!-- <td scope="row"><a class="btn_edit_delete"><i class="bi bi-trash3-fill" style="color:red"></i></a></td> -->
                 </tr>
             </tbody>
-            </table>
-            <div class="alert alert-secondary content_list" style="text-align:center;" role="alert">
+            <div v-else class="alert alert-secondary content_list" style="text-align:center;" role="alert">
                 ¡Ups! No tienes listas privadas. Creáte una lista.
             </div>
+            </table>
         </div>
         <div v-else>
 
