@@ -19,7 +19,7 @@ const router = [
 
   },
   { 
-    path: '/profile_user', 
+    path: '/perfil', 
     component:  require('../components/user/profile.vue').default 
   },
   { 

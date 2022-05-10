@@ -62,7 +62,7 @@ use App\Http\Controllers\ListController;
 Route::post('/signup', [userController::class, 'createUser']);
 Route::post('/login', [userController::class, 'login']);
 Route::post('/logout', [userController::class, 'logout']);
-Route::get('/profile', [userController::class, 'show']);
+Route::get('/perfil', [userController::class, 'show']);
 Route::post('/edit', [userController::class, 'edit']);
 Route::get('/admin_list', [userController::class, 'index']); 
 Route::post('/update_user', [userController::class, 'update']);
