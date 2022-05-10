@@ -19,7 +19,7 @@ const router = [
 
   },
   { 
-    path: '/profile', 
+    path: '/profile_user', 
     component:  require('../components/user/profile.vue').default 
   },
   { 
@@ -58,7 +58,7 @@ const router = [
     component: require('../components/user/admin/edit_user.vue').default
   },
   {
-    path: '/list_private',
+    path: '/lists_private',
     component: require('../components/list_private/lists_private.vue').default
   },
   {
