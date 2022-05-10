@@ -11,7 +11,7 @@ class User extends Model
     use HasFactory;
     use Notifiable;
     protected $fillable = [
-        'name', 'name_last', 'email', 'password', 'type'
+        'name', 'name_last', 'email', 'password', 'photo','type'
     ];
     protected $table = 'user';
 

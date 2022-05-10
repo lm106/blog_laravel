@@ -18,18 +18,18 @@
             <label >Password:</label><br>
             <input type="password"  v-model="getUser.password"/><br>
             <label >Avatar:</label><br>
-            <input type="file" class="mb-3" accept=".jpeg,.png,.jpg,.svg" name="avatar" @change="onChange"/>
+            <input type="file" class="mb-3" accept=".jpeg,.png,.jpg,.svg" name="photo" @change="onChange" ref="file"/>
             <div class="avatar-container mb-3">
-            <img v-bind:src="imagePreview" width="100" height="100" v-show="showPreview"/> 
+                <img v-bind:src="imagePreview" width="102" height="102" v-show="showPreview" class="rounded-circle" /> 
             </div>
             <input type="submit"  class="update mb-3" value="Actualizar datos">
         </div>
         
         </form>
         <form @submit.prevent="delete_user()">
-        <input type="submit"  class="update" id="delete" value="Eliminar cuenta">
+            <input type="submit"  class="update" id="delete" value="Eliminar mi cuenta">
         </form>
-        <!-- <p>{{ user }}</p> -->
+
     </div>
 </template>
 
@@ -39,6 +39,7 @@ export default {
     beforeCreate() {
         axios.get('/profile').then(res => {
             this.user = res.data;
+    
         },
         (error) => {
             console.log(error.response.data);
@@ -47,16 +48,25 @@ export default {
     name: 'Profile',
     data() {
       return {
+            avatar: '',
+            avatar_path:'',
             title: 'Mi Perfil',   
-            user: [],
+            user: [{
+                name: '',
+                name_last: '',
+                email: '',
+                password: '',
+                id: '',
+                photo: ''
+            }],
             message:[{
                 message_1:'',
                 message_2:''
             }],
             error:'',
-            avatar:'',
             imagePreview: null,
-            showPreview: false
+            showPreview: false,
+            
         }
     },
     computed:{
@@ -68,9 +78,10 @@ export default {
         }
     }, 
     methods:{
-        onChange(event){
-            this.avatar = event.target.files[0];
+        onChange(){
+            this.avatar = this.$refs.file.files[0];
             this.avatar_path = 'images/' + this.avatar.name
+
             let reader  = new FileReader();
 
             reader.addEventListener("load", function () {
@@ -84,15 +95,27 @@ export default {
                 }
             }
 
+            this.user[0].photo = this.avatar_path
+
         },
-        oldonChange(){
-            this.photo =this.$refs.file.files[0];
-            this.photo_path = 'images/' + this.photo.name
-            console.log(this.photo)
-        },
+        
         update(){
+            this.checkIfExistImage()
             if(this.validate()){
-                axios.post('/edit', { name: this.user.name, name_last: this.user.name_last, email: this.user.email, password: this.user.password}).then((res) => {
+                const formData = new FormData()
+
+                formData.append('name', this.user[0].name)
+                formData.append('name_last',this.user[0].name_last)
+                formData.append('email', this.user[0].email)
+                formData.append('password', this.user[0].password)
+                if(this.avatar){
+                    formData.append('photo', this.avatar)
+                }
+                formData.append('avatar_path', this.user[0].photo)
+                const headers = { 'Content-Type': 'multipart/form-data' };
+                axios.post('/edit', formData, {headers}).then(() => {
+                    console.log("updated")
+                    window.location.href="/login";
                 }, function (error) {
                     console.log(error.response.data); 
                 });
@@ -110,13 +133,13 @@ export default {
                 this.getError.message_2= " La contraseña no puede estar vacía"
                 flag=false;
             }
-            // console.log(this.message)
+    
             return flag;
         },
         delete_user(){
-            axios.post('/delete', { id: this.user.id}).then((res) => {
+            axios.post('/delete', { id: this.user[0].id}).then((res) => {
                 console.log(res);
-                // console.log('saved update');
+           
                 if(res.data) {
                     window.location.href='/';
                 }else{
@@ -125,7 +148,13 @@ export default {
             }, function (error) {
                 console.log(error.response.data); 
             });
+        },
+        checkIfExistImage(){
+            if(this.photo == ""){
+                this.avatar_path = "images/default-avatar.jpeg"
+            }
         }
+        
 
     }
 }

@@ -23,7 +23,7 @@
                 <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1">
                 <li><router-link class="dropdown-item" to="/recipes_manager">Administrador de recetas</router-link></li>
                 <li><router-link class="dropdown-item" to="/admin_list">Administrador de usuarios</router-link></li>
-                <li><router-link class="dropdown-item" to="/perfil">Perfil</router-link></li>
+                <li><router-link class="dropdown-item" to="/perfil">Mi perfil</router-link></li>
                 <li><hr class="dropdown-divider"></li>
                 <li><button class="dropdown-item" @click="logout">Cerrar sesión</button></li>
               </ul>
