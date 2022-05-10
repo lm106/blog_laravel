@@ -9,7 +9,7 @@ use App\Models\List_private;
 class ListController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Mostrar las listas privadas que tiene el usuario
      *
      * @return \Illuminate\Http\Response
      */
@@ -24,11 +24,19 @@ class ListController extends Controller
         $user_id=$request->session()->get('user')[0]->id;
         $list_n_recetas= List_private::select('user_id','name',DB::raw('COUNT(recipe_id) as n_recetas'))
         ->distinct('user_id','name')->groupBy('user_id','name')->where('user_id','=', $user_id)->get();
+
+        // $receta_destaca=DB::table('likes')
+        // ->crossJoin('receta', 'receta.id', '=', 'likes.recipe_id')
+        // ->distinct('likes.recipe_id', 'title')
+        // ->groupBy('likes.recipe_id','title', 'image', 'likes.user_id')
+        // ->select('recipe_id','title', 'image', DB::raw('COUNT(likes.user_id) as n_recetas') )
+        // ->get();
+        
         return response()->json($list_n_recetas);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Crear una lista privada vacía
      *
      * @return \Illuminate\Http\Response
      */
@@ -58,20 +66,38 @@ class ListController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
+    public function check_recipe(Request $request){
         //
+        $user=$request->session()->get('user');
+        if($user != ""){
+            $user_id=$user[0]->id;
+            $check=List_private::where('user_id','=', $user_id)
+                ->where('recipe_id','=', $request->get('id'))->count();
+            if($check>=1){
+                return 'ok';
+            }else{
+                return 'not';
+            }
+        }
     }
 
     /**
-     * Display the specified resource.
+     * Mostrar los nombres de las listas privadas del usuario
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
+    public function show(Request $request){
         //
+        $user=$request->session()->get('user');
+        if($user != ""){
+            $user_id=$user[0]->id;
+            $list_user= List_private::select('user_id','name')
+            ->distinct('name')->groupBy('user_id','name')->where('user_id','=', $user_id)->get();
+            return response()->json($list_user);
+        } else{
+            return 'not';
+        }
     }
 
     /**
@@ -86,17 +112,52 @@ class ListController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Guardar una receta en una lista privada
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
+    public function save_recipe(Request $request){
         //
+        $request->validate([
+            'name'=>'required',
+            'user_id'=>['required'],
+            'recipe_id'=>['required']
+        ]);
+        $check=List_private::where('user_id','=', $request->get('user_id'))
+            ->where('recipe_id','=', $request->get('recipe_id'))
+            ->where('name', '=', $request->get('name'))->count();
+        if($check == 0){
+            $save= new List_private();
+            $save->name=$request->get('name');
+            $save->user_id=$request->get('user_id');
+            $save->recipe_id=$request->get('recipe_id');
+            $save->save();
+            return 'ok';
+        } else{
+            return 'not';
+            // return response()->json($check);
+        }
     }
 
+    public function dissave_recipe(Request $request){
+        //
+        $request->validate([
+            'name'=>'required',
+            'user_id'=>['required'],
+            'recipe_id'=>['required']
+        ]);
+        $check=List_private::where('user_id','=', $request->get('user_id'))
+            ->where('recipe_id','=', $request->get('recipe_id'))
+            ->where('name', '=', $request->get('name'))->delete();
+        if($check==0){
+            return 'ok';
+        } else{
+            return 'not';
+            // return response()->json($check);
+        }
+    }
     /**
      * Remove the specified resource from storage.
      *
@@ -111,3 +172,4 @@ class ListController extends Controller
         return response()->json($delete_list);
     }
 }
+

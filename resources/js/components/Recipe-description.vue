@@ -13,7 +13,7 @@
                         <div class="col ingredient">
                             <div class="picture_recipe" style="margin-top: 2.5rem; margin-bottom: 2.5rem;">
                                 <div class="hijo">
-                                    <ul v-for="ingredient in ingredients">
+                                    <ul v-for="ingredient in ingredients" :key=ingredient>
                                         <li><p style="font-style: italic;">{{ingredient}}</p></li>
                                     </ul>
                                 </div>
@@ -32,7 +32,7 @@
 
                 <!-- description -->
                 <div class="descrip">
-                    <div v-for="description in descriptions">
+                    <div v-for="description in descriptions" :key=description>
                         <p>{{description}}</p>
                     </div>
                 </div>
@@ -42,12 +42,51 @@
                 <!-- like y guardado -->
                 <div class="container">
                     <div class="row">
-                        <!-- primera colimna (save) -->
-                        <div class="col" id="save_position">
-                            <button class="button_like">
+                        <button type="button" class="col btn" id='save_position' data-bs-toggle="modal" data-bs-target="#exampleModal">
                                 <img v-bind:src="save" class="card-img-top save_like" alt="image">
                             </button>
-                        </div>
+                            <!-- formulario de añadir receta en una lista -->
+                            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div v-if="getUser" class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Añadir receta a una lista privada</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                        <p class="success">{{message_error}}</p>
+                                            <form @submit.prevent="getSave">
+                                                <div class="mb-3">
+                                                    <label for="recipe-title" class="col-form-label">Seleccionar lista: &nbsp;</label>
+                                                    <select v-model="list_save">
+                                                        <option v-for="list in lists_private_user" :key=list>{{list.name}}</option>
+                                                    </select><br>
+                                                </div>
+                                                <button type="submit" class="btn btns_create" id="btn_save">Guardar receta</button>
+                                                <button type="button" class="btn btns_create btn_create" data-bs-dismiss="modal">Cancelar</button>
+                                            </form>
+                                            <form @submit.prevent="deleteSave">
+                                                <button type="submit" class="btn btn-danger">Quitar receta</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div v-else class="modal-content">
+                                        <div class="modal-header">
+                                            <p class="success" id="">No puedes guardar una receta hasta que no inicies sesión.</p>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+
+
+
+
+
 
                             <!-- Segunda columna (like) -->
                         <div class="col" id="like_position">
@@ -60,8 +99,6 @@
                         </div>
                     </div>
                 </div>
-
-                
             </div>
         </div>
 
@@ -87,7 +124,7 @@
 
         <!-- comments -->
         <div class="container coment_user">
-            <div v-for="comment_recipe in getComment" :comment='comment_recipe'>
+            <div v-for="comment_recipe in getComment" :key=comment_recipe :comment='comment_recipe'>
                 <Comment :comment="comment_recipe"  ></Comment>
             </div>
     
@@ -151,7 +188,22 @@ export default {
             }, 
             (error) => {
                 console.log(error.response.data);
-            });        
+            });    
+        //Listas creadas por el usuario
+        axios.get('/lists_user').then(res => {
+            if(res.data !='not') this.lists_private_user = res.data;
+        },
+        (error) => {
+            console.log(error.response.data);
+        });   
+        //Chequear si esta guardada
+         axios.post('/check_recipe_save', {id: this.id}).then(res => {
+            if(res.data =='ok')  this.save=img_dir.url + img_dir.save;
+            // console.log(res);
+        },
+        (error) => {
+            console.log(error.response.data);
+        });
     },
 
     data() {
@@ -162,11 +214,14 @@ export default {
             image: "",
             like: [0, img_dir.url + img_dir.dislike, null],
             send: img_dir.url + img_dir.send,
-            save: img_dir.url + img_dir.save,
+            save: img_dir.url + img_dir.dissave,
             coment: img_dir.url + img_dir.coment,
             user: [],
             comment: '', 
-            comments: []
+            comments: [],
+            lists_private_user:[],
+            list_save:'',
+            message_error:''
         }
     },
 
@@ -183,7 +238,7 @@ export default {
     methods: {
         getLike() {
             if (this.getUser.length == 0) {
-                alert("No puedes dar like hasta que inicies sesicón.");
+                alert("No puedes dar like hasta que no inicies sesión.");
             } else {
 
                 if (this.like[2] == null) {
@@ -233,7 +288,7 @@ export default {
 
         sendComment() {
             if (this.getUser.length == 0) {
-                alert("No puedes comentar hasta que inicies sesicón.");
+                alert("No puedes comentar hasta que no inicies sesión.");
             } else {
                 axios.post('/comment', {
                 description: this.comment,
@@ -250,7 +305,34 @@ export default {
 
                 
             }
-        }      
+        },
+        getSave(){
+            this.message_error='';
+            axios.post('/save_recipe', {user_id: this.getUser.id, name: this.list_save, recipe_id: this.recipe.id}).then((res) => {
+                if(res.data=='not') {
+                    this.message_error='¡Ups! No puede añadir esta receta en la lista seleccionada ya la tienes añadida';
+                }else{
+                    window.location.href=`/recipe_description/${this.recipe.id}`;
+                }
+            }, 
+            (error) => {
+                console.log(error.response.data);
+            });
+        },
+        deleteSave(){
+            this.message_error='';
+            axios.post('/dissave_recipe', {user_id: this.getUser.id, name: this.list_save, recipe_id: this.recipe.id}).then((res) => {
+                if(res.data=='not') {
+                    this.message_error='¡Ups! No puede quitar esta receta en la lista seleccionada no esta añadida';
+                }else{
+                    window.location.href=`/recipe_description/${this.recipe.id}`;
+                }
+                // console.log(res);
+            }, 
+            (error) => {
+                console.log(error.response.data);
+            });
+        }
     }
 
 }
