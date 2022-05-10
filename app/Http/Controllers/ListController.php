@@ -151,12 +151,12 @@ class ListController extends Controller
         $check=List_private::where('user_id','=', $request->get('user_id'))
             ->where('recipe_id','=', $request->get('recipe_id'))
             ->where('name', '=', $request->get('name'))->delete();
-        if($check==0){
+        if($check>=1){
             return 'ok';
         } else{
             return 'not';
-            // return response()->json($check);
         }
+        // return response()->json($check);
     }
     /**
      * Remove the specified resource from storage.

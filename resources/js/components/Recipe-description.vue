@@ -72,7 +72,7 @@
                                     </div>
                                     <div v-else class="modal-content">
                                         <div class="modal-header">
-                                            <p class="success" id="">No puedes guardar una receta hasta que no inicies sesión.</p>
+                                            <p class="success">No puedes guardar una receta hasta que no inicies sesión.</p>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                     </div>
@@ -313,7 +313,7 @@ export default {
         deleteSave(){
             this.message_error='';
             axios.post('/dissave_recipe', {user_id: this.getUser.id, name: this.list_save, recipe_id: this.recipe.id}).then((res) => {
-                if(res.data=='not') {
+                if(res.data =='not') {
                     this.message_error='¡Ups! No puede quitar esta receta en la lista seleccionada no esta añadida';
                 }else{
                     window.location.href=`/recipe_description/${this.recipe.id}`;

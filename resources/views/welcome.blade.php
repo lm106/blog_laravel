@@ -6,7 +6,7 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
-    <title>Document</title>
+    <title>Blog de Recetas</title>
     <link rel="stylesheet" href="{{ mix('css/app.css') }}" />
     <script defer src="{{ mix('js/app.js') }}"></script>
 </head>
