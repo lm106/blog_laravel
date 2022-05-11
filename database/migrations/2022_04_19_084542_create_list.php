@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('list', function (Blueprint $table) {
             $table->id();
             $table->string('Name');
-            $table->foreignId('user_id')->constrained('user');
-            $table->foreignId('recipe_id')->nullable()->constrained('receta');
+            $table->foreignId('user_id')->references('id')->on('user')->onDelete("cascade")->onUpdate("cascade");
+            $table->foreignId('recipe_id')->nullable()->references('id')->on('receta')->onDelete("cascade")->onUpdate("cascade");
             $table->timestamps();
         });
     }

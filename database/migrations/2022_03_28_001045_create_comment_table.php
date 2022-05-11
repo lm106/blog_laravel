@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('comment', function (Blueprint $table) {
             $table->id();
             $table->text('description');
-            $table->foreignId('user_id')->constrained('user');
-            $table->foreignId('recipe_id')->constrained('receta');
+            $table->foreignId('user_id')->references('id')->on('user')->onDelete("cascade")->onUpdate("cascade");
+            $table->foreignId('recipe_id')->references('id')->on('receta')->onDelete("cascade")->onUpdate("cascade");
             $table->timestamps();
         });
     }
