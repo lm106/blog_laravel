@@ -1,6 +1,6 @@
 <template>
   <div class="section">
-      <router-link to="/lists_private">Volver atrás</router-link>
+      <router-link class="btn btn_back" to="/lists_private">Volver atrás</router-link>
         <div class="content">
             <div class="container_fluid_new">
                 <div v-for="recipe in getLists_private" :key="recipe">
@@ -22,7 +22,7 @@ export default {
     beforeCreate(){
         axios.get(`/list_recipe/${this.name_list}`).then(res => {
             this.lists_private = res.data;
-            // console.log(res);
+            console.log(res);
         },
         (error) => {
             console.log(error.response.data);

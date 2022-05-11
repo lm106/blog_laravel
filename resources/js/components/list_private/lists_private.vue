@@ -39,7 +39,7 @@
                 <tr>
                 <th scope="col">Lista</th>
                 <th id="column_list" scope="col">N&#176;&nbsp;recetas</th>
-                <th class="btn_table" scope="col">Options</th>
+                <th class="btn_table" id="col_options" scope="col">Opciones</th>
 
                 </tr>
             </thead>
@@ -51,8 +51,8 @@
                     <td scope="row" v-if="list.n_recetas > 1"> {{list.n_recetas}} recetas </td>
                     <td scope="row" v-if="list.n_recetas == 0"> No tiene recetas </td>
                     <td scope="row">
-                        <div class="dropdown top-0 end-0 " style="position: unset;">
-                            <a class="d-block dropdown-toggle options" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="dropdown top-0 end-0 " id="options" >
+                            <!-- <a class="d-block dropdown-toggle options" id="submenu" data-bs-toggle="dropdown" aria-expanded="{{flag}}">
                                 <svg class="points"><circle cx="50%" cy="50%" r="2" fill="grey" stroke="grey" /></svg>
                                 <svg class="points"><circle cx="50%" cy="50%" r="2" fill="grey" stroke="grey" /></svg>
                                 <svg class="points"><circle cx="50%" cy="50%" r="2" fill="grey" stroke="grey" /></svg>
@@ -66,7 +66,13 @@
                                         <i class="bi bi-trash3-fill" style="color:red"></i>Eliminar
                                     </button>
                                 </li>
-                            </ul>
+                            </ul> -->
+                            <router-link class="dropdown-item"  :to="{name: 'edit_list_private', params: {name_list: list.name}}" style="color:#AB8A62; font-weight:bold;">
+                                <i class="bi bi-pencil-fill" style="color:#D5888D"></i>
+                            </router-link>
+                            <button @click="delete_list(list.name, index)" class="dropdown-item" style="color:red; font-weight:bold;">
+                                <i class="bi bi-trash3-fill" style="color:red"></i>
+                            </button>
                         </div>
                     </td>
                     <!-- <td scope="row"><a class="btn_edit_delete"><i class="bi bi-trash3-fill" style="color:red"></i></a></td> -->
@@ -89,7 +95,7 @@ export default {
     beforeCreate(){
         axios.get('/lists').then(res => {
             this.lists_private = res.data;
-            console.log(res);
+            // console.log(res);
         },
         (error) => {
             console.log(error.response.data);
@@ -111,7 +117,8 @@ export default {
             lists_private:[],
             user:[],
             create_list_name:'',
-            message_error:''
+            message_error:'',
+            flag:false
         }
     },
     computed:{
@@ -163,6 +170,16 @@ export default {
     text-align: center;
     margin-left: 20px;
 }
+#col_options{
+    text-align: center;
+}
+#options{
+    display: inline-flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    position: unset;
+}
 .points{
     display: block;
     width: 100%;
@@ -190,7 +207,7 @@ export default {
 }
 /* Botón 'Creaar nueva lista' y 'Cancerlar' (del dialogo) */
 .btn_create, .btn_create:focus, .btn_create:active{
-    background: #AB8A62;
+    background: #D5888D;
     color:white;
     box-shadow: none;
     display: block;
@@ -213,4 +230,5 @@ export default {
     box-shadow: none;
     margin-left: 5px;
 }
+
 </style>
