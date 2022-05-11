@@ -27,6 +27,7 @@
         </form> 
         <!-- <p>{{ user }}</p> -->
         <router-link to="/list_users">Volver atrás</router-link>
+        
     </div>
 </template>
 

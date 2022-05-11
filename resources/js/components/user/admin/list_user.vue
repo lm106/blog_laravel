@@ -72,13 +72,14 @@ export default {
             }
         }
     },
+    
     methods:{
         deleteUser(id,index){
             console.log(id)
             axios.get(`/delete_user/${id}`).then(res => {
                 if (res.data==='ok') {
                     this.users.splice(index,1)
-                }                                
+                }                         
             },
             (error) => {
                 console.log(error.response.data);

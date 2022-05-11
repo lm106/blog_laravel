@@ -23,7 +23,7 @@ const router = [
     component:  require('../components/user/profile.vue').default 
   },
   { 
-    path: '/list_users', 
+    path: '/list_users',
     component:  require('../components/user/admin/list_user.vue').default 
   },
   {   

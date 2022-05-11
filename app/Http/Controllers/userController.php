@@ -197,6 +197,5 @@ class userController extends Controller
         }else{
             return 'not';
         }
-        
     }
 }

@@ -42,7 +42,6 @@ Route::view('/lists_private', 'welcome');
 Route::view('/list_private/{name}', 'welcome');
 Route::view('/edit_list/{name}', 'welcome');
 
-
 // Route::view('/logout', 'welcome');
 /*
 Route::get('register', [AuthController::class, 'show_signup_form']->name('register');
