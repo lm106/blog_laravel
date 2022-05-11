@@ -66,6 +66,12 @@ const router = [
     name: 'list_private',
     props: true,
     component: require('../components/list_private/list_private.vue').default
+  },
+  {
+    path: '/edit_list/:name_list',
+    name: 'edit_list_private',
+    props: true,
+    component: require('../components/list_private/edit_list_private.vue').default
   }
   
 ]
