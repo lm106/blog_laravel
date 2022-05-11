@@ -137,11 +137,11 @@ class userController extends Controller
         //El antiguo que está en session (token)
         $user_old = $request->session()->get('user');
         //En la base de datos
-        $user_db=User::find($user_old[0]->id);
-        if($user_old[0]->name !==$user_update->name) $user_db->name=$user_update->name;
-        if($user_old[0]->name_last !==$user_update->name_last) $user_db->name_last=$user_update->name_last;
-        if($user_old[0]->password !==$user_update->password) $user_db->password=$user_update->password;
-        if($user_old[0]->photo !==$user_update->photo) $user_db->photo=$user_update->photo;
+        $user_db=User::find($user_old->id);
+        if($user_old->name !==$user_update->name) $user_db->name=$user_update->name;
+        if($user_old->name_last !==$user_update->name_last) $user_db->name_last=$user_update->name_last;
+        if($user_old->password !==$user_update->password) $user_db->password=$user_update->password;
+        if($user_old->photo !==$user_update->photo) $user_db->photo=$user_update->photo;
         $user_db->save();
         $request->session()->put(['user' => $user_update]);
         return response()->json($user_db);

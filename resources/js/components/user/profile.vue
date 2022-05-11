@@ -95,7 +95,7 @@ export default {
                 }
             }
 
-            this.user[0].photo = this.avatar_path
+            this.getUser.photo = this.avatar_path
 
         },
         
@@ -115,7 +115,7 @@ export default {
                 const headers = { 'Content-Type': 'multipart/form-data' };
                 axios.post('/edit', formData, {headers}).then(() => {
                     console.log("updated")
-                    window.location.href="/login";
+                    // window.location.href="/login";
                 }, function (error) {
                     console.log(error.response.data); 
                 });
@@ -137,7 +137,7 @@ export default {
             return flag;
         },
         delete_user(){
-            axios.post('/delete', { id: this.user[0].id}).then((res) => {
+            axios.post('/delete', { id: this.getUser.id}).then((res) => {
                 console.log(res);
            
                 if(res.data) {

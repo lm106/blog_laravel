@@ -16,8 +16,7 @@
           <div v-else-if="userType == 1">
           <div class="dropdown text-end position-absolute top-0 end-0 ">
             <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-              <img v-bind:src="user[0].photo" width="52" height="52" class="rounded-circle">
-
+              <img v-bind:src="getUser.photo" width="52" height="52" class="rounded-circle">
             </a>
             
                 <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1">
@@ -34,8 +33,7 @@
           <div v-else-if="userType != 1">
             <div class="dropdown text-end position-absolute top-0 end-0 ">
             <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-            <img v-bind:src="user[0].photo" width="52" height="52" class="rounded-circle">
-
+            <img  v-bind:src="getUser.photo" width="52" height="52" class="rounded-circle">
             </a>
             
                 <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1">
@@ -62,21 +60,22 @@ export default {
   components: {foot},
   data(){
     return {
-      user: [
-      ]      
+      user: []      
     }
   },
   computed:{
     userType(){ //verifica todo el rato si ha cambiado el tipo.
       return (this.user[0])? this.user[0].type: this.user.type;
+    },
+    getUser(){
+      return (this.user[0])? this.user[0]: this.user;
     }
   },
   beforeCreate() {
         var vm = this
         axios.get(`/profile`).then(res => {
-            (res.data)?vm.user = res.data: vm.user=res.data[0];//Recoger los datos del usuario en la session
-            // console.log(res.data);
-             console.log(vm.user[0].photo);
+            vm.user = res.data;//Recoger los datos del usuario en la session
+            console.log(res.data);
         },
         (error) => {
             console.log(error.response.data);
