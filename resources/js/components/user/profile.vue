@@ -104,18 +104,20 @@ export default {
             if(this.validate()){
                 const formData = new FormData()
 
-                formData.append('name', this.user[0].name)
-                formData.append('name_last',this.user[0].name_last)
-                formData.append('email', this.user[0].email)
-                formData.append('password', this.user[0].password)
+                formData.append('name',  this.getUser.name)
+                formData.append('name_last', this.getUser.name_last)
+                formData.append('email',  this.getUser.email)
+                formData.append('password',  this.getUser.password)
+                formData.append('id',  this.getUser.id)
+                formData.append('type', this.getUser.type)
                 if(this.avatar){
                     formData.append('photo', this.avatar)
                 }
-                formData.append('avatar_path', this.user[0].photo)
+                formData.append('avatar_path',  this.getUser.photo)
                 const headers = { 'Content-Type': 'multipart/form-data' };
                 axios.post('/edit', formData, {headers}).then(() => {
                     console.log("updated")
-                    // window.location.href="/login";
+                    window.location.href="/perfil";
                 }, function (error) {
                     console.log(error.response.data); 
                 });

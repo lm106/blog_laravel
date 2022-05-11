@@ -116,6 +116,41 @@ class userController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit(Request $request){
+        
+        $request->validate([
+            'photo.*' => 'mimes:jpeg,png,jpg,svg'
+        ]);
+        if($photo = $request->hasFile('photo')) { 
+            $photo = $request->file('photo') ;
+            $photoName = $photo->getClientOriginalName() ;
+            $destinationPath = public_path().'/images' ;
+            $photo->move($destinationPath,$photoName);
+        } 
+  
+        $user_update = new User();
+        $user_update->name = $request->get('name');
+        $user_update->name_last = $request->get('name_last');
+        $user_update->email = $request->get('email');
+        $user_update->password = $request->get('password');
+        $user_update->photo=$request->get('avatar_path');
+        $user_update->id = $request->get('id');
+        $user_update->type= $request->get('type');
+
+        $user_db=User::find($user_update->id);
+        if($user_db->name !==$user_update->name) $user_db->name=$user_update->name;
+        if($user_db->name_last !==$user_update->name_last) $user_db->name_last=$user_update->name_last;
+        if($user_db->name_last == "") $user_db->name_last="";
+        if($user_db->password !==$user_update->password) $user_db->password=$user_update->password;
+        if($user_db->type !==$user_update->type) $user_db->type=$user_update->type;
+        if($user_db->photo !==$user_update->photo) $user_db->photo=$user_update->photo;
+        $user_db->save();
+        $request->session()->put(['user' => $user_update]);
+        return response()->json($user_db);
+   
+    }
+
+    /**OLD VERSION edit 
+     *  public function edit(Request $request){
         $user_update = new User();
         $request->validate([
             'photo.*' => 'mimes:jpeg,png,jpg,svg'
@@ -147,6 +182,13 @@ class userController extends Controller
         return response()->json($user_db);
         // return response()->json($user_update);
     }
+    */
+
+
+
+
+
+
 
     /** Actualizar un usuario (Rol Admnistrador)
      * Update the specified resource in storage.
