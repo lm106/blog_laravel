@@ -189,4 +189,14 @@ class userController extends Controller
         $user=User::find($user_id)->delete();
         return response()->json($user);
     }
+
+    public function delete_user($id){
+        $user=User::find($id)->delete();
+        if ($user >= 1) {
+            return 'ok';
+        }else{
+            return 'not';
+        }
+        
+    }
 }

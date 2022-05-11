@@ -26,7 +26,7 @@
         <input type="submit"  id="update" value="Actualizar datos">
         </form> 
         <!-- <p>{{ user }}</p> -->
-        <router-link to="/admin_list">Volver atrás</router-link>
+        <router-link to="/list_users">Volver atrás</router-link>
     </div>
 </template>
 

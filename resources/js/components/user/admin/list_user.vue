@@ -17,14 +17,14 @@
         </tr>
     </thead>
     <tbody v-if="search!='not'">
-        <tr v-for="user in search" :key='user' >
+        <tr v-for="(user,index) in search" :key='user' >
             <td scope="row">{{user.photo}}</td>
             <td scope="row">{{user.name}}</td>
             <td scope="row" v-if="user.type==1">Administrador</td>
             <td scope="row" v-if="user.type!=1">Usuario registrado</td>
             <td scope="row"> <router-link :to="{name: 'edit_user', params: {id: user.id}}" class="btn_edit_delete">
                 <i class="bi bi-pencil-fill" ></i></router-link></td>
-            <td scope="row"><a class="btn_edit_delete"><i class="bi bi-trash3-fill" style="color:red"></i></a></td>
+            <td scope="row"><button style="border: none;" @click="deleteUser(user.id,index)"><i class="bi bi-trash3-fill" style="color:red"></i></button></td>
         </tr>
     </tbody>
     </table>
@@ -70,6 +70,19 @@ export default {
             }else{
                 return this.users;
             }
+        }
+    },
+    methods:{
+        deleteUser(id,index){
+            console.log(id)
+            axios.get(`/delete_user/${id}`).then(res => {
+                if (res.data==='ok') {
+                    this.users.splice(index,1)
+                }                                
+            },
+            (error) => {
+                console.log(error.response.data);
+            });
         }
     }
 }

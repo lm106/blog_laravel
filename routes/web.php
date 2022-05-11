@@ -35,7 +35,7 @@ Route::view('/login', 'welcome');
 Route::view('/signup', 'welcome');
 Route::view('/likes', 'welcome');
 Route::view('/edit', 'welcome');
-Route::view('/admin_list', 'welcome');
+Route::view('/list_users', 'welcome');
 Route::view('/edit_user/{id}', 'welcome');
 Route::view('/comment', 'welcome');
 Route::view('/lists_private', 'welcome');
@@ -69,6 +69,8 @@ Route::get('/admin_list', [userController::class, 'index']);
 Route::post('/update_user', [userController::class, 'update']);
 Route::get('/edit_user/{id}', [userController::class, 'edit_user']);
 Route::post('/delete', [userController::class, 'destroy']);
+Route::get('/delete_user/{id}', [userController::class, 'delete_user']);
+
 
 //#################Controlador de receta##################
 Route::get('/recetas', [RecetaController::class, 'index']);
