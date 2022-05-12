@@ -10,24 +10,29 @@
                         <img src="\images\filtre.png" alt="filter" class="image_filter">
                         Filtrar recetas
                     </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <li class="list-group-item">
-                            <input class="form-check-input me-1" type="checkbox" @click="getFilter('harina')">
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" style="z-index:0;">
+                        <li class="list-group-item list-group-item_new">
+                            <input class="form-check-input me-1" type="checkbox" id="destacada" @click="getFilter('destacada')">
+                            Destacadas
+                        </li>
+
+                        <li class="list-group-item list-group-item_new">
+                            <input class="form-check-input me-1" type="checkbox" id="harina" @click="getFilter('harina')">
                             Sin gluten
                         </li>
 
-                        <li class="list-group-item">
-                            <input class="form-check-input me-1" type="checkbox" @click="getFilter('huevo')">
+                        <li class="list-group-item list-group-item_new">
+                            <input class="form-check-input me-1" type="checkbox" id="huevo" @click="getFilter('huevo')">
                             Sin huevo
                         </li>
 
-                        <li class="list-group-item">
-                            <input class="form-check-input me-1" type="checkbox" @click="getFilter('leche')">
+                        <li class="list-group-item list-group-item_new">
+                            <input class="form-check-input me-1" type="checkbox" id="leche" @click="getFilter('leche')">
                             Sin lactosa
                         </li>
 
-                        <li class="list-group-item">
-                            <input class="form-check-input me-1" type="checkbox" @click="getFilter('azúcar')">
+                        <li class="list-group-item list-group-item_new">
+                            <input class="form-check-input me-1" type="checkbox" id="azúcar" @click="getFilter('azúcar')">
                             Sin azúcar
                         </li>
                     </ul>
@@ -53,7 +58,8 @@
 </template>
 
 <script>
-    import axios from 'axios'
+    import { thisTypeAnnotation } from '@babel/types'
+import axios from 'axios'
     import receta from './Receta.vue'
 
 export default {
@@ -84,40 +90,96 @@ export default {
     },
 
     methods: {
-        getPosts() {
-        },
-
         getFilter(filtro) {
-            let array = [];
-            for (let index = 0; index < this.ids.length; index++) {
-                let receta = this.ids[index];
-                if (!receta.ingredients.includes(filtro)) {
-                    array.push(receta);
-                }
-                
-            }
+            if (filtro == 'destacada') {
+                if (document.getElementById(filtro).checked) {
+                    document.getElementById('harina').checked = false;
+                    document.getElementById('huevo').checked = false;
+                    document.getElementById('leche').checked = false;
+                    document.getElementById('azúcar').checked = false;
 
-            /**
-             // siendo "miElementoCheckbox" el id del input checkbox
-            var miCheckbox = document.getElementById('miElementoCheckbox');
-            var msg = document.getElementById('msg');
+                     // miramos el num de likes y commentarios de la receta
+                    axios.get('/recipes_likes')
+                        .then(respo => {
+                            this.ids = [];
 
-            alert('El valor inicial del checkbox es ' + miCheckbox.checked);
+                            let array = respo.data;
+                            for (let index = 0; index < array.length; index++) {
+                                
+                                if (index > 0 && array[index].id == array[index-1].id) {
+                                    this.ids[0].n_likes++;
 
-            miCheckbox.addEventListener('click', function() {
-                if(miCheckbox.checked) {
-                msg.innerText = 'El elemento está marcado';
+                                } else {
+                                    this.ids.unshift(array[index]);
+                                }                      
+                            }
+
+                                this.ids.sort((a, b) => {
+                                    if(a.n_likes < b.n_likes) {
+                                        return 1;
+                                    }
+                                    if(a.n_likes > b.n_likes) {
+                                        return -1;
+                                    }
+                                    return 0;
+                                    });
+                        }, 
+                        (error) => {
+                            console.log(error.response.data);
+                        });
+
+                    
+
+
                 } else {
-                msg.innerText = 'Ahora está desmarcado';
+                    this.ids = this.original;
                 }
-            });
+               
 
-             * **/
+            } else {
+                if (document.getElementById('destacada').checked) {
+                    this.ids = this.original;
+                    document.getElementById('destacada').checked = false;
+                }
+  
+                if (document.getElementById(filtro).checked) {
+                    let array = [];
+                    for (let index = 0; index < this.ids.length; index++) {
+                        let receta = this.ids[index];
+                        if (!receta.ingredients.includes(filtro)) {
+                            array.push(receta);
+                        }
+                        
+                    }
+                    this.ids = array;
 
-            this.ids = array;
-            console.log(this.ids);
+                } else {
+                    let array = [];
+                    let index_id = 0;
+                    for (let index = 0; index < this.original.length; index++) {
+                        let receta = this.original[index];
 
+                        if (this.ids[index_id].id == receta.id){
+                            array.push(receta);
 
+                        } else {
+                            if (receta.ingredients.includes(filtro)) {
+                            array.push(receta);
+                            }
+
+                            if(index_id != this.ids.length) {
+                                index_id--;
+                            }
+                        }
+
+                        if(index_id != this.ids.length -1) {
+                            index_id++;
+                        }
+                    }
+
+                    this.ids = array;
+                }
+            }
             
         }
     }
@@ -129,6 +191,10 @@ export default {
 
 
 <style>
+    .list-group-item_new {
+        border: transparent;
+    }
+
     .receta {
         width: 18rem;
         margin-right: 1rem;

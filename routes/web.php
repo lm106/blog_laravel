@@ -79,6 +79,7 @@ Route::get('/recipe_likes/{id}', [RecetaController::class, 'nLike']);
 Route::get('/recipe_comments/{id}', [RecetaController::class, 'allComments']);
 Route::get('/recipe_like_comments/{id}', [RecetaController::class, 'allLikesComments']);
 Route::get('/recipes_finder/{search}', [RecetaController::class, 'find_recipes']);
+Route::get('/recipes_likes', [RecetaController::class, 'nLikes']);
 
 //#################Controlador de like##################
 Route::get('/likes/{id}', [LikeController::class, 'index']);

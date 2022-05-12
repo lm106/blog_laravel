@@ -80,19 +80,12 @@ export default {
         loadLikeComment() {
             axios.get(`/recipe_likes/${this.receta.id}`)
             .then(respo => {
-                this.like[0] = respo.data;
+                this.like[0] = respo.data[0];
+                this.comment = respo.data[1]
             }, 
             (error) => {
                 console.log(error.response.data);
             });
-
-            /*axios.get(`/recipe_likes/${this.receta.id}`)
-            .then(respo => {
-                this.like[0] = respo.data;
-            }, 
-            (error) => {
-                console.log(error.response.data);
-            });*/
         }
     }
 }

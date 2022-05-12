@@ -1,38 +1,40 @@
 <template>
-  <div class="row margin_comment">
-        <!-- primera colimna (avatar)  -->
-        <div class="col-1">
-            <img v-bind:src="user_img" class="card-img-top comment_image" alt="image">
-        </div>
+    <div class="container-fluid coment">
+        <div class="row margin_comment" style="max-width: 100%;">
+            <!-- primera colimna (avatar)  -->
+            <div class="col-1">
+                <img v-bind:src="user_img" class="card-img-top comment_image" alt="image">
+            </div>
 
-            <!-- Segunda columna (comentario)  -->
-        <div class="col-10">
-            <p style="font-weight: bold;">@{{ my_comment.name_user.name }}</p>
-            <div v-if="flag == true">
-                <p>
-                    <input class="form-control edit_comment_input" type="textarea" v-model="my_comment.description">
-                </p> 
+                <!-- Segunda columna (comentario)  -->
+            <div class="col-9">
+                <p style="font-weight: bold;">@{{ my_comment.name_user.name }}</p>
+                <div v-if="flag == true">
+                    <p>
+                        <input class="form-control edit_comment_input" type="textarea" v-model="my_comment.description">
+                    </p> 
+                </div>
+                <div v-else-if="flag == false">
+                    <p>{{ my_comment.description }}</p>
+                </div>
+                
             </div>
-            <div v-else-if="flag == false">
-                <p>{{ my_comment.description }}</p>
-            </div>
-            
-        </div>
 
-            <!-- like o editar  -->
-        <div class="col-1">
-            <br>
-            <div v-if="my_comment.name_user.id == getUser.id">
-                <button @click="getEdit()" class="button_edit">
-                    <img v-bind:src="edit" class="card-img-top edit" alt="image">
-                </button>
+                <!-- like o editar  -->
+            <div class="col-2">
+                <br>
+                <div v-if="my_comment.name_user.id == getUser.id">
+                    <button @click="getEdit()" class="button_edit">
+                        <img v-bind:src="edit" class="card-img-top edit" alt="image">
+                    </button>
+                </div>
+                <div v-else-if="my_comment.name_user.id != getUser.id">
+                    <button @click="sendLike()" class="button_edit">
+                        <img v-bind:src="getLike" class="card-img-top save_like" alt="image">
+                    </button>
+                </div>
+                
             </div>
-            <div v-else-if="my_comment.name_user.id != getUser.id">
-                <button @click="sendLike()" class="button_edit">
-                    <img v-bind:src="getLike" class="card-img-top save_like" alt="image">
-                </button>
-            </div>
-            
         </div>
     </div>
 </template>
@@ -174,9 +176,8 @@ export default {
         color: rgb(128, 128, 128);
     }
 
-    .save_like, .edit{
-        min-width: 1.5rem;
-        width: 100%;
+    .save_like{
+        margin-left: -0.6rem;
     }
 
 </style>

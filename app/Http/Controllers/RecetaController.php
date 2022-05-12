@@ -8,6 +8,7 @@ use App\Models\Receta;
 use App\Models\LikeComment;
 use App\Models\Comment;
 use App\Models\User;
+use App\Models\Like;
 
 class RecetaController extends Controller
 {
@@ -48,6 +49,16 @@ class RecetaController extends Controller
                     'user.id as user_id_comment')->where('like_comment.comment_id', '=', $id)
             ->crossJoin('user', 'user.id', '=', 'like_comment.user_id')->get();
         return response()->json($comments);
+    }
+
+    public function nLikes() {
+        $recipe_fav = DB::table('receta')
+        ->crossJoin('likes', 'receta.id', '=', 'likes.recipe_id')
+        ->groupBy('likes.recipe_id', 'title', 'image', 'likes.user_id')
+        ->select('recipe_id as id', 'title', 'image', DB::raw('COUNT(likes.user_id) as n_likes'))
+        ->get();
+
+        return response()->json($recipe_fav);
     }
 
 
