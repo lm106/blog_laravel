@@ -24,12 +24,31 @@
                             <textarea placeholder= "Introducir ingredientes separados por comas" rows="6" class="form-control" id="recipe-ingredients" v-model="recipe.ingredients " style="resize:vertical"></textarea>
                         </div>
         
-                        <div class="mb-5">
+                        <div class="mb-3">
                             <label for="formFile" class="form-label">Imagen:</label>
                             <input class="form-control" type="file" id="formFile" accept=".jpeg,.png,.jpg,.svg" name="image" v-on:change="onChange" ref="file">
                         </div>
+
+                        <label for="recipe-title" class="col-form-label">Etiquetas:</label> <br>
                         
-       
+                        <div class="btn-group mb-5" role="group" aria-label="Basic checkbox toggle button group" id="tags">
+                            
+                            <input type="checkbox" class="btn-check" id="featured" value="#Destacadas" autocomplete="off" v-model="checkedTags">
+                            <label class="btn btn-outline-primary" for="featured">#Destacadas</label>
+
+                            <input type="checkbox" class="btn-check" id="glutenFree" value="#Sin gluten" autocomplete="off"  v-model="checkedTags">
+                            <label class="btn btn-outline-primary" for="glutenFree">#Sin gluten</label>
+
+                            <input type="checkbox" class="btn-check" id="eggFree" value="#Sin huevo" autocomplete="off"  v-model="checkedTags">
+                            <label class="btn btn-outline-primary" for="eggFree">#Sin huevo</label>
+
+                            <input type="checkbox" class="btn-check" id="lactoseFree" value="#Sin lactosa" autocomplete="off"  v-model="checkedTags">
+                            <label class="btn btn-outline-primary" for="lactoseFree">#Sin lactosa</label>
+
+                            <input type="checkbox" class="btn-check" id="btncheck5" value="#Sin azúcar" autocomplete="off"  v-model="checkedTags">
+                            <label class="btn btn-outline-primary" for="btncheck5">#Sin azúcar</label>
+                        </div>
+                  
                         
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -42,7 +61,7 @@
             </div>
         </div>
 
-
+    
     <table class="table" >
         <thead >
             <tr>
@@ -51,6 +70,7 @@
             <th scope="col">Imagen</th>
             <th scope="col">Descripción</th>
             <th scope="col">Ingredientes</th>
+            <th scope="col">Etiquetas</th>
             <th scope="col"></th>
             <th scope="col"></th>
             <!-- <th scope="col">Likes</th> -->
@@ -63,6 +83,7 @@
                 <td scope="row"><img v-bind:src="r.image" width="100" height="100" /></td>
                 <td scope="row">{{r.short_description}}</td>
                 <td scope="row">{{r.short_ingredients}}</td>
+                <td scope="row">{{r.tags}}</td>
                 <td scope="row"><router-link :to="{name: 'recipe_description', params: {id: r.id}}" >
                 <button style="border:none; background-color:transparent">
                 <i class="bi bi-info-circle-fill" style="color:blue" ></i></button></router-link></td>
@@ -78,9 +99,8 @@
 <script>
 
 export default {
-   
+   el: '#tags',
   
-
    beforeCreate() {
 
         axios.get('/recetas')
@@ -119,7 +139,8 @@ export default {
                 user_id: ''
                 }],
             user: [],
-            loggedUser: ""
+            loggedUser: "",
+            checkedTags: []
             
             
             
@@ -142,6 +163,7 @@ export default {
             formData.append('description', this.recipe.description)
             formData.append('ingredients', this.recipe.ingredients)
             formData.append('user_id',this.user[0].id)
+            formData.append('tags', this.checkedTags)
             const headers = { 'Content-Type': 'multipart/form-data' };
             axios.post('/new_recipe', formData, {headers}).then(() => {
                 console.log('saved');
@@ -173,3 +195,27 @@ export default {
     }
 }
 </script>
+<style>
+/* .btn-check:checked + .btn-outline-primary, .btn-check:active + .btn-outline-primary, .btn-outline-primary:active, .btn-outline-primary.active, .btn-outline-primary.dropdown-toggle.show {
+    color: #fff;
+    background-color: #AB8A62;
+    border-color: #AB8A62;
+}
+.btn-outline-primary {
+    color: #AB8A62;
+    border-color: #AB8A62;
+}
+
+.btn-outline-primary:hover {
+  color: #fff;
+  background-color: #AB8A62;
+  border-color: #AB8A62;
+} */
+.btn-check:checked + .btn-outline-primary:focus, .btn-check:active + .btn-outline-primary:focus, .btn-outline-primary:active:focus, .btn-outline-primary.active:focus, .btn-outline-primary.dropdown-toggle.show:focus {
+  box-shadow: none;
+}
+.btn-check:focus + .btn-outline-primary, .btn-outline-primary:focus {
+  box-shadow: none;
+}
+
+</style>

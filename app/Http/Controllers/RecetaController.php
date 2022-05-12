@@ -91,6 +91,7 @@ class RecetaController extends Controller
         $receta->image = $request->get('image_path');
         $receta->description = $request->get('description');
         $receta->ingredients = $request->get('ingredients');
+        $receta->tags = $request->get('tags');
         $receta->user_id = $request->get('user_id');
         $receta -> save();
     }
