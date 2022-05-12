@@ -1,10 +1,9 @@
 <template>
     <header id="myHeader" class="">
         <div class="myContainer position-relative">
-          <form class="form-inline my-2 my-lg-0 ">  
-            <input class="form-control mr-sm-2" id="searchbar" type="text" placeholder="Buscar recetas..." aria-label="Search">
-
-          </form>
+          <div class="form-inline my-2 my-lg-0 ">  
+            <input class="form-control mr-sm-2" id="searchbar" type="text" placeholder="Buscar recetas..." v-model="search" @keypress.enter="buscarRecetas" autocomplete="off">
+          </div>
           
           <div class="title position-absolute top-50 start-50 translate-middle">
             <router-link to="/" id="myTitle">Blog de Recetas</router-link>
@@ -60,7 +59,8 @@ export default {
   components: {foot},
   data(){
     return {
-      user: []      
+      user: [],
+      search:null   
     }
   },
   computed:{
@@ -95,6 +95,10 @@ export default {
         (error) => {
             console.log(error.response.data);
         });
+      },
+      buscarRecetas(){
+        window.location.href = `/find_recipes/${this.search}`
+
       }
       
   }

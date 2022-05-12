@@ -72,8 +72,13 @@ const router = [
     name: 'edit_list_private',
     props: true,
     component: require('../components/list_private/edit_list_private.vue').default
+  },
+  {
+    path: '/find_recipes/:search',
+    props: true,
+    component: require('../components/recipeFinder.vue').default
   }
-  
+
 ]
 /** OTRA FORMA
  * const routes = [

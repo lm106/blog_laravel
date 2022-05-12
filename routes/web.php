@@ -41,6 +41,7 @@ Route::view('/comment', 'welcome');
 Route::view('/lists_private', 'welcome');
 Route::view('/list_private/{name}', 'welcome');
 Route::view('/edit_list/{name}', 'welcome');
+Route::view('/find_recipes/{search}', 'welcome');
 
 // Route::view('/logout', 'welcome');
 /*
@@ -77,6 +78,7 @@ Route::post('/new_recipe', [RecetaController::class, 'createRecipe']);
 Route::get('/recipe_likes/{id}', [RecetaController::class, 'nLike']);
 Route::get('/recipe_comments/{id}', [RecetaController::class, 'allComments']);
 Route::get('/recipe_like_comments/{id}', [RecetaController::class, 'allLikesComments']);
+Route::get('/recipes_finder/{search}', [RecetaController::class, 'find_recipes']);
 
 //#################Controlador de like##################
 Route::get('/likes/{id}', [LikeController::class, 'index']);

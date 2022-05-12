@@ -140,4 +140,10 @@ class RecetaController extends Controller
     {
         //
     }
+
+
+    public function find_recipes($search){
+        $finded_recipes = Receta::where('title','like','%'.$search.'%')->get()->toArray();
+        return array_reverse($finded_recipes);
+    }
 }
