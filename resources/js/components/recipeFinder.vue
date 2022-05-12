@@ -20,7 +20,6 @@ export default {
     beforeCreate() {
         axios.get(`/recipes_finder/${this.search}`).then(res => {
             this.finded_recipes = res.data;
-            console.log(res);
         },
         (error) => {
             console.log(error.response.data);
