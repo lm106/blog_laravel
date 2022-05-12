@@ -147,7 +147,11 @@ export default {
         }
         
     },
-
+    computed:{
+        getUser(){
+            return (this.user[0])? this.user[0]: this.user;
+        }
+    },
     methods: {
         onChange(){
             this.image =this.$refs.file.files[0];
@@ -162,10 +166,10 @@ export default {
             formData.append('title', this.recipe.title)
             formData.append('description', this.recipe.description)
             formData.append('ingredients', this.recipe.ingredients)
-            formData.append('user_id',this.user[0].id)
+            formData.append('user_id',this.getUser.id)
             formData.append('tags', this.checkedTags)
             const headers = { 'Content-Type': 'multipart/form-data' };
-            axios.post('/new_recipe', formData, {headers}).then(() => {
+            axios.post('/new_recipe', formData).then(() => {
                 console.log('saved');
                 window.location.href="/recipes_manager";
                 console.log(this.recipe[0].description)
