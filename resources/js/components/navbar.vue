@@ -15,7 +15,7 @@
           <div v-else-if="userType == 1">
           <div class="dropdown text-end position-absolute top-0 end-0 ">
             <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-              <img v-bind:src="getUser.photo" width="52" height="52" class="rounded-circle">
+              <img v-bind:src="imagen + getUser.photo" width="52" height="52" class="rounded-circle">
             </a>
             
                 <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1">
