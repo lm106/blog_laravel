@@ -77,6 +77,11 @@ const router = [
     path: '/find_recipes/:search',
     props: true,
     component: require('../components/recipeFinder.vue').default
+  },
+  {
+  path: '/edit_recipe/:id',
+  props: true,
+  component: require('../components/editRecipes.vue').default
   }
 
 ]
