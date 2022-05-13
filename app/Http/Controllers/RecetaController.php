@@ -158,4 +158,46 @@ class RecetaController extends Controller
         $finded_recipes = Receta::where('title','like','%'.$search.'%')->get()->toArray();
         return array_reverse($finded_recipes);
     }
+
+    public function getReceta($id){
+        $receta = Receta::where('id',$id)->get();
+        return $receta;
+    }
+
+
+    public function updateReceta(Request $request){
+        $request->validate([
+            'title'=>'required',
+            'image.*' => 'mimes:jpeg,png,jpg,svg',
+            'description'=>'required',
+            'ingredients'=>'required',
+            'user_id'=>'required'
+        ]);
+        
+        if($image = $request->hasFile('image')) { 
+            $image = $request->file('image') ;
+            $imageName = $image->getClientOriginalName() ;
+            $destinationPath = public_path().'/images' ;
+            $image->move($destinationPath,$imageName);
+        } 
+
+        $receta = new Receta();
+        $receta->title = $request->get('title');
+        $receta->image = $request->get('image_path');
+        $receta->description = $request->get('description');
+        $receta->ingredients = $request->get('ingredients');
+        $receta->tags = $request->get('tags');
+        $receta->user_id = $request->get('user_id');
+
+
+        $receta->id=$request->get('id');
+        $db_receta = Receta::find($receta->id);
+        if($db_receta->title !==$receta->ntitleame) $db_receta->title=$receta->title;
+        if($db_receta->description !==$receta->description) $db_receta->description=$receta->description;
+        if($db_receta->ingredients !==$receta->ingredients) $db_receta->ingredients=$receta->ingredients;
+        if($db_receta->tags !==$receta->tags) $db_receta->tags=$receta->tags;
+        if($db_receta->user_id !==$receta->user_id) $db_receta->user_id=$receta->user_id;
+        if($db_receta->image !==$receta->image) $db_receta->image=$receta->image;
+        $db_receta->save();
+    }
 }
