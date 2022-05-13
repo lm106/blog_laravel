@@ -23,7 +23,7 @@
                                 </div>
                                 <!-- <div class="modal-footer"> -->
                                     <button type="submit" class="btn btns_create" id="btn_save">Crear lista</button>
-                                    <button type="button" class="btn btns_create btn_create" data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="button" class="btn btns_create btn_cancel" data-bs-dismiss="modal">Cancelar</button>
 
                                 <!-- </div> -->
                             </form>
@@ -214,7 +214,7 @@ export default {
     display: block;
 }
 /* Botón 'Creaar nueva lista' y 'Cancelar' (del dialogo) */
-.btn_create:hover, #btn_save:hover{
+.btn_create:hover, #btn_save:hover, .btn_cancel:hover{
     color:white;
     background: #81a1b0;
     box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
@@ -230,6 +230,10 @@ export default {
     color: white;
     box-shadow: none;
     margin-left: 5px;
+}
+.btn_cancel,.btn_cancel:focus, .btn_cancel:active{
+    background:#ab8a62;
+    color:white;
 }
 
 </style>

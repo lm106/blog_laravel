@@ -64,7 +64,7 @@
                                                     </select><br>
                                                 </div>
                                                 <button type="submit" class="btn btns_create" id="btn_save">Guardar receta</button>
-                                                <button type="button" class="btn btns_create btn_create" data-bs-dismiss="modal">Cancelar</button>
+                                                <button type="button" class="btn btns_create btn_cancel" data-bs-dismiss="modal">Cancelar</button>
                                             </form>
                                             <form @submit.prevent="deleteSave">
                                                 <button type="submit" class="btn btn-danger">Quitar receta</button>
