@@ -2,6 +2,8 @@
     <div class="section">
       <router-link class="btn btn_back" to="/lists_private">Volver atrás</router-link>
         <div class="container_fluid_new">      
+            <span v-if="getMessage!=''" class='alert alert-primary content_list'>{{getMessage}}</span>
+            <span v-if="getError!=''" class='alert alert-danger content_list'>{{getError}}</span>
             <form id="list_recipe" @submit.prevent="save_List()">
                 <input type="submit" value="Guardar lista"/><br>
                 <input class="form-control mr-sm-2" id="name_list" type="text" v-model="name_original" aria-label="Search">
@@ -22,7 +24,7 @@
                         </tr>
                     </tbody>
                 </table>
-                <p>{{getMessage}}</p>
+                
                 <div v-if="list_private.length==0" class="alert alert-secondary content_list" style="text-align:center;" role="alert">
                     ¡Ups! No tienes recetas en esta lista
                 </div>
@@ -55,6 +57,7 @@ export default {
             select_recipes:[],
             name_original:this.name_list,
             message:'',
+            error:'',
             name:'',
             count:0
         }
@@ -65,6 +68,9 @@ export default {
         },
         getMessage(){
             return this.message;
+        },
+        getError(){
+            return this.error;
         }
     },
     methods:{
@@ -86,21 +92,40 @@ export default {
         },
         save_List(){
             this.message='';
+            this.error='';
             let previo=this.name;
             if(this.count==0){
                 previo=this.name_list;
                 this.count=1;
             }
-            axios.post('/update_list', {name_old:previo, name_new:this.name_original}).then(res=>{
-                this.name=this.name_original;
-                this.message=(res.data=='not')? "¡Ups! No se ha podido actualizar.":'Se ha actualizado la lista privada';
+            if(previo != this.name_original){
+                axios.post('/update_list', {name_old:previo, name_new:this.name_original}).then(res=>{
+                    this.name=this.name_original;
+                    if(res.data=='not') {
+                        this.error="¡Ups! No se ha podido actualizar.";
+                    }else{
+                        this.message='Se ha actualizado la lista privada';
+                    }
+                },
+                (error) => {
+                    console.log(error.response.data);
+                });
+            } else{
+                 this.error="¡Ups! No se ha podido actualizar. Es el mismo nombre.";
+            }
+        },
+        delete_recipes(){
+             axios.post('/delete_recipes', {name: this.name_original, ids:this.select_recipes}).then(res=>{
+                // console.log(res);
+                // console.log("eleimin");
+                // console.log(this.list_private);
+                this.list_private=res.data;
             },
             (error) => {
                 console.log(error.response.data);
             });
-        },
-        delete_recipes(){
-            console.log(this.select_recipes);
+            this.message='';
+            this.error='';
         }
     }
 }
@@ -149,3 +174,4 @@ export default {
 }
 
 </style>
+

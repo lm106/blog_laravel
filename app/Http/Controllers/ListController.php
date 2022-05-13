@@ -153,21 +153,19 @@ class ListController extends Controller
 
     public function update(Request $request){
         $list_old=$request->get('name_old');
-        $user_new=$request->get('name_new');
+        $name_new=$request->get('name_new');
         $user=$request->session()->get('user');
         if($user != ""){
             $user_id=($user[0]!=null)?$user[0]->id:$user->id;
         }
-        // $list_db=List_private::find($list->id);
-        // if($list->name)
         $list_db=List_private::where('name','=', $list_old)->where('user_id', '=', $user_id)->whereNull('recipe_id')->select('name')->distinct()->get();
-        if($list_db!= $user_new){
+        if($list_db!= $name_new){
             $lists_id=List_private::where('name','=', $list_old)->where('user_id', '=', $user_id)->select('id')->get();
             for ($i=0; $i < $lists_id->count(); $i++) { 
                 $list=List_private::find($lists_id[$i]->id);
-                $list->update(['name' => $user_new]);
+                $list->update(['name' => $name_new]);
             }   
-            $lists_update=List_private::where('name','=', $user_new)->where('user_id','=', $user_id)->whereNotNull('recipe_id')->get();
+            $lists_update=List_private::where('name','=', $name_new)->whereNotNull('recipe_id')->where('user_id','=', $user_id)->get();
             if($lists_update->count()>1){
                 return $lists_update;
             }else{
@@ -207,6 +205,22 @@ class ListController extends Controller
         $user_id=($user[0])? $user[0]->id: $user->id;
         $delete_list=List_private::where('user_id','=', $user_id)->where('name','=',$name)->delete();
         return response()->json($delete_list);
+    }
+    public function destroy_recipes(Request $request){
+        //
+        $recipes_id=$request->get('ids');
+        $name_list=$request->get('name');
+        $user=$request->session()->get('user');
+        $user_id=($user[0])? $user[0]->id: $user->id;
+        for ($i=0; $i < sizeof($recipes_id); $i++) { 
+            $list=List_private::where('name', '=',$name_list)->where('user_id','=', $user_id)->where('recipe_id','=',$recipes_id[$i])->delete();
+        }
+        $list_delete=List_private::select('list.id as list_id','receta.*')
+        ->where('name', '=',$name_list)->where('list.user_id','=', $user_id)->rightJoin('receta', 'recipe_id', 'receta.id')->get();
+        return $list_delete;
+        // $user_id=($user[0])? $user[0]->id: $user->id;
+        // $delete_list=List_private::where('user_id','=', $user_id)->where('name','=',$name)->delete();
+        // return response()->json($recipes_id);
     }
 }
 
