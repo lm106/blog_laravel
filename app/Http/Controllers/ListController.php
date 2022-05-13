@@ -21,7 +21,8 @@ class ListController extends Controller
         //Muestra todos las listas de todos los usuarios
         // $n_recetas= List_private::select('user_id','name',DB::raw('COUNT(recipe_id) as n_recetas'))
         // ->distinct('user_id','name')->groupBy('user_id','name')->get();
-        $user_id=$request->session()->get('user')[0]->id;
+        $user=$request->session()->get('user');
+        $user_id=($user[0]!=null)?$user[0]->id:$user->id;
         $list_n_recetas= List_private::select('user_id','name',DB::raw('COUNT(recipe_id) as n_recetas'))
         ->distinct('user_id','name')->groupBy('user_id','name')->where('user_id','=', $user_id)->get();
 
@@ -70,7 +71,7 @@ class ListController extends Controller
         //
         $user=$request->session()->get('user');
         if($user != ""){
-            $user_id=$user[0]->id;
+            $user_id=($user[0]!=null)?$user[0]->id:$user->id;
             $check=List_private::where('user_id','=', $user_id)
                 ->where('recipe_id','=', $request->get('id'))->count();
             if($check>=1){
@@ -91,7 +92,7 @@ class ListController extends Controller
         //
         $user=$request->session()->get('user');
         if($user != ""){
-            $user_id=$user[0]->id;
+            $user_id=($user[0]!=null)?$user[0]->id:$user->id;
             $list_user= List_private::select('user_id','name')
             ->distinct('name')->groupBy('user_id','name')->where('user_id','=', $user_id)->get();
             return response()->json($list_user);
@@ -110,8 +111,8 @@ class ListController extends Controller
         //
         $user=$request->session()->get('user');
         if($user != ""){
-            $user_id=$user[0]->id;
-            $list_recipe=List_private::select('receta.*')
+            $user_id=($user[0]!=null)?$user[0]->id:$user->id;
+            $list_recipe=List_private::select('list.id as list_id','receta.*')
                 ->where('list.user_id', '=', $user_id)
                 ->where('name', '=', $name)->rightJoin('receta', 'recipe_id', 'receta.id')->get();
             return response()->json($list_recipe);
@@ -149,6 +150,33 @@ class ListController extends Controller
             // return response()->json($check);
         }
     }
+
+    public function update(Request $request){
+        $list_old=$request->get('name_old');
+        $user_new=$request->get('name_new');
+        $user=$request->session()->get('user');
+        if($user != ""){
+            $user_id=($user[0]!=null)?$user[0]->id:$user->id;
+        }
+        // $list_db=List_private::find($list->id);
+        // if($list->name)
+        $list_db=List_private::where('name','=', $list_old)->where('user_id', '=', $user_id)->whereNull('recipe_id')->select('name')->distinct()->get();
+        if($list_db!= $user_new){
+            $lists_id=List_private::where('name','=', $list_old)->where('user_id', '=', $user_id)->select('id')->get();
+            for ($i=0; $i < $lists_id->count(); $i++) { 
+                $list=List_private::find($lists_id[$i]->id);
+                $list->update(['name' => $user_new]);
+            }   
+            $lists_update=List_private::where('name','=', $user_new)->where('user_id','=', $user_id)->whereNotNull('recipe_id')->get();
+            if($lists_update->count()>1){
+                return $lists_update;
+            }else{
+                return 'not';
+            }
+        }
+        return 'not';
+    }
+
 
     public function dissave_recipe(Request $request){
         //

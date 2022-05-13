@@ -132,6 +132,7 @@ export default {
             var vm= this;
             if(vm.create_list_name!=''){
                 axios.post('/create_list', {name:this.create_list_name, user_id: this.getUser.id}).then(res => {
+                    console.log(res);
                     if(res.data !='not'){
                         var list_new= (res.data[0])? res.data[0]:res.data;
                         vm.lists_private.push(list_new);

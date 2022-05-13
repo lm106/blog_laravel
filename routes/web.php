@@ -105,3 +105,4 @@ Route::post('/save_recipe', [ListController::class, 'save_recipe']);
 Route::post('/dissave_recipe', [ListController::class, 'dissave_recipe']);
 Route::post('/check_recipe_save', [ListController::class, 'check_recipe']);
 Route::get('/list_recipe/{name}', [ListController::class, 'show_list']);
+Route::post('/update_list', [ListController::class, 'update']);
