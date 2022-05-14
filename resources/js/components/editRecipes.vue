@@ -91,12 +91,11 @@ export default {
             })
         },
         editRecipe() {
-            this.checkIfExistImage()
             const formData = new FormData()
             
-            
+            console.log(this.recipe.image)
             formData.append('image', this.image)
-            formData.append('image_path', this.image_path)
+            formData.append('image_path', this.recipe.image)
             formData.append('title', this.recipe.title)
             formData.append('description', this.recipe.description)
             formData.append('ingredients', this.recipe.ingredients)
@@ -115,14 +114,9 @@ export default {
         onChange() {
             this.image = this.$refs.file.files[0];
             console.log(this.image)
-            this.image_path = 'images/' + this.image.name
+            this.recipe.image = 'images/' + this.image.name
         },
 
-        checkIfExistImage() {
-            if (this.image == "") {
-                this.image_path = "images/undefined.jpeg"
-            }
-        },
     }
 }
 </script>
