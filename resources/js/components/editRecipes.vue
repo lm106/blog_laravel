@@ -1,6 +1,5 @@
 <template>
     <div style="margin: 6rem auto;" class="w-50">
-        {{ recipe }}
         <form @submit.prevent="editRecipe" enctype="multipart/form-data">
             <div>
                 <label for="recipe-title" class="col-form-label">
@@ -49,6 +48,7 @@
             <div class="text-center">
                 <button type="button submit" class="btn btn-primary">Guardar</button>
             </div>
+
         </form>
 
     </div>
@@ -77,7 +77,9 @@ export default {
         axios.get(`/receta/${this.id}`)
             .then(res => {
                 this.recipe=res.data[0]
+                this.checkedTags = this.recipe.tags.split(',')
                 this.getUserID()
+                console.log(this.recipe)
             })
         
 
