@@ -82,6 +82,11 @@ const router = [
   path: '/edit_recipe/:id',
   props: true,
   component: require('../components/editRecipes.vue').default
+  },
+  {
+  path: '/show_favorites',
+  props: true,
+  component: require('../components/viewFavorites.vue').default
   }
 
 ]

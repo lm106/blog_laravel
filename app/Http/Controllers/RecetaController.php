@@ -61,7 +61,13 @@ class RecetaController extends Controller
         return response()->json($recipe_fav);
     }
 
+    public function getLikedRecipes($user_id){
+        $recetas = DB::table('likes')
+        ->where('likes.user_id',$user_id)
+        -> rightJoin('receta', 'likes.recipe_id','=','receta.id')->get();
 
+        return $recetas;
+    }
 
     /**
      * Show the form for creating a new resource.

@@ -43,6 +43,8 @@ Route::view('/list_private/{name}', 'welcome');
 Route::view('/edit_list/{name}', 'welcome');
 Route::view('/find_recipes/{search}', 'welcome');
 Route::view('/edit_recipe/{id}', 'welcome');
+Route::view('/show_favorites', 'welcome');
+
 
 // Route::view('/logout', 'welcome');
 /*
@@ -71,7 +73,7 @@ Route::post('/update_user', [userController::class, 'update']);
 Route::get('/edit_user/{id}', [userController::class, 'edit_user']);
 Route::post('/delete', [userController::class, 'destroy']);
 Route::get('/delete_user/{id}', [userController::class, 'delete_user']);
-
+Route::get('/getUserLikes/{user_id}', [RecetaController::class, 'getLikedRecipes']);
 
 //#################Controlador de receta##################
 Route::get('/recetas', [RecetaController::class, 'index']);
