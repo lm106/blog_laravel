@@ -150,7 +150,7 @@ class RecetaController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $recipe=Receta::find($id)->delete();
     }
 
 

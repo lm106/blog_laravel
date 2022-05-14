@@ -83,6 +83,7 @@ Route::get('/recipes_finder/{search}', [RecetaController::class, 'find_recipes']
 Route::get('/recipes_likes', [RecetaController::class, 'nLikes']);
 Route::get('/receta/{id}', [RecetaController::class, 'getReceta']);
 Route::post('/edit_recipe', [RecetaController::class, 'updateReceta']);
+Route::post('/delete_recipe/{id}', [RecetaController::class, 'destroy']);
 
 //#################Controlador de like##################
 Route::get('/likes/{id}', [LikeController::class, 'index']);

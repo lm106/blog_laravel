@@ -1,4 +1,6 @@
 <template  >
+
+    
     <div class="myTable" style=" width: 85%; margin: 8rem auto;">
         <div class="form-inline my-2 my-lg-0 ">
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
@@ -92,7 +94,7 @@
                 </tr>
             </thead>
             <tbody v-if="search!='not'">
-                <tr v-for="(r) in search" :key='r'>
+                <tr v-for="(r,index) in search" :key='r'>
                     <td scope="row">{{ r.id }}</td>
                     <td scope="row">{{ r.title }}</td>
                     <td scope="row"><img v-bind:src="r.image" width="100" height="100" /></td>
@@ -108,8 +110,27 @@
                     <td scope="row"><button @click="editRecipe(r.id)"
                             style="border:none; background-color:transparent"><i class="bi bi-pencil-fill"></i></button>
                     </td>
-                    <td scope="row"><button style="border:none; background-color:transparent"><i
+                    <td scope="row"><button style="border:none; background-color:transparent"  data-bs-toggle="modal" data-bs-target="#deleteModal" ><i
                                 class="bi bi-trash3-fill" style="color:red"></i></button></td>
+
+                    <!-- Modal delete recipe -->
+                    <div class="modal fade " id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                        <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLongTitle">Borrar receta</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            ¿Está seguro de eliminar la receta?
+                        </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                <button @click="deleteRecipe(r.id,index)" type="button submit" class="btn btn-danger">Eliminar</button>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
 
                 </tr>
             </tbody>
@@ -196,6 +217,18 @@ export default {
         onChange() {
             this.image = this.$refs.file.files[0];
             this.image_path = 'images/' + this.image.name
+        },
+
+        deleteRecipe(id,index){
+            console.log("entra")
+                axios.post(`/delete_recipe/${id}`)
+            .then((res) => {
+                window.location.href = "/recipes_manager"
+            }, 
+            (error) => {
+                console.log(error.response.data);
+            });
+
         },
 
         newRecipe() {
