@@ -1,8 +1,12 @@
 <template  >
     <div class="myTable" style=" width: 85%; margin: 8rem auto;">
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
+    {{search_recipe}}
+        <div class="form-inline my-2 my-lg-0 ">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
             style="margin-bottom:15px">Nueva receta</button>
-
+            <input class="form-control mr-sm-2" id="search_user" type="text" v-model="search_recipe"
+                placeholder="Buscar receta..." aria-label="Search">
+        </div>
         <div class="modal fade bd-example-modal-xl" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
             aria-hidden="true">
             <div class="modal-dialog modal-xl">
@@ -88,8 +92,8 @@
                     <!-- <th scope="col">Likes</th> -->
                 </tr>
             </thead>
-            <tbody>
-                <tr v-for="(r) in recipes" :key='r'>
+            <tbody v-if="search!='not'">
+                <tr v-for="(r) in search" :key='r'>
                     <td scope="row">{{ r.id }}</td>
                     <td scope="row">{{ r.title }}</td>
                     <td scope="row"><img v-bind:src="r.image" width="100" height="100" /></td>
@@ -111,6 +115,8 @@
                 </tr>
             </tbody>
         </table>
+        <div class="alert alert-secondary" id="alert_search" v-if="search=='not'"> ¡Ups! No hay recetas con ese titulo. ¡Intentálo de nuevo!</div>
+
 
     </div>
 </template>
@@ -159,7 +165,8 @@ export default {
                 }],
             user: [],
             loggedUser: "",
-            checkedTags: []
+            checkedTags: [],
+            search_recipe:''
 
 
 
@@ -169,6 +176,21 @@ export default {
     computed: {
         getUser() {
             return (this.user[0]) ? this.user[0] : this.user;
+        },
+        search(){
+            if(this.search_recipe){
+                var recipe=[];
+                var recipes_search = [];
+                for (let i = 0; i < this.recipes.length; i++) {
+                    recipe = this.recipes[i];
+                    if(recipe.title.toLowerCase()==this.search_recipe.toLowerCase() || recipe.title.toLowerCase().includes(this.search_recipe.toLowerCase()) ){
+                        recipes_search.push(recipe);
+                    }                     
+                }
+                return (recipes_search.length>0)? recipes_search : 'not';
+            }else{
+                return this.recipes;
+            }
         }
     },
     methods: {
