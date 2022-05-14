@@ -1,6 +1,5 @@
 <template  >
     <div class="myTable" style=" width: 85%; margin: 8rem auto;">
-    {{search_recipe}}
         <div class="form-inline my-2 my-lg-0 ">
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
             style="margin-bottom:15px">Nueva receta</button>
