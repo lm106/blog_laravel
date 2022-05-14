@@ -77,7 +77,9 @@ export default {
         axios.get(`/receta/${this.id}`)
             .then(res => {
                 this.recipe=res.data[0]
-                this.checkedTags = this.recipe.tags.split(',')
+                 if(this.recipe.tags!==null){
+                    this.checkedTags = this.recipe.tags.split(',')  
+                }
                 this.getUserID()
                 console.log(this.recipe)
             })

@@ -24,7 +24,25 @@
             <td scope="row" v-if="user.type!=1">Usuario registrado</td>
             <td scope="row"> <router-link :to="{name: 'edit_user', params: {id: user.id}}" class="btn_edit_delete">
                 <i class="bi bi-pencil-fill" ></i></router-link></td>
-            <td scope="row"><button style="border: none;" @click="deleteUser(user.id,index)"><i class="bi bi-trash3-fill" style="color:red"></i></button></td>
+            <td scope="row"><button style="border: none;" data-bs-toggle="modal" data-bs-target="#deleteModal"  ><i class="bi bi-trash3-fill" style="color:red"></i></button></td>
+            <!-- Modal delete recipe -->
+            <div class="modal fade " id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Borrar receta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Está seguro de eliminar el usuario?
+                </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button @click="deleteUser(user.id,index)" type="button submit" class="btn btn-danger" data-bs-dismiss="modal">Eliminar</button>
+                    </div>
+                </div>
+            </div>
+            </div>
         </tr>
     </tbody>
     </table>
@@ -79,7 +97,7 @@ export default {
             axios.get(`/delete_user/${id}`).then(res => {
                 if (res.data==='ok') {
                     this.users.splice(index,1)
-                }                         
+                }
             },
             (error) => {
                 console.log(error.response.data);
