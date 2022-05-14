@@ -100,7 +100,7 @@ export default {
         },
         
         update(){
-            this.checkIfExistImage()
+            //this.checkIfExistImage()
             if(this.validate()){
                 const formData = new FormData()
 

@@ -98,6 +98,7 @@ Route::post('/dislike_comment', [LikeCommentController::class, 'destroy']);
 Route::post('/comment', [CommentController::class, 'create']);
 Route::get('/edit_comment/{id}', [CommentController::class, 'edit']);
 Route::post('/edit_comment', [CommentController::class, 'edit']);
+Route::post('/delete_comment/{id}', [CommentController::class, 'destroy']);
 
 //#################Controlador de Lista privadas##################
 Route::get('/lists', [ListController::class, 'index']);

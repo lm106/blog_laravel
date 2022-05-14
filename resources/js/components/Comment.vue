@@ -1,42 +1,71 @@
 <template>
-    <div class="container-fluid coment">
-        <div class="row margin_comment" style="max-width: 100%;">
-            <!-- primera colimna (avatar)  -->
-            <div class="col-1">
-                <img v-bind:src="user_img" class="card-img-top comment_image" alt="image">
-            </div>
 
-                <!-- Segunda columna (comentario)  -->
-            <div class="col-9">
-                <p style="font-weight: bold;">@{{ my_comment.name_user.name }}</p>
-                <div v-if="flag == true">
-                    <p>
-                        <input class="form-control edit_comment_input" type="textarea" v-model="my_comment.description">
-                    </p> 
-                </div>
-                <div v-else-if="flag == false">
-                    <p>{{ my_comment.description }}</p>
-                </div>
-                
-            </div>
-
-                <!-- like o editar  -->
-            <div class="col-2">
-                <br>
-                <div v-if="my_comment.name_user.id == getUser.id">
-                    <button @click="getEdit()" class="button_edit">
-                        <img v-bind:src="edit" class="card-img-top edit" alt="image">
-                    </button>
-                </div>
-                <div v-else-if="my_comment.name_user.id != getUser.id">
-                    <button @click="sendLike()" class="button_edit">
-                        <img v-bind:src="getLike" class="card-img-top save_like" alt="image">
-                    </button>
-                </div>
-                
-            </div>
+<!-- Modal -->
+<div class="modal fade " id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Borrar comentario</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ¿Está seguro de eliminar el comentario?
+      </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button @click="deleteComment" type="button submit" class="btn btn-danger">Eliminar</button>
         </div>
     </div>
+  </div>
+</div>
+
+<div class="container-fluid coment">
+    <div class="row margin_comment" style="max-width: 100%;">
+        <!-- primera colimna (avatar)  -->
+        <div class="col-1">
+            <img v-bind:src="user_img" class="card-img-top comment_image" alt="image">
+        </div>
+
+            <!-- Segunda columna (comentario)  -->
+        <div class="col-9">
+            <p style="font-weight: bold;">@{{ my_comment.name_user.name }}</p>
+            <div v-if="flag == true">
+                <p>
+                    <input class="form-control edit_comment_input" type="textarea" v-model="my_comment.description">
+                </p> 
+            </div>
+            <div v-else-if="flag == false">
+                <p>{{ my_comment.description }}</p>
+            </div>
+            
+        </div>
+
+            <!-- like o editar  -->
+        <div class="d-flex col-2">
+            <br>
+            <div v-if="my_comment.name_user.id == getUser.id" class="align-bt">
+                <button @click="getEdit()" class="button_edit">
+                    <img v-bind:src="edit" class=" edit" alt="image">
+                </button>
+            </div>
+            <div v-else-if="my_comment.name_user.id != getUser.id" class="align-heart">
+                <button @click="sendLike()" class="button_edit">
+                    <img v-bind:src="getLike" class="save_like" alt="image">
+                </button>
+            </div>
+            <div v-if="getUser.type == 1" class="align-bt">
+                
+                <button type="button" class="button_edit" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                        <i  id="bi-delete" class="bi bi-x-square-fill edit"></i>
+                </button>
+            </div>
+            
+        </div>
+    </div>
+</div>
+   
+        
+
 </template>
 
 <script>
@@ -101,6 +130,16 @@ export default {
     }, 
 
     methods: {
+
+        deleteComment(){
+             axios.post(`/delete_comment/${this.my_comment.id}`)
+                .then(() => {
+                }, 
+                (error) => {
+                    console.log(error.response.data);
+                });
+            window.location.href = "/recipe_description" +  "/" + this.my_comment.recipe_id
+        },
 
         sendLike() {
             if (this.getUser.length == 0) {
@@ -178,6 +217,45 @@ export default {
 
     .save_like{
         margin-left: -0.6rem;
+        
     }
+    .col-2 {
+        flex: 0 0 auto;
+        width: 10px;
+    }
+
+    /* .bi::before, [class^="bi-"]::before, [class*=" bi-"]::before {
+    display: inline-block;
+    font-family: bootstrap-icons !important;
+    font-style: normal;
+    font-weight: normal !important;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    vertical-align: -.125em;
+    -webkit-font-smoothing: antialiased;
+    color: red;
+    font-size: 25;
+    
+    } */
+
+    .align-bt {
+  
+        margin-top: 8.5;
+    }   
+    
+    .align-heart {
+        margin-left: 3;
+        width: 37;
+   
+    }
+
+    #bi-delete{
+        color: red;
+        font-size: 25;
+    }
+    
+
+
 
 </style>
