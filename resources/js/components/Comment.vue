@@ -1,29 +1,10 @@
 <template>
 
-<!-- Modal -->
-<div class="modal fade " id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">Borrar comentario</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        ¿Está seguro de eliminar el comentario?
-      </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-            <button @click="deleteComment" type="button submit" class="btn btn-danger">Eliminar</button>
-        </div>
-    </div>
-  </div>
-</div>
-
 <div class="container-fluid coment">
     <div class="row margin_comment" style="max-width: 100%;">
         <!-- primera colimna (avatar)  -->
         <div class="col-1">
-            <img v-bind:src="user_img" class="card-img-top comment_image" alt="image">
+            <img v-bind:src="user_img + my_comment.name_user.photo" class="card-img-top comment_image" alt="image">
         </div>
 
             <!-- Segunda columna (comentario)  -->
@@ -55,7 +36,7 @@
             </div>
             <div v-if="getUser.type == 1" class="align-bt">
                 
-                <button type="button" class="button_edit" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                <button type="button" class="button_edit"  @click="deleteComment" >
                         <i  id="bi-delete" class="bi bi-x-square-fill edit"></i>
                 </button>
             </div>
@@ -98,7 +79,7 @@ export default {
     data() {
         return { 
             user: [],
-            user_img: img_dir.url + img_dir.user,
+            user_img: img_dir.url,
             edit: img_dir.url + img_dir.edit, 
             like_comment: [],
             my_comment: this.comment,
@@ -153,13 +134,17 @@ export default {
             }
         },
         deleteComment(){
-             axios.post(`/delete_comment/${this.my_comment.id}`)
+            let text = "¿Está seguro de que desea eliminar el comentario?";
+            if (confirm(text) == true) {
+                 axios.post(`/delete_comment/${this.my_comment.id}`)
                 .then(() => {
                 }, 
                 (error) => {
                     console.log(error.response.data);
                 });
-            window.location.href = "/recipe_description" +  "/" + this.my_comment.recipe_id
+                window.location.href = "/recipe_description" +  "/" + this.my_comment.recipe_id
+            }
+    
         },
 
         sendLike() {
