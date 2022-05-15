@@ -102,7 +102,10 @@ export default {
             edit: img_dir.url + img_dir.edit, 
             like_comment: [],
             my_comment: this.comment,
-            flag: false
+            flag: false,
+            commenthasbadwords:false,
+            bannedWords: ['joder', 'subnormal', 'tonto','gilipollas','maricon','estúpido'],
+
         }
     }, 
 
@@ -126,11 +129,29 @@ export default {
                 }
                 
             }
-        }
-    }, 
+        },
+        
+    },
 
     methods: {
+        filterComment() {
+            if (this.my_comment.description!== '') {
+                let BreakError
+                try{
+                    this.bannedWords.forEach(element => {
+                        if (this.my_comment.description.includes(element)) {
+                            this.commenthasbadwords = true
+                            throw BreakError;
 
+                        }else{
+                            this.commenthasbadwords=false
+                        }
+                    });
+                }catch (err) {
+                    if (err !== BreakError) throw err;
+                }
+            }
+        },
         deleteComment(){
              axios.post(`/delete_comment/${this.my_comment.id}`)
                 .then(() => {
@@ -156,7 +177,6 @@ export default {
                         (error) => {
                             console.log(error.response.data);
                         });
-
                 } else {
                     axios.get(`/dislike_comment/${this.like_comment[0].id}`)
                     .then(() => {
@@ -176,19 +196,22 @@ export default {
                 this.flag = true;
 
             } else {
-                axios.post('/edit_comment', {
-                    id: this.my_comment.id,
-                    user_id: this.my_comment.user_id, 
-                    recipe_id: this.my_comment.recipe_id,
-                    description: this.my_comment.description})
+                this.filterComment()
+                if (!this.commenthasbadwords) {
+                    axios.post('/edit_comment', {
+                        id: this.my_comment.id,
+                        user_id: this.my_comment.user_id, 
+                        recipe_id: this.my_comment.recipe_id,
+                        description: this.my_comment.description})
                     .then(() => {
                         this.flag = false;
-                    }, 
-                    (error) => {
+                    },(error) => {
                         console.log(error.response.data);
                     }); 
-            }
-            
+                }else{
+                    alert('Su comentario editado tiene palabras ofensivas. Por favor quitelas para publicar su comentario.')
+                }
+            } 
         }
     }
 
