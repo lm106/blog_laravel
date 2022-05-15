@@ -55,14 +55,14 @@
                                 <div class="modal-dialog">
                                     <div v-if="getUser" class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">Añadir receta a una lista
+                                            <h5 v-if="list_private_user" class="modal-title" id="exampleModalLabel">Añadir receta a una lista
                                                 privada</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
                                             <p class="success">{{ message_error }}</p>
-                                            <form @submit.prevent="getSave">
+                                            <form v-if="list_private_user" @submit.prevent="getSave">
                                                 <div class="mb-3">
                                                     <label for="recipe-title" class="col-form-label">Seleccionar lista:
                                                         &nbsp;</label>
@@ -76,7 +76,7 @@
                                                 <button type="button" class="btn btns_create btn_cancel"
                                                     data-bs-dismiss="modal">Cancelar</button>
                                             </form>
-                                            <form @submit.prevent="deleteSave">
+                                            <form v-if="list_private_user" @submit.prevent="deleteSave">
                                                 <button type="submit" class="btn btn-danger">Quitar receta</button>
                                             </form>
                                         </div>
@@ -227,7 +227,7 @@ export default {
             comments: [],
             lists_private_user: [],
             list_save: '',
-            message_error: '',
+            message_error: '¡Ups! No tienes listas privadas. Créate una.',
             bannedWords: ['joder', 'subnormal', 'tonto','gilipollas','maricon','estúpido'],
             commenthasbadwords:false
         }

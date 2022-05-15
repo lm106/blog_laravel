@@ -1,5 +1,7 @@
 <template>
-  <div class="section_form">
+<div class="section">
+    <router-link  class="btn btn_back" to="/list_users">Volver atrás</router-link>
+    <div class="section_form">
         <h2> {{ title }}&nbsp;{{ user.name }}</h2>
         <ul class="success">
         <li v-if="getError.message_error_1">{{ getError.message_error_1}}</li> 
@@ -23,12 +25,13 @@
             <label >Password:</label><br>
             <input type="password"  v-model="user.password"/><br>
         </div>
-        <input type="submit"  id="update" value="Actualizar datos">
+        <input type="submit" class="update" id="actualizar" value="Actualizar datos">
         </form> 
         <!-- <p>{{ user }}</p> -->
-        <router-link to="/list_users">Volver atrás</router-link>
+        
         
     </div>
+</div>
 </template>
 
 <script>
@@ -109,5 +112,8 @@ export default {
 }
 option{
     background: #ECE5E9;
+}
+#actualizar {
+    margin: 20px 25%;
 }
 </style>
