@@ -139,6 +139,7 @@ export default {
         delete_list(name, i){
             axios.get(`/delete_list/${name}`).then(res => {
                 this.lists_private.splice(i,1);
+                this.message_list="¡Ups! No tienes listas privadas. Creáte una lista.";
             },
             (error) => {
                 console.log(error.response.data);
