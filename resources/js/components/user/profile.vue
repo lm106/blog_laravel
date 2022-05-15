@@ -139,6 +139,7 @@ export default {
             return flag;
         },
         delete_user(){
+            confirm('¿Estás seguro que quieres eliminar tu cuenta?');
             axios.post('/delete', { id: this.getUser.id}).then((res) => {
                 console.log(res);
            
