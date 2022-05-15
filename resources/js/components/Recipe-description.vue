@@ -61,7 +61,7 @@
                                                 aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
-                                            <p class="success">{{ message_error }}</p>
+                                            <p class="success">{{ message_error }}<span class="success" v-if="!getUser">¡Ups! No tienes listas privadas. Créate una.</span></p>
                                             <form v-if="getListUser" @submit.prevent="getSave">
                                                 <div class="mb-3">
                                                     <label for="recipe-title" class="col-form-label">Seleccionar lista:
@@ -227,7 +227,7 @@ export default {
             comments: [],
             lists_private_user: [],
             list_save: '',
-            message_error: '¡Ups! No tienes listas privadas. Créate una.',
+            message_error: '',
             bannedWords: ['joder', 'subnormal', 'tonto','gilipollas','maricon','estúpido'],
             commenthasbadwords:false
         }
