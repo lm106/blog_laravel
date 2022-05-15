@@ -30,9 +30,7 @@
                 <h3>Etiquetas:</h3>
             </label> <br>
             <div class="btn-group mb-5" role="group" aria-label="Basic checkbox toggle button group" id="tags">
-                <input  type="checkbox" class="btn-check" id="featured" value="#Destacadas" autocomplete="off" v-model="checkedTags">
-                <label class="btn btn-outline-primary" for="featured">#Destacadas</label>
-
+                
                 <input type="checkbox" class="btn-check" id="glutenFree" value="#Sin gluten" autocomplete="off" v-model="checkedTags">
                 <label class="btn btn-outline-primary" for="glutenFree">#Sin gluten</label>
 
