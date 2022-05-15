@@ -64,13 +64,10 @@
                     <!-- <td scope="row"><a class="btn_edit_delete"><i class="bi bi-trash3-fill" style="color:red"></i></a></td> -->
                 </tr>
             </tbody>
-            </table>
-            <div v-if="!list_private" class="alert alert-secondary content_list" style="text-align:center;" role="alert">
-                ¡Ups! No tienes listas privadas. Creáte una lista.
+            </table>                
+            <div v-if="message_list" class="alert alert-secondary content_list" style="text-align:center;" role="alert">
+                    {{message_list}}
             </div>
-        </div>
-        <div v-else>
-
         </div>
         
     </div>
@@ -82,6 +79,9 @@ export default {
         axios.get('/lists').then(res => {
             this.lists_private = res.data;
             // console.log(res);
+            if(res.data.length==0){
+                this.message_list="¡Ups! No tienes listas privadas. Creáte una lista.";
+            }
         },
         (error) => {
             console.log(error.response.data);
@@ -104,7 +104,8 @@ export default {
             user:[],
             create_list_name:'',
             message_error:'',
-            flag:false
+            flag:false,
+            message_list:''
         }
     },
     computed:{
