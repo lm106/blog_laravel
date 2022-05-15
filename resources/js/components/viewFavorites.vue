@@ -18,31 +18,41 @@ import Receta from './Receta.vue';
 export default {
     components: { Receta },
     beforeCreate() {
-        axios.get('/profile').then(res => {
-            axios.get(`/getUserLikes/${res.data[0].id}`).then(res => {
-                this.liked_recipes = res.data
+        axios.get('/profile')
+            .then(res => {
+                this.user = (res.data[0]) ? res.data[0] : res.data;
+
+
+                axios.get(`/getUserLikes/${this.user.id}`)
+                    .then(res => {
+                        this.liked_recipes = res.data;
+
+                    },(error) => {
+                        console.log(error.response.data);
+                    });
             },(error) => {
                 console.log(error.response.data);
             });
-        },(error) => {
-            console.log(error.response.data);
-        });
 
     },
     data() {
         return {
             liked_recipes: [],
-            user_id: null,
+            user: []
         }
     },
     computed: {
         getLikedRecipes() {
             return this.liked_recipes;
+        }, 
+
+        getUser() {
+            return (this.user[0]) ? this.user[0] : this.user;
         }
     },
     methods: {
         getLikes() {
-            axios.get('/getUserLikes', { user_id: this.user_id }).then(res => {
+            axios.get('/getUserLikes', { user_id: this.getUser.id }).then(res => {
                 console.log(res.data)
             })
         },
