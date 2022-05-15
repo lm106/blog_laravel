@@ -17,22 +17,22 @@
                         </li>
 
                         <li class="list-group-item list-group-item_new">
-                            <input class="form-check-input me-1" type="checkbox" id="harina" @click="getFilter('harina')">
+                            <input class="form-check-input me-1" type="checkbox" id="#Sin gluten" @click="getFilter('#Sin gluten')">
                             Sin gluten
                         </li>
 
                         <li class="list-group-item list-group-item_new">
-                            <input class="form-check-input me-1" type="checkbox" id="huevo" @click="getFilter('huevo')">
+                            <input class="form-check-input me-1" type="checkbox" id="#Sin huevo" @click="getFilter('#Sin huevo')">
                             Sin huevo
                         </li>
 
                         <li class="list-group-item list-group-item_new">
-                            <input class="form-check-input me-1" type="checkbox" id="leche" @click="getFilter('leche')">
+                            <input class="form-check-input me-1" type="checkbox" id="#Sin lactosa" @click="getFilter('#Sin lactosa')">
                             Sin lactosa
                         </li>
 
                         <li class="list-group-item list-group-item_new">
-                            <input class="form-check-input me-1" type="checkbox" id="azúcar" @click="getFilter('azúcar')">
+                            <input class="form-check-input me-1" type="checkbox" id="#Sin azúcar" @click="getFilter('#Sin azúcar')">
                             Sin azúcar
                         </li>
                     </ul>
@@ -79,7 +79,8 @@ export default {
     data() {
         return { 
             ids: [], 
-            original: []
+            original: [], 
+            alergenos: []
         }
     },
 
@@ -93,10 +94,10 @@ export default {
         getFilter(filtro) {
             if (filtro == 'destacada') {
                 if (document.getElementById(filtro).checked) {
-                    document.getElementById('harina').checked = false;
-                    document.getElementById('huevo').checked = false;
-                    document.getElementById('leche').checked = false;
-                    document.getElementById('azúcar').checked = false;
+                    document.getElementById('#Sin gluten').checked = false;
+                    document.getElementById('#Sin huevo').checked = false;
+                    document.getElementById('#Sin lactosa').checked = false;
+                    document.getElementById('#Sin azúcar').checked = false;
 
                      // miramos el num de likes y commentarios de la receta
                     axios.get('/recipes_likes')
@@ -143,10 +144,12 @@ export default {
                 }
   
                 if (document.getElementById(filtro).checked) {
+                    this.alergenos.push(filtro);
+
                     let array = [];
                     for (let index = 0; index < this.ids.length; index++) {
                         let receta = this.ids[index];
-                        if (!receta.ingredients.includes(filtro)) {
+                        if (receta.tags != null && receta.tags.includes(filtro)) {
                             array.push(receta);
                         }
                         
@@ -154,17 +157,33 @@ export default {
                     this.ids = array;
 
                 } else {
+                    let id_check = this.alergenos.indexOf(filtro);
+                    this.alergenos.splice(id_check, 1);
+
                     let array = [];
                     let index_id = 0;
                     for (let index = 0; index < this.original.length; index++) {
                         let receta = this.original[index];
 
-                        if (this.ids[index_id].id == receta.id){
+                        if (this.ids.length == 0) {
+                            array.push(receta);
+
+                        } else if (this.ids[index_id].id == receta.id){
                             array.push(receta);
 
                         } else {
-                            if (receta.ingredients.includes(filtro)) {
-                            array.push(receta);
+                            if(this.alergenos.length == 0) {
+                                array.push(receta);
+                                
+                            } else {
+                                for(let i = 0; i < this.alergenos.length; i++) {
+                                    console.log('hola');
+                                    if (receta.tags == null || !receta.tags.includes(this.alergenos[i])) {
+                                        break;
+                                    } else if (i == this.alergenos.length -1) {
+                                        array.push(receta);
+                                    }
+                                }
                             }
 
                             if(index_id != this.ids.length) {
