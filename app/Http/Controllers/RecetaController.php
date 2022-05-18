@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Receta;
+use App\Models\LikeComment;
 use App\Models\Comment;
+use App\Models\User;
+use App\Models\Like;
 
 class RecetaController extends Controller
 {
@@ -40,6 +43,32 @@ class RecetaController extends Controller
         return response()->json($comments);
     }
 
+    public function allLikesComments($id) {
+        $comments = DB::table('like_comment')
+            ->select('like_comment.id as id', 'like_comment.user_id', 'like_comment.comment_id',
+                    'user.id as user_id_comment')->where('like_comment.comment_id', '=', $id)
+            ->crossJoin('user', 'user.id', '=', 'like_comment.user_id')->get();
+        return response()->json($comments);
+    }
+
+    public function nLikes() {
+        $recipe_fav = DB::table('receta')
+        ->crossJoin('likes', 'receta.id', '=', 'likes.recipe_id')
+        ->groupBy('likes.recipe_id', 'title', 'image', 'likes.user_id')
+        ->select('recipe_id as id', 'title', 'image', DB::raw('COUNT(likes.user_id) as n_likes'))
+        ->get();
+
+        return response()->json($recipe_fav);
+    }
+
+    public function getLikedRecipes($user_id){
+        $recetas = DB::table('likes')
+        ->where('likes.user_id',$user_id)
+        -> rightJoin('receta', 'likes.recipe_id','=','receta.id')->get();
+
+        return $recetas;
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -51,17 +80,24 @@ class RecetaController extends Controller
 
         $request->validate([
             'title'=>'required',
-            'image'=>'',
+            'image.*' => 'mimes:jpeg,png,jpg,svg',
             'description'=>'required',
             'ingredients'=>'required',
             'user_id'=>'required'
         ]);
-
+        
+        if($image = $request->hasFile('image')) { 
+            $image = $request->file('image') ;
+            $imageName = $image->getClientOriginalName() ;
+            $destinationPath = public_path().'/images' ;
+            $image->move($destinationPath,$imageName);
+        } 
         $receta = new Receta();
         $receta->title = $request->get('title');
-        $receta->image = $request->get('image');
+        $receta->image = $request->get('image_path');
         $receta->description = $request->get('description');
         $receta->ingredients = $request->get('ingredients');
+        $receta->tags = $request->get('tags');
         $receta->user_id = $request->get('user_id');
         $receta -> save();
     }
@@ -120,6 +156,54 @@ class RecetaController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $recipe=Receta::find($id)->delete();
+    }
+
+
+    public function find_recipes($search){
+        $finded_recipes = Receta::where('title','like','%'.$search.'%')->get()->toArray();
+        return array_reverse($finded_recipes);
+    }
+
+    public function getReceta($id){
+        $receta = Receta::where('id',$id)->get();
+        return $receta;
+    }
+
+
+    public function updateReceta(Request $request){
+        $request->validate([
+            'title'=>'required',
+            'image.*' => 'mimes:jpeg,png,jpg,svg',
+            'description'=>'required',
+            'ingredients'=>'required',
+            'user_id'=>'required'
+        ]);
+        
+        if($image = $request->hasFile('image')) { 
+            $image = $request->file('image') ;
+            $imageName = $image->getClientOriginalName() ;
+            $destinationPath = public_path().'/images' ;
+            $image->move($destinationPath,$imageName);
+        } 
+
+        $receta = new Receta();
+        $receta->title = $request->get('title');
+        $receta->image = $request->get('image_path');
+        $receta->description = $request->get('description');
+        $receta->ingredients = $request->get('ingredients');
+        $receta->tags = $request->get('tags');
+        $receta->user_id = $request->get('user_id');
+
+
+        $receta->id=$request->get('id');
+        $db_receta = Receta::find($receta->id);
+        if($db_receta->title !==$receta->ntitleame) $db_receta->title=$receta->title;
+        if($db_receta->description !==$receta->description) $db_receta->description=$receta->description;
+        if($db_receta->ingredients !==$receta->ingredients) $db_receta->ingredients=$receta->ingredients;
+        if($db_receta->tags !==$receta->tags) $db_receta->tags=$receta->tags;
+        if($db_receta->user_id !==$receta->user_id) $db_receta->user_id=$receta->user_id;
+        if($db_receta->image !==$receta->image) $db_receta->image=$receta->image;
+        $db_receta->save();
     }
 }

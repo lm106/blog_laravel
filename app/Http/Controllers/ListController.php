@@ -9,12 +9,11 @@ use App\Models\List_private;
 class ListController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Mostrar las listas privadas que tiene el usuario
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
-    {
+    public function index(Request $request){
         //
         // $n_recetas= List_private::select('user_id','name', DB::raw('count(recipe_id) as n_recetas'))->groupBy('user_id','name')
         //     ->havingRaw('count(recipe_id) > 1')->get();
@@ -22,20 +21,44 @@ class ListController extends Controller
         //Muestra todos las listas de todos los usuarios
         // $n_recetas= List_private::select('user_id','name',DB::raw('COUNT(recipe_id) as n_recetas'))
         // ->distinct('user_id','name')->groupBy('user_id','name')->get();
-        $user_id=$request->session()->get('user')[0]->id;
+        $user=$request->session()->get('user');
+        $user_id=($user[0]!=null)?$user[0]->id:$user->id;
         $list_n_recetas= List_private::select('user_id','name',DB::raw('COUNT(recipe_id) as n_recetas'))
         ->distinct('user_id','name')->groupBy('user_id','name')->where('user_id','=', $user_id)->get();
-        return response()->json($list_n_recetas); 
+
+        // $receta_destaca=DB::table('likes')
+        // ->crossJoin('receta', 'receta.id', '=', 'likes.recipe_id')
+        // ->distinct('likes.recipe_id', 'title')
+        // ->groupBy('likes.recipe_id','title', 'image', 'likes.user_id')
+        // ->select('recipe_id','title', 'image', DB::raw('COUNT(likes.user_id) as n_recetas') )
+        // ->get();
+        
+        return response()->json($list_n_recetas);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Crear una lista privada vacía
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
+    public function create(Request $request){
         //
+        $request->validate([
+            'name'=>'required',
+            'user_id'=>['required']
+        ]);
+        $user_id=$request->get('user_id');
+        $name=$request->get('name');
+        $check_list=List_private::distinct()->where('user_id','=', $user_id)->where('name','=', $name)->exists();
+        if(!$check_list){
+            $list_new= new List_private();
+            $list_new->name=$request->get('name');
+            $list_new->user_id=$request->get('user_id');
+            $list_new->save();
+            return $list_new;
+        }else{
+            return 'not';
+        }
     }
 
     /**
@@ -44,53 +67,160 @@ class ListController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
+    public function check_recipe(Request $request){
         //
+        $user=$request->session()->get('user');
+        if($user != ""){
+            $user_id=($user[0]!=null)?$user[0]->id:$user->id;
+            $check=List_private::where('user_id','=', $user_id)
+                ->where('recipe_id','=', $request->get('id'))->count();
+            if($check>=1){
+                return 'ok';
+            }else{
+                return 'not';
+            }
+        }
     }
 
     /**
-     * Display the specified resource.
+     * Mostrar los nombres de las listas privadas del usuario
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
+    public function show(Request $request){
         //
+        $user=$request->session()->get('user');
+        if($user != ""){
+            $user_id=($user[0]!=null)?$user[0]->id:$user->id;
+            $list_user= List_private::select('user_id','name')
+            ->distinct('name')->groupBy('user_id','name')->where('user_id','=', $user_id)->get();
+            return response()->json($list_user);
+        } else{
+            return 'not';
+        }
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Mostrar el contenido de una lista
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
-    {
+    public function show_list(Request $request, $name){
         //
+        $user=$request->session()->get('user');
+        if($user != ""){
+            $user_id=($user[0]!=null)?$user[0]->id:$user->id;
+            $list_recipe=List_private::select('list.id as list_id','receta.*')
+                ->where('list.user_id', '=', $user_id)
+                ->where('name', '=', $name)->rightJoin('receta', 'recipe_id', 'receta.id')->get();
+            return response()->json($list_recipe);
+        } else{
+            return 'not';
+        }
     }
 
     /**
-     * Update the specified resource in storage.
+     * Guardar una receta en una lista privada
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
+    public function save_recipe(Request $request){
         //
+        $request->validate([
+            'name'=>'required',
+            'user_id'=>['required'],
+            'recipe_id'=>['required']
+        ]);
+        $check=List_private::where('user_id','=', $request->get('user_id'))
+            ->where('recipe_id','=', $request->get('recipe_id'))
+            ->where('name', '=', $request->get('name'))->count();
+        if($check == 0){
+            $save= new List_private();
+            $save->name=$request->get('name');
+            $save->user_id=$request->get('user_id');
+            $save->recipe_id=$request->get('recipe_id');
+            $save->save();
+            return 'ok';
+        } else{
+            return 'not';
+            // return response()->json($check);
+        }
     }
 
+    public function update(Request $request){
+        $list_old=$request->get('name_old');
+        $name_new=$request->get('name_new');
+        $user=$request->session()->get('user');
+        if($user != ""){
+            $user_id=($user[0]!=null)?$user[0]->id:$user->id;
+        }
+        $list_db=List_private::where('name','=', $list_old)->where('user_id', '=', $user_id)->whereNull('recipe_id')->select('name')->distinct()->get();
+        if($list_db!= $name_new){
+            $lists_id=List_private::where('name','=', $list_old)->where('user_id', '=', $user_id)->select('id')->get();
+            for ($i=0; $i < $lists_id->count(); $i++) { 
+                $list=List_private::find($lists_id[$i]->id);
+                $list->update(['name' => $name_new]);
+            }   
+            $lists_update=List_private::where('name','=', $name_new)->whereNotNull('recipe_id')->where('user_id','=', $user_id)->get();
+            if($lists_update->count()>1){
+                return $lists_update;
+            }else{
+                return 'not';
+            }
+        }
+        return 'not';
+    }
+
+
+    public function dissave_recipe(Request $request){
+        //
+        $request->validate([
+            'name'=>'required',
+            'user_id'=>['required'],
+            'recipe_id'=>['required']
+        ]);
+        $check=List_private::where('user_id','=', $request->get('user_id'))
+            ->where('recipe_id','=', $request->get('recipe_id'))
+            ->where('name', '=', $request->get('name'))->delete();
+        if($check>=1){
+            return 'ok';
+        } else{
+            return 'not';
+        }
+        // return response()->json($check);
+    }
     /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
+    public function destroy(Request $request, $name){
         //
+        $user=$request->session()->get('user');
+        $user_id=($user[0])? $user[0]->id: $user->id;
+        $delete_list=List_private::where('user_id','=', $user_id)->where('name','=',$name)->delete();
+        return response()->json($delete_list);
+    }
+    public function destroy_recipes(Request $request){
+        //
+        $recipes_id=$request->get('ids');
+        $name_list=$request->get('name');
+        $user=$request->session()->get('user');
+        $user_id=($user[0])? $user[0]->id: $user->id;
+        for ($i=0; $i < sizeof($recipes_id); $i++) { 
+            $list=List_private::where('name', '=',$name_list)->where('user_id','=', $user_id)->where('recipe_id','=',$recipes_id[$i])->delete();
+        }
+        $list_delete=List_private::select('list.id as list_id','receta.*')
+        ->where('name', '=',$name_list)->where('list.user_id','=', $user_id)->rightJoin('receta', 'recipe_id', 'receta.id')->get();
+        return $list_delete;
+        // $user_id=($user[0])? $user[0]->id: $user->id;
+        // $delete_list=List_private::where('user_id','=', $user_id)->where('name','=',$name)->delete();
+        // return response()->json($recipes_id);
     }
 }
+

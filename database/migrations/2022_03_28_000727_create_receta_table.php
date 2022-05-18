@@ -19,7 +19,9 @@ return new class extends Migration
             $table->text('image')->nullable();
             $table->text('description');
             $table->text('ingredients');
-            $table->foreignId('user_id')->constrained('user');
+            $table->text('tags')->nullable();
+            $table->foreignId('user_id')->references('id')
+            ->on('user')->onDelete("cascade")->onUpdate("cascade");
             $table->timestamps();
         });
     }

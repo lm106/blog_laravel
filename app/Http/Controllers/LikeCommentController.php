@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Models\LikeComment;
 
-class BlogController extends Controller
+class LikeCommentController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,6 +16,8 @@ class BlogController extends Controller
     public function index()
     {
         //
+        $like = LikeComment::all()->toArray();
+        return array_reverse($like);
     }
 
     /**
@@ -21,9 +25,21 @@ class BlogController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
         //
+
+        $request->validate([
+            'user_id'=>'required',
+            'comment_id'=>'required'
+        ]);
+
+        $like = new LikeComment();
+        $like->user_id = $request->get('user_id');
+        $like->comment_id = $request->get('comment_id');
+        $like -> save();
+
+        return response()->json($like);
     }
 
     /**
@@ -35,6 +51,7 @@ class BlogController extends Controller
     public function store(Request $request)
     {
         //
+        LikeComment::create($request->all());
     }
 
     /**
@@ -46,6 +63,8 @@ class BlogController extends Controller
     public function show($id)
     {
         //
+        $like = DB::table('like_comment')->where('user_id', $id);
+        return response()->json($like);
     }
 
     /**
@@ -80,5 +99,7 @@ class BlogController extends Controller
     public function destroy($id)
     {
         //
+        $like = LikeComment::findOrFail($id);
+        $like->delete();
     }
 }

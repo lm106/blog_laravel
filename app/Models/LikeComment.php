@@ -15,4 +15,12 @@ class LikeComment extends Model
     ];
     protected $table = 'like_comment';
 
+    public function nameUser() {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function nameComment() {
+        return $this->belongsTo(Comment::class, 'comment_id');
+    }
+
 }

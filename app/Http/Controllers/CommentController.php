@@ -78,9 +78,18 @@ class CommentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Request $request)
     {
         //
+        $comment_update = new Comment();
+        $comment_update->id = $request->get('id');
+        $comment_update->user_id = $request->get('user_id');
+        $comment_update->recipe_id = $request->get('recipe_id');
+        $comment_update->description = $request->get('description');
+
+        $comment_db = Comment::find($comment_update->id);
+        if($comment_db->description !== $comment_update->description) $comment_db->description = $comment_update->description;
+        $comment_db->save();
     }
 
     /**
@@ -103,6 +112,7 @@ class CommentController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $comment=Comment::find($id)->delete();
+        
     }
 }

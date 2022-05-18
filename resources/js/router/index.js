@@ -19,11 +19,11 @@ const router = [
 
   },
   { 
-    path: '/profile', 
+    path: '/perfil', 
     component:  require('../components/user/profile.vue').default 
   },
   { 
-    path: '/admin_list', 
+    path: '/list_users',
     component:  require('../components/user/admin/list_user.vue').default 
   },
   {   
@@ -58,16 +58,37 @@ const router = [
     component: require('../components/user/admin/edit_user.vue').default
   },
   {
-    path: '/list_private',
+    path: '/lists_private',
     component: require('../components/list_private/lists_private.vue').default
   },
   {
-    path: '/list_private/:id',
+    path: '/list_private/:name_list',
     name: 'list_private',
     props: true,
     component: require('../components/list_private/list_private.vue').default
+  },
+  {
+    path: '/edit_list/:name_list',
+    name: 'edit_list_private',
+    props: true,
+    component: require('../components/list_private/edit_list_private.vue').default
+  },
+  {
+    path: '/find_recipes/:search',
+    props: true,
+    component: require('../components/recipeFinder.vue').default
+  },
+  {
+  path: '/edit_recipe/:id',
+  props: true,
+  component: require('../components/editRecipes.vue').default
+  },
+  {
+  path: '/show_favorites',
+  props: true,
+  component: require('../components/viewFavorites.vue').default
   }
-  
+
 ]
 /** OTRA FORMA
  * const routes = [

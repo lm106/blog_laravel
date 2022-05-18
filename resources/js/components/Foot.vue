@@ -6,7 +6,7 @@
         </div>
         <div>
             <br>
-            <router-link to="/formulario_contacto" class="text-white" id="contact"><h4>Contactanos</h4></router-link>
+            <router-link to="/formulario_contacto" class="text-white" id="contact"><h4>Contáctanos</h4></router-link>
             
         </div>
         <div>

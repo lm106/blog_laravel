@@ -17,56 +17,56 @@
             <input type="email" readonly v-model="getUser.email"/><br>
             <label >Password:</label><br>
             <input type="password"  v-model="getUser.password"/><br>
+            <label >Avatar:</label><br>
+            <input type="file" class="mb-3" accept=".jpeg,.png,.jpg,.svg" name="photo" @change="onChange" ref="file"/>
+            <div class="avatar-container mb-3">
+                <img v-bind:src="imagePreview" width="102" height="102" v-show="showPreview" class="rounded-circle" /> 
+            </div>
+            <input type="submit"  class="update mb-3" value="Actualizar datos">
         </div>
-        <input type="submit"  class="update" value="Actualizar datos">
+        
         </form>
         <form @submit.prevent="delete_user()">
-        <input type="submit"  class="update" id="delete" value="Eliminar cuenta">
+            <input type="submit"  class="update" id="delete" value="Eliminar mi cuenta">
         </form>
-        <!-- <p>{{ user }}</p> -->
+
     </div>
 </template>
 
 <script>
 export default {
+  
     beforeCreate() {
-        /* Para ver todos los usuarios */
-        // axios.get('/profile').then(res => {
-        //     vm.user = res.data;
-        //     console.log(res);
-        // })
-        //  console.log(this.user_id);
         axios.get('/profile').then(res => {
             this.user = res.data;
-            // console.log(res);
-            // console.log(this.user);
-
+    
         },
         (error) => {
             console.log(error.response.data);
         })
-
-        // axios.get('/profile')
-        // .then(function (response) {
-        //     // handle success
-        //     this.user=response.data;
-        //     console.log(response);
-        // })
-        // .then((response) => {
-        //     this.user = response.data;
-        // })
-        // console.log("usuario:" + vm.user)
     },
     name: 'Profile',
     data() {
       return {
-            title: 'Perfil',   
-            user: [],
+            avatar: '',
+            avatar_path:'',
+            title: 'Mi Perfil',   
+            user: [{
+                name: '',
+                name_last: '',
+                email: '',
+                password: '',
+                id: '',
+                photo: ''
+            }],
             message:[{
                 message_1:'',
                 message_2:''
             }],
-            error:''
+            error:'',
+            imagePreview: null,
+            showPreview: false,
+            
         }
     },
     computed:{
@@ -78,21 +78,52 @@ export default {
         }
     }, 
     methods:{
+        onChange(){
+            this.avatar = this.$refs.file.files[0];
+            this.avatar_path = 'images/' + this.avatar.name
+
+            let reader  = new FileReader();
+
+            reader.addEventListener("load", function () {
+                this.showPreview = true;
+                this.imagePreview = reader.result;
+            }.bind(this), false);
+
+            if( this.avatar ){
+                if ( /\.(jpe?g|png|gif|svg)$/i.test( this.avatar.name) ) {
+                    reader.readAsDataURL( this.avatar );
+                }
+            }
+
+            this.getUser.photo = this.avatar_path
+
+        },
+        
         update(){
-            // console.log("---");
-            // console.log(this.user);
-            // var user_new=this.user;
+            //this.checkIfExistImage()
             if(this.validate()){
-                axios.post('/edit', { name: this.user.name, name_last: this.user.name_last, email: this.user.email, password: this.user.password}).then((res) => {
-                    // console.log(res);
-                // console.log('saved update');
+                const formData = new FormData()
+
+                formData.append('name',  this.getUser.name)
+                formData.append('name_last', this.getUser.name_last)
+                formData.append('email',  this.getUser.email)
+                formData.append('password',  this.getUser.password)
+                formData.append('id',  this.getUser.id)
+                formData.append('type', this.getUser.type)
+                if(this.avatar){
+                    formData.append('photo', this.avatar)
+                }
+                formData.append('avatar_path',  this.getUser.photo)
+                const headers = { 'Content-Type': 'multipart/form-data' };
+                axios.post('/edit', formData, {headers}).then(() => {
+                    console.log("updated")
+                    window.location.href="/perfil";
                 }, function (error) {
                     console.log(error.response.data); 
                 });
             }
         },
         validate(){
-            // console.log('he');
             this.getError.message_1='';
             this.getError.message_2='';
             var flag=true;
@@ -104,13 +135,14 @@ export default {
                 this.getError.message_2= " La contraseña no puede estar vacía"
                 flag=false;
             }
-            // console.log(this.message)
+    
             return flag;
         },
         delete_user(){
-            axios.post('/delete', { id: this.user.id}).then((res) => {
+            confirm('¿Estás seguro que quieres eliminar tu cuenta?');
+            axios.post('/delete', { id: this.getUser.id}).then((res) => {
                 console.log(res);
-                // console.log('saved update');
+           
                 if(res.data) {
                     window.location.href='/';
                 }else{
@@ -119,7 +151,13 @@ export default {
             }, function (error) {
                 console.log(error.response.data); 
             });
+        },
+        checkIfExistImage(){
+            if(this.photo == ""){
+                this.avatar_path = "images/default-avatar.jpeg"
+            }
         }
+        
 
     }
 }
@@ -141,15 +179,35 @@ export default {
     margin: 0 auto;
     text-align: start;
     color: #AB8A62;
+  
 }
-#input_data input{
-    padding-right: 40%;
+
+ img{
+    text-align: center;
+  
+}
+#input_data input {
+    width: 100%;
+}
+#input_data input[type=file]{
+    border:none
+
+}
+
+#input_data input[type=file]{
+    color: black;
+    
 }
 #input_data label{
     margin: 5px 0px;
 }
+
+.avatar-container{
+    text-align: center;
+}
+
 .update {
-    margin: 30% 0% 10% 30%;
+   
     background: #D5888D;
     border: none;
     padding: 5px 20px;
